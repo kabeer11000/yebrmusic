@@ -98,4 +98,4 @@ io.sockets.on("connection", socket => {
     });
 });
 //https://www.npmjs.com/package/engine.io
-httpServer.listen(3240);
+httpServer.listen(process.env.PORT || 3240);
