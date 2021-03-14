@@ -1,6 +1,10 @@
-backend/node_modules
-client/node_modules
-recom-api/venv
-cast-server/node_modules
-lyrics-generation/venv
-src/components/ArtistComponent/BB.js
+#lyrics-generation/venv
+#src/components/ArtistComponent/BB.js
+#.idea/inspectionProfiles/
+#client/src/components/ArtistComponent/BB.js
+.idea/inspectionProfiles/
+client/src/components/ArtistComponent/BB.js
+backend/node_modules/
+cast-server/node_modules/
+proxy-server/node_modules/
+user-accounts-api/node_modules/
