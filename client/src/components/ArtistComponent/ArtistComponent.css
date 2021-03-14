@@ -1,0 +1,11 @@
+.ArtistComponent {
+
+}
+
+.backgroundImage:before {
+    filter: blur(5px);
+}
+
+.infinite-scroll-component {
+    overflow: hidden !important;
+}

@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "sources": [
+    "E:/Projects/phpstormprojects/music_react/client/src/components/ArtistComponent/E:/Projects/phpstormprojects/music_react/client/src/components/ArtistComponent/ArtistComponent.css",
+    "17.8792b9ec.chunk.css"
+  ],
+  "names": [],
+  "mappings": "AAIA,wBACI,wBAAA,CAAA,gBCEJ",
+  "file": "17.8792b9ec.chunk.css",
+  "sourcesContent": [
+    ".ArtistComponent {\r\n\r\n}\r\n\r\n.backgroundImage:before {\r\n    filter: blur(5px);\r\n}\r\n",
+    ".ArtistComponent {\r\n\r\n}\r\n\r\n.backgroundImage:before {\r\n    -webkit-filter: blur(5px);\r\n            filter: blur(5px);\r\n}\r\n\n"
+  ]
+}

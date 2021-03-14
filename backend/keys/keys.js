@@ -1,0 +1,42 @@
+module.exports = {
+    db: {
+        url: process.env.MONGO_URI_DEV
+    },
+    auth: {
+        public: process.env.AUTH_PUBLIC,
+        secret: process.env.AUTH_SECRET
+    },
+    internalCommunication: {
+        rsa: {
+            private: `-----BEGIN RSA PRIVATE KEY-----
+MIICXAIBAAKBgQDLijg/VW0FVBY5adSW4Jv1oCf6breemnVoXc9Q7if7OBt16zxp
+MUS0IW5HewrjvhqNgkk2xOARlIYfu6MZTuwsknV0kQgLu/ma6FcB82atAQIkRHKB
+5DnQh3oOq34Dlub9caSi3OSKi/2cQyZ08Q9N4pX9jZV0RNMvmkoUSw7IzQIDAQAB
+AoGAcxuE+dRO5m+Kbge60WTO7pcXZNqOf2Sst0wuPX+iHsG5TfOt43OYfiJV4pjk
+LK3LCHJBA3dNnMOZIoMUFvD6QKxDf5RNC1DQg9YfLXz87dKas7PiyDVYE015IG87
+242V1nEFvfHoRgRGwXRtrHiKKgpGWhLJwEOGYrnSg50zWuECQQDwDKTtGUhhUjCc
+rTffqbiZBaWwAIY2Z1+X5ldMglNGJ735oW8wWwj+No5vjWvc8dbipbPT4y+t6Znk
+ys6RYx7lAkEA2RCII4uGEWCJT6tW2cqDyANNg6aNh5iKd8MyXULh3UN6drvBIo7o
+cioQJWX8QCFJk0P+UaexVXn4ZaKLUR37yQJBAK1pdPuTeCZWKagFuodpJGHnInqy
+5kIHC5fAXvB2dZIIw8TCSoC0QxribqNHltRWINY6vl4jkR4h03rkx7Vf1cECQFMk
+uPDcjaL0VkQ0/hR4NNgVI8jMsCODM27CTvVYHAnTwgHe0xC4qqKoJ/0bPm8WEQee
+oLiIQi3ahWHwy+prULkCQC98MGxxyY4Cvji8vYpw9hJrGy4Y3X1rL8ha2R2W2J2C
+tPn8T6zT2NeiAbnVCVns2OR+rWdtJVz7jyb9UR4V9OU=
+-----END RSA PRIVATE KEY-----`,
+            public: `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLijg/VW0FVBY5adSW4Jv1oCf6
+breemnVoXc9Q7if7OBt16zxpMUS0IW5HewrjvhqNgkk2xOARlIYfu6MZTuwsknV0
+kQgLu/ma6FcB82atAQIkRHKB5DnQh3oOq34Dlub9caSi3OSKi/2cQyZ08Q9N4pX9
+jZV0RNMvmkoUSw7IzQIDAQAB
+-----END PUBLIC KEY-----`
+        }
+    },
+
+    KabeerAuthPlatform_Public_RSA_Key: `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqC8QOAygPkks0h7iRVg7FNNVf
+AlQhYjnK9vB69dw9TOG+DyjSuFUnpedEv0YfbGIC3dGqc5YHfqZPDy4U5Jj+H5/g
+FzSdiI7AIauD5OLDCqBy6nyMC23GesMPibgaiEylvryreGmkfANEJSCtceVTjIHn
+/MEgvdBd6oZAEkv0XQIDAQAB
+-----END PUBLIC KEY-----`
+};
+

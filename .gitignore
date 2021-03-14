@@ -1,0 +1,6 @@
+backend/node_modules
+client/node_modules
+recom-api/venv
+cast-server/node_modules
+lyrics-generation/venv
+src/components/ArtistComponent/BB.js
