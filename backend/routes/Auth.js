@@ -3,9 +3,7 @@ const axios = require("axios");
 // const
 // 	uuid = require("uuid");
 // const keys = require("../keys/keys");
-const {RefreshToken} = require("../controllers/Auth");
-const {OAuthCallbackHandler} = require("../controllers/Auth");
-const {OAuthRedirect} = require("../controllers/Auth");
+const {GetDataServerKey, OAuthRedirect, RefreshToken, OAuthCallbackHandler} = require("../controllers/Auth");
 // const MongoClient = require("mongodb").MongoClient;
 // const mongoClient = MongoClient.connect(keys.db.url, {
 // 	useNewUrlParser: true,
@@ -39,6 +37,7 @@ const access_token_expired_code = 400;
 router.get("/callback", OAuthCallbackHandler);
 
 router.get("/redirect", OAuthRedirect);
+router.post("/external/data-collection/generate", GetDataServerKey);
 router.get("/user/data", (req, res) => {
     const token = req.headers["idtoken"];
     axios.post(`${endPoints.OIDCHost}/user/userinfo`, serialize({

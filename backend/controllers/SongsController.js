@@ -5,6 +5,7 @@ const history = require("./history");
 // const endpoints = require("../api/endpoints");
 const scraper = require("../functions/scraper");
 const keys = require("../keys/keys");
+const axios = require("axios");
 // const ytSearch = require("yt-search");
 const {getMaximum} = require("../functions/misc");
 const uuid = require("uuid");
@@ -26,9 +27,13 @@ const getSong = async (req, res) => {
         });
         if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:getSong", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
         const song = await ytdl.getInfo(req.query.id).then(info => ytdl.filterFormats(info.formats, "audioonly"));
-        await history.listeningHistory(decoded, req.query.id);
         res.set("Cache-Control", "public, max-age=20000"); //6hrs approx
         res.json(song[1].url);
+        // console.log(await scraper.getSong(req.query.id))
+        // await history.listeningHistory(decoded, req.query.id);
+        // axios.post("http://localhost/api/index-song", JSON.stringify({
+        //     song: await scraper.getSong(req.query.id), token: process.env.DATA_SERVER_TOKEN
+        // })).then(a => console.log(a));
     } catch (e) {
         console.log(e);
         return res.status(400).json(e.message);
@@ -41,7 +46,7 @@ const getSongDetail = async (req, res) => {
             algorithms: "RS256"
         });
         if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
-        res.json(await scraper.getSong(req.params.id))
+        res.json(await scraper.getSong(req.params.id));
     } catch (e) {
         console.log(e);
         return res.status(400).end();
@@ -54,7 +59,7 @@ const searchSong = async (req, res) => {
             algorithms: "RS256"
         });
         if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
-        // await history.searchHistory(decoded, req.query.q);
+        await history.searchHistory(decoded, req.query.q);
         res.json(await scraper.searchYoutube(req.query.q));
     } catch (e) {
         console.log(e);

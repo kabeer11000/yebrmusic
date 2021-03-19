@@ -2,6 +2,8 @@
 export const hostName = `${window.location.protocol}//${window.location.hostname}:9000`;
 const proxy = "http://localhost:8080";
 const CastServer = `http://localhost:3240`
+const DataCollection = `http://localhost:80`;
+
 const endPoints = {
     castServer: CastServer,
     hostName: hostName,
@@ -36,6 +38,14 @@ const endPoints = {
     castPingTest: `${hostName}/cast/user/devices/ping`,
     clientComSocket: `${hostName}/socket/com`,
     getSongDetail: (id) => `${hostName}/api/song/details/${id}`,
-    getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`
+    getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`,
+
+    DataCollection: {
+        getToken: `${hostName}/auth/external/data-collection/generate`,
+        rate: ({id, token}) => `${DataCollection}/api/update-rating?video_id=${id}&token=${token}`,
+        details: {
+            getStreams: (token) => `${DataCollection}/api/details/streams?token=${token}`,
+        }
+    }
 };
 export default endPoints;

@@ -104,16 +104,10 @@ const SearchComponent = (props) => {
 							<ArrowBack color="#FFF"/>
 						</IconButton> : <></>}
 						<InputBase
-							autoCapitalize={true}
-							autoComplete={true}
+							// autoCapitalize={true}
+							// autoComplete={true}
 							autoFocus={true}
 							onKeyUp={Search}
-							onFocus={() => {
-
-							}}
-							onBlur={() => {
-
-							}}
 							className={`${classes.input} text-light`}
 							placeholder="Search Kabeers Music"
 							inputProps={{"aria-label": "Search Kabeers Music"}}

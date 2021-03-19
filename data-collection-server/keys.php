@@ -1,6 +1,6 @@
 <?php
 
-$keys = array(
+$KEYS = array(
     "database_dev" => array(
         "password" => "",
         "username" => "root",
@@ -36,7 +36,8 @@ AlQhYjnK9vB69dw9TOG+DyjSuFUnpedEv0YfbGIC3dGqc5YHfqZPDy4U5Jj+H5/g
 FzSdiI7AIauD5OLDCqBy6nyMC23GesMPibgaiEylvryreGmkfANEJSCtceVTjIHn
 /MEgvdBd6oZAEkv0XQIDAQAB
 -----END PUBLIC KEY-----
-EOD
+EOD,
+        "csrf_id" => "Vy0ShK6HqSwpONfMC1GtlQTFdZf0dnmSkqTCs0rNWpVtFB9hBsE8MUisUoUyYHOWH8WcuIHpZHcaVDqO"
     )
 );
 ?>

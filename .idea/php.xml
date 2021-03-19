@@ -4,6 +4,12 @@
     <include_path>
       <path value="$PROJECT_DIR$/data-collection-server/vendor/firebase/php-jwt" />
       <path value="$PROJECT_DIR$/data-collection-server/vendor/composer" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/bramus/router" />
     </include_path>
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/data-collection-server/vendor/autoload.php" />
+    </phpunit_settings>
   </component>
 </project>

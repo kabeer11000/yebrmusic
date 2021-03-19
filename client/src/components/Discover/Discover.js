@@ -38,7 +38,7 @@ const Discover = (props) => {
     const [error, setError] = React.useState(false);
 
     React.useEffect(() => {
-        (async () => {
+        const a = async () => {
             try {
                 if (!await get(storageIndex.discover.saveObject) || !(Date.now() - await get(storageIndex.discover.timeObject)) / (100 * 60) > 1) fetch("http://127.0.0.1:5000/feed/home/recom?for_each_history=2").then(a => a.json()).then(homeObject => {
                     setState({
@@ -59,17 +59,19 @@ const Discover = (props) => {
             } catch (e) {
                 setError(!error);
             }
-        })();
+        };
+        a();
     }, []);
     React.useEffect(() => {
-        (async () => {
+        const a = async () => {
             if (!state) return;
             const saved = await get(storageIndex.discover.saveObject);
             if (!saved || saved.etag !== state.etag) {
                 await set(storageIndex.discover.timeObject, Date.now());
                 await set(storageIndex.discover.saveObject, state);
             }
-        })();
+        };
+        a();
     }, [state]);
     const tv = React.useContext(isTvContext);
     const {PlaySong} = React.useContext(PlayContext);

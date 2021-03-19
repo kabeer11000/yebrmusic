@@ -1,4 +1,4 @@
 <?php
 include("./keys.php");
-
-$SQL_CLIENT = new mysqli($keys["database_dev"]["host"], $keys["database_dev"]["username"], $keys["database_dev"]["password"], $keys["database_dev"]["name"]);
+global $KEYS;
+$SQL_CLIENT = new mysqli($KEYS["database_dev"]["host"], $KEYS["database_dev"]["username"], $KEYS["database_dev"]["password"], $KEYS["database_dev"]["name"]);

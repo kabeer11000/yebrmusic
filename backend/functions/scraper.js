@@ -81,6 +81,7 @@ const searchYoutube = async (query) => ytSearch({query: query}).then(videos => (
     title: query
 }));
 const getPlayList = async (id) => ytPlaylist(id).then(list => ({
+    kind: "KabeersMusic#PlayList",
     id: list.id,
     url: list.url,
     title: list.title,
@@ -90,14 +91,14 @@ const getPlayList = async (id) => ytPlaylist(id).then(list => ({
     views: list.views,
     last_updated: list.last_updated,
     author: {
-        id: list.author.id,
-        name: list.author.name,
-        avatar: list.author.avatar,
-        user: list.author.user,
-        channel_url: list.author.channel_url,
-        user_url: list.author.user_url
+        id: list.author?.id,
+        name: list.author?.name,
+        avatar: list.author?.avatar,
+        user: list.author?.user,
+        channel_url: list.author?.channel_url,
+        user_url: list.author?.user_url
     },
-    items: list.videos.map(video => ({
+    items: list.items.map(video => ({
         kind: "KabeersMusic#Song",
         id: video.id,
         channelId: video.author.url.split("/")[4],

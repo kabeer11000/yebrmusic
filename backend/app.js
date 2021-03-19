@@ -1,7 +1,5 @@
 require("dotenv").config();
-const createError = require("http-errors");
 const express = require("express");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
@@ -32,8 +30,8 @@ const recomRouter = require("./routes/RecomAPI/simpleRecom");
 // const clientComSocket = require("./routes/RecomAPI/ClientComSocket")(app.io);
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "jade");
 
 //app.use('/api/', limiter);
 app.use(cors());
@@ -55,18 +53,14 @@ app.use(session({
     })
 }));
 app.set("json spaces", 2);
-// app.use("/proxy", ProxyRouter);
-app.use(express.static("public"/*/build*/));
-app.get(["/home", "/downloads", "/liked", "/history", "/settings", "/search", "/search/results", "/artist", "/charts"], (req, res) => {
-    res.sendFile(path.resolve(__dirname, "public", "build", "index.html"));
-});
+app.use(express.static("public"));
 app.use("/api", songsRouter);
 app.use("/auth", authRouter);
 app.use("/backend", backendRouter);
 app.use("/recom", recomRouter);
 app.use("/feed", require("./routes/Feed"));
 // app.use("/cast", castEventRouter);
-app.use("/tests", require("./controllers/recom/exp/download-top-playlist"));
+// app.use("/tests", require("./controllers/recom/exp/download-top-playlist"));
 // app.use("/socket/com", clientComSocket);
 
 
@@ -78,20 +72,10 @@ app.use((err, req, res, next) => {
 });
 //*/
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    next(createError(404));
-});
+app.use((req, res) => res.json("404 - Route Not Found"));
 
 // error handler
-app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get("env") === "development" ? err : {};
-
-    // render the error page
-    res.status(err.status || 500);
-    res.render("error");
-});
+app.use((err, req, res) => res.status(500).json(err.message));
 
 module.exports = app;
 

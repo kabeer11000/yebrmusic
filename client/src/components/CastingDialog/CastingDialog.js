@@ -8,12 +8,30 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import {Airplay, Refresh} from "@material-ui/icons";
 import ListItemText from "@material-ui/core/ListItemText";
-import {CastContext} from "../../Contexts";
+import {CastContext, CastDialogContext, PlayContext} from "../../Contexts";
 import {DialogContentText, IconButton, Toolbar} from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
+import {useSnackbar} from "notistack";
 
 
-const CastDialog = ({onCancel, onSelect, open}) => {
+const CastDialog = ({}) => {
+    const Cast = React.useContext(CastContext);
+    const [open, setOpen] = React.useContext(CastDialogContext);
+    const {playState} = React.useContext(PlayContext);
+    const {enqueueSnackbar} = useSnackbar();
+    return (
+        <_CastDialog onCancel={() => setOpen(!open)} onSelect={async (id) => {
+            await Cast.controls.SendPlayCast(id, {
+                ...playState,
+                audioElement: undefined
+            });
+            setOpen(!open);
+            playState.audioElement.pause();
+            enqueueSnackbar(`Casting ${playState.videoElement.snippet.title} on ${id}`);
+        }} open={open}/>
+    )
+}
+const _CastDialog = ({onCancel, onSelect, open}) => {
     const [devices, setDevices] = React.useState([]);
     const Cast = React.useContext(CastContext);
     const UpdateDevices = () => Cast.info.getPeerDevices().then(d => {
@@ -51,7 +69,7 @@ const CastDialog = ({onCancel, onSelect, open}) => {
         </Dialog>);
 };
 
-CastDialog.propTypes = {
+_CastDialog.propTypes = {
     onCancel: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     onSelect: PropTypes.string.isRequired,

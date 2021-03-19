@@ -1,11 +1,11 @@
 import {get, set} from "idb-keyval";
-import {storageIndex as S} from "../Helper/storageIndex";
+import {storageIndex} from "../Helper/storageIndex";
 import io from "socket.io-client";
 import endPoints from "../../api/endpoints/endpoints";
 // import endPoints from "../../api/endpoints/endpoints";
 
-const user = get(S.cookies.UserData);
-const storageIndex = {
+const user = get(storageIndex.cookies.UserData);
+export const Events = {
 	RegisterDevice: "RegisterDevice",
 	DeviceListUpdate: "DevicesListUpdateEvent",
 
@@ -43,30 +43,30 @@ export const cookies = {
 // const accessToken = JSON.parse(cookies.getCookie(S.cookies.Tokens))["access_token"];
 const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoicmVmcmVzaF90b2tlbiIsImFwcF9uYW1lIjoiS2FiZWVycyBNdXNpYyBBcHAiLCJhcHBfaWQiOiJTNTY1ZHM2ODg3ZGY2NDZrNVk0ZjU2SU9pRFd4UlhTODQwbG5ubUQiLCJzY29wZSI6Im9wZW5pZHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpnZXRTb25nfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2OnNlYXJjaHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpmZWVkfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2Omhpc3RvcnkucmVhZHdyaXRlIiwianRpIjoiODZmOTVkMWYtMzI0OS00NDM4LWFjZDctMjM2YTBlNTQ4MWJkIiwiaWF0IjoxNjEwNjg3NjMyLCJleHAiOjE2MTE1NTE2MzJ9.pjCUryvehhrUzPeb9htAuFZEV7c85lfKXRl5CpBdiMmNfY-isqhwQq8wnqw06DuJpHIFcDlYOrkJUxQHJ-dcIhlIml0oA6d_xJ_ZrcxetRvquZJeI0wSvhFgE1s2j_cVZw40vjgMlvma9dewouVGyAPwW0cizz4mtn1aS6dO_zI";
 const castEnabled = true;
-const deviceId = localStorage.getItem(S.deviceEtag);
+const deviceId = localStorage.getItem(storageIndex.deviceEtag);
 
 const socket = io.connect(endPoints.castServer || "localhost:9000");
 
-const RegisterDevice = async () => socket.emit(storageIndex.RegisterDevice, {
+const RegisterDevice = async () => socket.emit(Events.RegisterDevice, {
 	token: accessToken,
 	user: await user,
 	deviceId: deviceId
 });
-const ConnectToPeer = async (id) => socket.emit(storageIndex.DevicePeerConnectEvent, {
+const ConnectToPeer = async (id) => socket.emit(Events.DevicePeerConnectEvent, {
 	token: accessToken,
 	remoteId: id
 });
-const SendPlayCast = async (id, playState) => socket.emit(storageIndex.DevicePlayEvent, {
+const SendPlayCast = async (id, playState) => socket.emit(Events.DevicePlayEvent, {
 	token: accessToken,
 	remoteId: id,
 	deviceId: deviceId,
 	playState: playState
 });
-const SendPauseCast = async (id) => socket.emit(storageIndex.DevicePauseEvent, {
+const SendPauseCast = async (id) => socket.emit(Events.DevicePauseEvent, {
 	token: accessToken,
 	remoteDeviceId: id,
 });
-const PeerRequestAccept = async (id) => socket.emit(storageIndex.DeviceConnectAcceptEvent, {
+const PeerRequestAccept = async (id) => socket.emit(Events.DeviceConnectAcceptEvent, {
 	token: accessToken,
 	remoteDeviceId: id
 });
@@ -97,7 +97,7 @@ export const Cast = {
 	set: {
 		setPlayHandler: (f) => {
 			// Someone Wants To Play
-			socket.on(storageIndex.DevicePlayEvent, async (d) => {
+			socket.on(Events.DevicePlayEvent, async (d) => {
 				return d.remoteId === deviceId ? f(d) : null;
 				// const acceptedDevices = await get(S.castAcceptedDevices) || [];
 				// if (acceptedDevices.includes(d.from) && d.remoteDeviceId === deviceId) f(d);
@@ -105,7 +105,7 @@ export const Cast = {
 		},
 		setPauseHandler: (f) => {
 			// Someone Wants To Pause
-			socket.on(storageIndex.DevicePlayEvent, async (d) => {
+			socket.on(Events.DevicePlayEvent, async (d) => {
 				return d.remoteDeviceId === deviceId ? f(d) : null;
 				// const acceptedDevices = await get(S.castAcceptedDevices) || [];
 				// if (acceptedDevices.includes(d.from) && d.remoteDeviceId === deviceId) f(d);
@@ -113,7 +113,7 @@ export const Cast = {
 		},
 		setOnPeerRequestHandler: (f) => {
 			// Someone Wants To Connect
-			socket.on(storageIndex.DevicePeerConnectEvent, async (d) => {
+			socket.on(Events.DevicePeerConnectEvent, async (d) => {
 				console.log(d);
 				return d === deviceId ? f(d) : null;
 			});
@@ -121,13 +121,13 @@ export const Cast = {
 
 	},
 	info: {
-		getPeerDevices: async () => get(S.castDevices),
-		getAcceptedPeerDevices: async () => get(S.castAcceptedDevices),
+		getPeerDevices: async () => get(storageIndex.castDevices),
+		getAcceptedPeerDevices: async () => get(storageIndex.castAcceptedDevices),
 		getDeviceId: async () => deviceId
 	}
 };
 window.onbeforeunload = () => {
-	set(S.castDevices, []);
+	set(storageIndex.castDevices, []);
 };
 
 export const _Cast = ({onPlay}) => {
@@ -136,11 +136,11 @@ export const _Cast = ({onPlay}) => {
 		onPlayRequest: onPlay
 	});
 	// Someone Wants To Play
-	socket.on(storageIndex.DevicePlayEvent, a.onPlayRequest);
+	socket.on(Events.DevicePlayEvent, a.onPlayRequest);
 	// Someone Wants To Pause
-	socket.on(storageIndex.DevicePlayEvent, a.onPauseRequest);
+	socket.on(Events.DevicePlayEvent, a.onPauseRequest);
 	// Someone Wants To Connect
-	socket.on(storageIndex.DevicePeerConnectEvent, a.onPeerRequest);
+	socket.on(Events.DevicePeerConnectEvent, a.onPeerRequest);
 
 	return a;
 };

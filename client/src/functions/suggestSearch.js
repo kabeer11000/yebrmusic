@@ -20,7 +20,7 @@ export async function SearchYoutube(q, abortController = new AbortController()) 
 		}).then(r => r.json())).catch(e => e);
 }
 
-export async function fetccch() {
+// export async function fetccch() {
 	/*    var add = SimpleWorker(function (q) {
 			var deferred = Q.defer();
 
@@ -38,6 +38,6 @@ export async function fetccch() {
 		});
 
 		*/
-}
+// }
 
 // fetccch();

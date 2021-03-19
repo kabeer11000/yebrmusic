@@ -1,4 +1,4 @@
-importScripts("https://unpkg.com/comlink/dist/umd/comlink.js", "./worker-scripts/fuse.js", "https://unpkg.com/dexie@3.0.3/dist/dexie.min.js");
+importScripts("./worker-scripts/comlink.min.js", "./worker-scripts/fuse.js", "./worker-scripts/dexie.min.js");
 
 const fusePrivates = {
     corpus: null,
@@ -18,7 +18,7 @@ const main = {
         stringify: (object) => JSON.stringify(object)
     },
     fetch: (uri, config) => fetch(uri, config).then(r => r.ok ? r.json() : null),
-    // fetchNonJSON: (uri, config) => fetch(uri, config),
+    fetchNonJSON: (uri, config) => fetch(uri, config),
     fuseSetup: async (data, options) => {
         fusePrivates.corpus = data;
         fusePrivates.fuseOptions = options;

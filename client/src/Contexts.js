@@ -2,19 +2,27 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
 import {getSong, getSongDetails} from "./functions/songs";
 import addMediaSession from "./functions/Helper/addMediaSession";
-import {Cast} from "./functions/Cast/NewNewCast";
+import {Cast, Events} from "./functions/Cast/NewNewCast";
 import endPoints from "./api/endpoints/endpoints";
 import {useSnackbar} from "notistack";
 import {get, set} from "idb-keyval";
 import {storageIndex, storageIndex as StorageIndex} from "./functions/Helper/storageIndex";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
-// import * as Comlink from "comlink";
+import {comLinkWorker} from "./functions/Worker/worker-export";
+import Log, {DebugLog} from "./functions/Log";
 
 // const comlinkWorker = Comlink.wrap(new Worker("./comlink-worker.js"));
+export const CastDialogContext = React.createContext(false);
+export const CastDialogProvider = ({children}) => {
+    const [a, b] = React.useState(false);
+    return <CastDialogContext.Provider value={[a, b]}>{children}</CastDialogContext.Provider>;
+};
+
+
 export const isTvContext = React.createContext(false);
 export const IsTvProvider = ({children}) => {
     const isTv = useMediaQuery("(min-width:600px)");
-    console.log("isTv", isTv);
+    console.log("isDesktop", isTv);
     return <isTvContext.Provider value={isTv}>{children}</isTvContext.Provider>;
 };
 
@@ -30,18 +38,7 @@ export const DrawerProvider = React.memo(({children}) => {
     const [drawer, setDrawer] = React.useState(false);
     return <DrawerContext.Provider value={[drawer, setDrawer]}>{children}</DrawerContext.Provider>;
 });
-
-export const PlayContext = React.createContext({
-    audioElement: window.audio,
-    videoElement: null,
-    playList: null,
-    // componentState: {
-    //     Dialog: false,
-    //     MiniPlayer: false
-    // },
-    others: null,
-    autoPlay: false
-});
+//window.__kn.music["data-collection"].token.access_token
 export const PlayerContext = React.createContext({
     Dialog: false,
     MiniPlayer: false
@@ -53,93 +50,118 @@ export const PlayerProvider = React.memo(({children}) => {
     });
     return <PlayerContext.Provider value={[a, b]}>{children}</PlayerContext.Provider>
 });
+export const RatingContext = React.createContext({});
+export const RatingProvider = ({children}) => {
+    const [playerState] = React.useContext(PlayerContext);
+    const {playState} = React.useContext(PlayContext);
+    const [rating, setRating] = React.useState({
+        is_casting: 0,
+        repeat_enabled: window.__kn.music.audio.loop ? 1 : 0.5,
+        player_type: playerState.Dialog ? 1 : 0.5,
+        volume: window.__kn.music.audio.volume,
+        explicit_rating: 0,
+        watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
+        viewed_artist: 0,
+        times_streamed: 0,
+    });
+    const UpdateState = async ({is_casting, explicit_rating, viewed_artist}) => {
+        try {
+            const response = await comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
+                method: "post",
+                body: JSON.stringify({id: playState.videoElement.id}),
+            })
+            setRating({
+                is_casting,
+                repeat_enabled: window.__kn.music.audio.loop ? 1 : 0.5,
+                player_type: playState.Dialog ? 1 : 0.5,
+                volume: window.__kn.music.audio.volume,
+                explicit_rating,
+                watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
+                viewed_artist: viewed_artist ? 1 : 0,
+                times_streamed: parseInt(response.times_streamed) + 1,
+            });
+            await comLinkWorker.fetch(endPoints.DataCollection.rate({
+                id: playState.videoElement.id,
+                token: window.__kn.music["data-collection"].token.access_token
+            }), {
+                method: "post",
+                body: JSON.stringify({
+                    is_casting,
+                    repeat_enabled: window.__kn.music.audio.loop ? 1 : 0.5,
+                    player_type: playState.Dialog ? 1 : 0.5,
+                    volume: window.__kn.music.audio.volume,
+                    explicit_rating,
+                    watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
+                    viewed_artist: viewed_artist ? 1 : 0,
+                    times_streamed: parseInt(response.times_streamed) + 1,
+                })
+            });
+        } catch (e) {
+            Log("Exception: ", e);
+        }
+    }
+    React.useEffect(() => {
+        if (playState.videoElement && window.__kn.music["data-collection"].token?.access_token) return comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
+            method: "post",
+            body: JSON.stringify({id: playState.videoElement.id}),
+        }).then(response => {
+            console.log(response);
+            // setRating({
+            //     ...rating,
+            //     times_streamed: parseInt(response.times_streamed),
+            // });
+        });
+    }, [playState.videoElement]);
+    return <RatingContext.Provider value={{rating, setRating, UpdateState}}>{children}</RatingContext.Provider>;
+}
+export const PlayContext = React.createContext({
+    audioElement: window.__kn.music.audio,
+    videoElement: null,
+    playList: null,
+    others: null,
+    autoPlay: false
+});
 export const PlayProvider = React.memo(({children}) => {
     const {enqueueSnackbar} = useSnackbar();
     const [, setPlayerState] = React.useContext(PlayerContext);
+    const {rating: rating, UpdateState: UpdateRatingState} = React.useContext(RatingContext);
     const [playState, setPlayState] = React.useState({
-        audioElement: window.audio,
+        audioElement: window.__kn.music.audio,
         videoElement: null,
         playList: null,
-        // componentState: {
-        //     Dialog: false,
-        //     MiniPlayer: false
-        // },
         others: null,
         autoPlay: false
     });
-    const SkipSong = async (data, index) => {
-        if (!data) return;
-        if (data.isOffline) {
-            // data.videoElement.snippet.thumbnails.high.url = URL.createObjectURL(data.blobs.thumbnail);
-            await PlaySong({
-                useProxy: false,
-                songURI: URL.createObjectURL(data.blobs.audio),
-                song: data.videoElement,
-                playList: {
-                    ...playState.playList,
-                    index: index
-                }
-            });
-            addMediaSession({
-                artist: data.videoElement.snippet.channelTitle,
-                title: data.videoElement.snippet.title,
-                artwork: [{
-                    src: data.videoElement.snippet.thumbnails.high.url,
-                    sizes: "96x96",
-                    type: "image/png"
-                }]
-            }, {
-                playAudio: () => playState.audioElement.play(),
-                pauseAudio: () => playState.audioElement.pause()
-            }, playState.audioElement);
-        } else {
-            await PlaySong({
-                useProxy: true,
-                song: data,
-                playList: {
-                    ...playState.playList,
-                    index: index
-                }
-            });
-            addMediaSession({
-                artist: data.snippet.channelTitle,
-                title: data.snippet.title,
-                artwork: [{
-                    src: data.snippet.thumbnails.high.url,
-                    sizes: "96x96",
-                    type: "image/png"
-                }]
-            }, {
-                playAudio: () => playState.audioElement.play(),
-                pauseAudio: () => playState.audioElement.pause()
-            }, playState.audioElement);
-        }
-    };
     const tv = React.useContext(isTvContext);
     const setLoading = React.useContext(LoadingContext)[1];
-    const AutoPlay = (autoplay) => {
-        console.log("AutoPlay: ", autoplay);
-        if (autoplay) playState.audioElement.onended = async () => {
-            if (playState.playList.list.items[playState.playList.index + 1]) {
-                const item = playState.playList.list.items[playState.playList.index + 1];
-                await SkipSong(item, playState.playList.index + 1);
+    const SkipSong = async (song, index) => {
+        if (!song) return;
+        if (song.isOffline) await PlaySong({
+            useProxy: false,
+            songURI: URL.createObjectURL(song.blobs.audio),
+            song: song.videoElement,
+            playList: {
+                ...playState.playList,
+                index: index
             }
+        });
+        else await PlaySong({
+            useProxy: true,
+            song: song,
+            playList: {
+                ...playState.playList,
+                index: index
+            }
+        });
+    };
+    const AutoPlay = (autoplay) => {
+        if (autoplay) playState.audioElement.onended = async () => {
+            if (playState.playList.list.items[playState.playList.index + 1]) await SkipSong(playState.playList.list.items[playState.playList.index + 1], playState.playList.index + 1);
         };
         else playState.audioElement.onended = null;
+        Log("auto-playing: ", autoplay);
     };
-    /*    React.useEffect(() => {
-            if (localStorage.getItem("3d-sound") !== null) {
-                const panner = new StereoPannerNode(window.kmusic.audioContext, {pan: 0});
-                window.kmusic.track.connect(panner).connect(window.kmusic.audioContext.destination);
-                // let direction = 10;
-                // let i = 0;
-                const s = a => panner.pan.value = a;
-                window.kmusic.loopInterval = comlinkWorker.intervals.makeAudioPanning(Comlink.proxy(s));
-                window.kmusic.clearLoop = async () => comlinkWorker.intervals.clearLoopInterval();
-            }
-        }, []);
-
-     */
+    //TODO 3D Audio Feature
     React.useEffect(() => {
         const a = async () => {
             const id = new URLSearchParams(window.location.search).get("play");
@@ -150,27 +172,21 @@ export const PlayProvider = React.memo(({children}) => {
                 useProxy: true,
                 song: songDetails,
             });
-        };
-        a();
+        }
+        a()
     }, []);
-    const PlaySong = async (options) => {
+    const PlaySong = async ({song, playList, componentState, useProxy, others, ...options}) => {
         setLoading(true);
-        const {song, playList, componentState, useProxy, others} = options;
+        // const {song, playList, componentState, useProxy, others} = options;
         try {
             await playState.audioElement.pause();
             if (useProxy) {
                 const songURI = await getSong(song.id);
                 playState.audioElement.src = endPoints.proxyURI(songURI);
             } else playState.audioElement.src = options["songURI"];
-
             setPlayState({
                 ...playState,
                 videoElement: song,
-                // componentState: componentState || {
-                //     ...playState.componentState,
-                //     Dialog: !tv,
-                //     MiniPlayer: tv
-                // },
                 playList: playList,
                 others: others
             });
@@ -178,55 +194,49 @@ export const PlayProvider = React.memo(({children}) => {
                 Dialog: !tv,
                 MiniPlayer: tv
             }));
-            // console.log("PlayState:", {
-            //     ...playState,
-            //     videoElement: song,
-            //     componentState: componentState || {
-            //         ...playState.componentState,
-            //         Dialog: !tv,
-            //         MiniPlayer: tv
-            //     },
-            //     playList: playList,
-            //     others: others
-            // }, " - Contexts");
+            await addMediaSession({
+                artist: others?.offline ? song.videoElement.snippet.channelTitle : song.snippet.channelTitle,
+                title: others?.offline ? song.videoElement.snippet.title : song.snippet.title,
+                artwork: [{
+                    src: others?.offline ? song.videoElement.snippet.thumbnails.high.url : song.snippet.thumbnails.high.url,
+                    sizes: "96x96",
+                    type: "image/png"
+                }]
+            }, {
+                playAudio: () => playState.audioElement.play(),
+                pauseAudio: () => playState.audioElement.pause()
+            }, playState.audioElement);
             await playState.audioElement.play();
             setLoading(false);
         } catch (e) {
             setLoading(false);
-            enqueueSnackbar("Cannot Play Song");
-            return new Error("Failed to Play Song");
+            enqueueSnackbar("Error: " + e.message, " Occurred at: ", e.lineNumber);
         }
     };
 
-    // React.useEffect(() => {}, [])
+    React.useEffect(() => {
+        DebugLog("PlayStateChanged");
+        if (playState.videoElement) {
+            setInterval(async () => {
+                console.log(rating);
+                // await UpdateRatingState({is_casting: rating.is_casting, explicit_rating: rating.explicit_rating, viewed_artist: rating.viewed_artist});
+                Log("Updated-Rating");
+            }, 7000);
+        }
+    }, [playState]);
     return <PlayContext.Provider
         value={{playState, setPlayState, SkipSong, AutoPlay, PlaySong}}>{children}</PlayContext.Provider>;
 });
-
 export const SearchContext = React.createContext(null);
 export const SearchingProvider = React.memo(({children}) => {
     const [query, setQuery] = React.useState(null);
     return <SearchContext.Provider value={[query, setQuery]}>{children}</SearchContext.Provider>;
 });
-
-
-// export const CastProvider = React.memo(({children}) => {
-// 	const _Cast = Cast();
-// 	React.useEffect(() => {
-// 		_Cast.devices.RegisterDevice().then(() => {
-// 			_Cast.info.getPeerDevices().then(console.log) // .then(setCastDevices);
-// 			// castSession.info.getPeerDevices().then(setCastDevices);
-// 		});
-// 		_Cast.set.setPlayHandler((a) => console.log("setPlayHandler: ", a));
-// 		_Cast.set.setOnPeerRequestHandler((a) => console.log("setOnPeerRequestHandler: ", a));
-// 	}, [])
-// 	return <CastContext.Provider value={_Cast}>{children}</CastContext.Provider>
 export const BottomNavigationContext = React.createContext(true);
 export const BottomNavigationProvider = React.memo(({children}) => {
     const [a, b] = React.useState(true);
     return <BottomNavigationContext.Provider value={[a, b]}>{children}</BottomNavigationContext.Provider>;
 });
-// });
 export const CastContext = React.createContext(null);
 export const CastProvider = React.memo(({children}) => {
     Cast.onPlayRequest = a => console.log(`Play Requested`, a, "Context");
@@ -237,71 +247,30 @@ export const CastProvider = React.memo(({children}) => {
         Cast.devices.RegisterDevice().then(() => {
             Cast.info.getPeerDevices().then((d) => console.log("Peer Devices: ", d, "Context"));
         });
-        const Events = {
-            RegisterDevice: "RegisterDevice",
-            DeviceListUpdate: "DevicesListUpdateEvent",
-
-            DevicePeerConnectEvent: "DeviceConnectEvent",
-            DeviceConnectAcceptEvent: "DeviceConnectAcceptEvent",
-
-            DevicePlayEvent: "DevicePlayEvent",
-            DevicePauseEvent: "DevicePauseEvent",
-        };
-        Cast.onPlayRequest = async (d) => {
-            console.log(d);
-            const {playState: _playState, remoteId} = d;
-            const a = [];
+        Cast.onPlayRequest = async ({playState: remotePlayState, remoteId}) => {
+            Log("Remote Play Requested - RemoteID: ", remoteId);
             try {
                 playState.audioElement.pause();
-                console.log(d);
-                if (_playState.others && _playState.others.offline) {
-                    _playState.playList.list.items.map(song => {
-                        song.videoElement.snippet.thumbnails.high.url = `https://i.ytimg.com/vi/${song.videoElement.id}/hqdefault.jpg`
-                        a.push(song.videoElement);
-                        // song.isOffline = true
-                    });
-                    PlaySong({
-                        useProxy: true,
-                        song: _playState.videoElement,
-                        playList: a,
-                        ..._playState,
-                    });
-                } else PlaySong({
+                if (remotePlayState.others && remotePlayState.others.offline) PlaySong({
                     useProxy: true,
-                    song: _playState.videoElement,
-                    ..._playState,
+                    song: remotePlayState.videoElement,
+                    playList: remotePlayState.playList.list.items.map(song => {
+                        song.videoElement.snippet.thumbnails.high.url = `https://i.ytimg.com/vi/${song.videoElement.id}/hqdefault.jpg`;
+                        song.isOffline = true;
+                        return (song.videoElement);
+                    }),
+                    ...remotePlayState,
+                });
+                else PlaySong({
+                    useProxy: true,
+                    song: remotePlayState.videoElement,
+                    ...remotePlayState,
                 });
                 await playState.audioElement.play();
-                enqueueSnackbar(`Playing ${_playState.videoElement.snippet.title} from ${remoteId}`);
+                enqueueSnackbar(`Playing ${remotePlayState.videoElement.snippet.title} from ${remoteId}`);
                 setLoading(false);
-
-
-                // if (state.others.song.isOffline) {
-                //     state.videoElement.snippet.thumbnails.high.url = URL.createObjectURL(state.others.song.blobs.thumbnail);
-                //     PlaySong({
-                //         useProxy: false,
-                //         songURI: URL.createObjectURL(state.others.song.blobs.audio),
-                //         song: state.song.videoElement,
-                //         ...state,
-                //         others: {
-                //             song: state.song,
-                //             // blobs: state.song.blobs
-                //         }
-                //     })
-                // } else {
-                //     state.videoElement.snippet.thumbnails.high.url = `https://i.ytimg.com/vi/${state.videoElement.id}/hqdefault.jpg`;
-                //     playState.audioElement.src = endPoints.proxyURI(await getSong(state.videoElement.id));
-                //
-                //     setPlayState({
-                //         audioElement: playState.audioElement,
-                //         ...state,
-                //     });
-                // }
-                // playState.audioElement.play();
-                // enqueueSnackbar(`Playing ${state.videoElement.snippet.title} from ${remoteId}`);
-                // setLoading(false);
             } catch (e) {
-                console.log(e);
+                Log(`An Error Occured: ${e.message}`);
                 setLoading(false);
                 enqueueSnackbar("Cannot Play Song");
             }
@@ -315,17 +284,15 @@ export const CastProvider = React.memo(({children}) => {
         // Someone Accepted Request
         Cast.socket.on(Events.DeviceConnectAcceptEvent, async deviceId => {
             await set(StorageIndex.castAcceptedDevices, [...await get(StorageIndex.castAcceptedDevices), deviceId]);
-            console.log("Someone Accepted Your Request, Accepted Devices", await get(StorageIndex.castAcceptedDevices));
+            Log("Someone Accepted Your Request, Accepted Devices : ", await get(StorageIndex.castAcceptedDevices));
             Cast.onPeerAccept();
         });
         // Devices Updated
         Cast.socket.on(Events.DeviceListUpdate, async devices => {
             const deviceId = await Cast.info.getDeviceId();
             await set(StorageIndex.castDevices, devices.filter(d => d !== deviceId));
-            console.log("Cast Devices Updated: ", devices);
+            Log("Cast Devices Updated: ", devices);
         });
-
-
     }, []);
     return <CastContext.Provider value={Cast}>{children}</CastContext.Provider>;
 });

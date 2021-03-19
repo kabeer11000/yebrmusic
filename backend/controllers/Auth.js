@@ -101,11 +101,32 @@ const RefreshToken = async (req, res) => {
     } catch (e) {
         return res.status(400).json(e.message);
     }
-
 };
+const GetDataServerKey = async (req, res) => {
+    if (!req.headers.authorization) return res.status(400).json("Bad Request");
+    try {
+        // TODO: add new Scopes to IDP and also require them during /redirect
+        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+            algorithms: "RS256"
+        });
+        if (!decoded) return res.status(400).end();
+        const token = await jwt.sign({
+            sub: decoded.sub,
+            scope: "__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song|__kn.music.data-collection.get-rating-details",
+        }, process.env.DATA_SERVER_TOKEN);
+        return res.json({
+            sub: decoded.sub,
+            scope: "__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song".split("|"),
+            access_token: token,
+        });
+    } catch (e) {
+        return res.status(400).json(e.message);
+    }
+}
 module.exports = {
     OAuthCallbackHandler,
     OAuthRedirect,
-    RefreshToken
+    RefreshToken,
+    GetDataServerKey
 };
 // module.exports = router;

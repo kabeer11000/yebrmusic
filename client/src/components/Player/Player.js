@@ -8,6 +8,7 @@ import {
     Done,
     Forward10,
     GetApp,
+    Grade,
     Loop,
     Pause,
     PlayCircleOutline,
@@ -34,44 +35,46 @@ import {useHistory} from "react-router-dom";
 // import CastDialog from "./CastDialog";
 import ImagesSlider from "./ComingNext/ImagesSlider";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import {CastContext, isTvContext, PlayContext, PlayerContext} from "../../Contexts";
-import addMediaSession from "../../functions/Helper/addMediaSession";
+import {CastContext, CastDialogContext, PlayContext, PlayerContext} from "../../Contexts";
 import Button from "@material-ui/core/Button";
-import CastingDialog from "../CastingDialog/CastingDialog.lazy";
 import Container from "@material-ui/core/Container";
+//import StarRatingDialog from "../StarRatingDialog/StarRatingDialog.lazy";
+
+const LoopingButton = ({playState, setLooping}) => {
+    const handleOnClick = async () => {
+        playState.audioElement.loop = true;
+        setLooping(<IconButton
+            color={"primary.player.invertButtons.invert"}
+            onClick={() => playState.audioElement.loop = false}
+            style={{backgroundColor: "primary.player.invertButtons.invert"}}><Loop/></IconButton>);
+    }
+    return (
+        <IconButton color={"primary.player.invertButtons.main"}
+                    style={{backgroundColor: "primary.player.invertButtons.main"}}
+                    onClick={handleOnClick}><Loop/></IconButton>
+    );
+}
 
 const Player = () => {
 
-    const {playState, SkipSong, AutoPlay} = React.useContext(PlayContext);
     const [playerState, setPlayerState] = React.useContext(PlayerContext)
     if (!playerState.Dialog) return null;
+    const {playState, SkipSong, AutoPlay} = React.useContext(PlayContext);
     const history = useHistory();
     const dialog = useDialog();
-    const [, setLooping] = React.useState(<IconButton color={"primary.player.invertButtons.main"}
-                                                      style={{backgroundColor: "primary.player.invertButtons.main"}}
-                                                      onClick={() => {
-                                                          playState.audioElement.loop = true;
-                                                          setLooping(<IconButton
-                                                              color={"primary.player.invertButtons.invert"}
-                                                              onClick={() => {
-                                                                  playState.audioElement.loop = false;
-                                                              }}
-                                                              style={{backgroundColor: "primary.player.invertButtons.invert"}}><Loop/></IconButton>);
-                                                      }}><Loop/></IconButton>);
+    const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
     const [downloadButton, setDownloadButton] = React.useState(<div/>);
     const {enqueueSnackbar} = useSnackbar();
     const [PlayList, setPlayList] = React.useState(false);
     const [AutoPlayButton, SetAutoPlayButton] = React.useState(playState.autoPlay);
-    // const abortController = new AbortController();
-    const [castDialogOpen, setCastDialogOpen] = React.useState(false);
-    // const setBottomNav = React.useContext(BottomNavigationContext)[1];
+    const [castDialogOpen, setCastDialogOpen] = React.useContext(CastDialogContext);
 
     const handleClose = () => setPlayerState({
         MiniPlayer: true,
         Dialog: false
     });
 
-    const downloadAudio = async () => {
+    const DownloadAudio = async () => {
         if (!navigator.onLine) return enqueueSnackbar("No Connection, Download Failed");
         try {
             setDownloadButton(<Grow in={true}><IconButton><CircularProgress
@@ -80,48 +83,29 @@ const Player = () => {
             setDownloadButton(<IconButton onClick={deleteDownload}><Done/></IconButton>)
         } catch (e) {
             enqueueSnackbar("Download Failed");
-            setDownloadButton(<Grow in={true}><IconButton onClick={downloadAudio}><GetApp/></IconButton></Grow>);
+            setDownloadButton(<Grow in={true}><IconButton onClick={DownloadAudio}><GetApp/></IconButton></Grow>);
         }
-        // await downloadSong({
-        // 	videoId: "object" == typeof playState.videoElement.id ? playState.videoElement.id.videoId : "string" == typeof playState.videoElement.id && (playState.videoElement.id),
-        // 	rating: 0,
-        // 	title: playState.videoElement.snippet.title,
-        // 	channelTitle: playState.videoElement.snippet.channelTitle,
-        // 	tags: playState.videoElement.snippet.tags,
-        // 	videoElement: playState.videoElement,
-        // 	success: () => setDownloadButton(<IconButton onClick={deleteDownload}><Done/></IconButton>),
-        // 	error: () => {
-        // 		enqueueSnackbar("Download Failed");
-        // 		setDownloadButton(<Grow in={true}><IconButton onClick={downloadAudio}><GetApp/></IconButton></Grow>);
-        // 	}
-        // }, abortController);
-        // // enqueueSnackbar('Download Started');
-        // setDownloadButton(<Grow in={true}><IconButton onClick={deleteDownload}><CircularProgress
-        // 	color={"primary.light"} size={25}/></IconButton></Grow>);
     };
 
     const deleteDownload = async () => {
-        dialog.confirm({
-            title: <div className={"k-dialog-body-title text-truncate"}>Delete From Downloads</div> || "Nothing Here!",
-            message: <div className={"k-dialog-body-inner"}>
-                <div className={"d-flex justify-content-center mb-3"}>
-                    <Avatar src={playState.videoElement.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
-                </div>
-                Do You want to delete {playState.videoElement.snippet.title} from downloads?
-                <br/>
-            </div> || "Nothing Here!",
-        })
-            .then(() => {
-                let videoID = "";
-                if (typeof playState.videoElement.id === "object") videoID = playState.videoElement.id.videoId;
-                if (typeof playState.videoElement.id === "string") videoID = playState.videoElement.id;
-                deleteDownloadedSong(videoID).then(() => setDownloadButton(<IconButton onClick={downloadAudio}><GetApp/></IconButton>));
+        try {
+            dialog.confirm({
+                title: <div className={"k-dialog-body-title text-truncate"}>Delete From
+                    Downloads</div> || "Nothing Here!",
+                message: <div className={"k-dialog-body-inner"}>
+                    <div className={"d-flex justify-content-center mb-3"}>
+                        <Avatar src={playState.videoElement.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
+                    </div>
+                    Do You want to delete {playState.videoElement.snippet.title} from downloads?
+                    <br/>
+                </div> || "Nothing Here!",
             });
+            await deleteDownloadedSong(playState.videoElement.id);
+            setDownloadButton(<IconButton onClick={DownloadAudio}><GetApp/></IconButton>);
+        } catch (e) {
+        }
     };
     const [playing, setPlaying] = React.useState(!playState.audioElement.paused);
-    React.useEffect(() => {
-        // setPlaying(playState.audioElement.paused)
-    }, [playState.audioElement.paused])
     const playAudio = () => {
         playState.audioElement.play();
         setPlaying(false);
@@ -130,41 +114,15 @@ const Player = () => {
         playState.audioElement.pause();
         setPlaying(true);
     };
-    const isTv = React.useContext(isTvContext);
     const Cast = React.useContext(CastContext);
 
     React.useEffect(() => {
         isOfflineAvailable(playState.videoElement.id).then(v => setDownloadButton(v ?
             <IconButton onClick={deleteDownload}><Done/></IconButton> :
-            <IconButton onClick={downloadAudio}><GetApp/></IconButton>));
+            <IconButton onClick={DownloadAudio}><GetApp/></IconButton>));
     }, [playState.videoElement])
-    React.useEffect(() => {
-        console.log("Playing:", playState.videoElement.snippet.title);
-        console.log("SRC:", playState.audioElement.src);
-        addMediaSession({
-            artist: playState.videoElement.snippet.channelTitle,
-            title: playState.videoElement.snippet.title,
-            artwork: [{
-                src: playState.videoElement.snippet.thumbnails.high.url,
-                sizes: "96x96",
-                type: "image/png"
-            }]
-        }, {
-            playAudio: () => playState.audioElement.play(),
-            pauseAudio: () => playState.audioElement.pause()
-        }, playState.audioElement);
-    }, []);
     return (
         <div className="Player">
-            <CastingDialog onCancel={() => setCastDialogOpen(!castDialogOpen)} onSelect={async (id) => {
-                await Cast.controls.SendPlayCast(id, {
-                    ...playState,
-                    audioElement: undefined
-                });
-                setCastDialogOpen(!castDialogOpen);
-                playState.audioElement.pause();
-                enqueueSnackbar(`Casting ${playState.videoElement.snippet.title} on ${id}`);
-            }} open={castDialogOpen}/>
             <SwipeableDrawer
                 onClose={handleClose}
                 anchor={"bottom"}
@@ -174,19 +132,11 @@ const Player = () => {
                 }}
                 PaperProps={{
                     style: {
-                        // justifySelf: "center",
-                        // maxWidth: isTv ? "70vw": "100%",
-                        // marginTop: "0.5rem",
-                        // opacity: "70%",
-                        // backdropFilter: "blur(2px)",
                         borderRadius: "1rem 1rem 0 0 "
                     },
                     square: false
                 }}
-                // swipeAreaWidth={20}
-                // disableBackdropTransition
                 open={playerState.Dialog}
-                // disableSwipeToOpen={!playState.videoElement}
                 onOpen={() => setPlayerState({...playerState, Dialog: true})}>
                 {/*<div className={"w-100 text-center justify-content-center"}><DragHandle/></div><br/>*/}
                 <AppBar color={"transparent"} elevation={0} style={{position: "relative"}}>
@@ -229,7 +179,7 @@ const Player = () => {
                                 {playState.videoElement.snippet.channelTitle || "Unavailable"}
                             </Typography>
                         </Typography>
-                        <div className={"mx-4"}><CustomSlider/></div>
+                        <div className={"mx-4"}><CustomSlider mobile={true}/></div>
                         <div className={"container mb-0 smallOnDesktop"} style={{
                             width: "100%",
                             display: "inline-flex",
@@ -285,21 +235,19 @@ const Player = () => {
                             }}><Repeat/></IconButton>)}
 
                             {downloadButton ? downloadButton : <IconButton><CircularProgress size={25}/></IconButton>}
-
+                            <IconButton onClick={() => {
+                            }}><Grade/></IconButton>
                             <IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
                             <IconButton
-                                onClick={() => {
-                                    // setBottomNav(false);
-                                    return navigator.onLine ? (history.push(`/artist?id=${playState.videoElement.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"));
-                                }}><AccountCircle/>
+                                onClick={() => navigator.onLine ? (history.push(`/artist?id=${playState.videoElement.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}><AccountCircle/>
                             </IconButton>
                         </div>
                         <Container maxWidth={"md"}>
                             <Drawer
-                                anchor={isTv ? "right" : "bottom"}
+                                anchor={"bottom"}
                                 PaperProps={{
                                     style: {
-                                        maxHeight: isTv ? "100%" : "90vh"
+                                        maxHeight: "90vh"
                                         // maxWidth: "20rem"
                                     }
                                 }}
@@ -310,6 +258,7 @@ const Player = () => {
                             </Drawer>
                         </Container>
                     </div>
+                    {/*<StarRatingDialog title={"OP SANDRA"} open={true}/>*/}
                 </div>
             </SwipeableDrawer>
         </div>

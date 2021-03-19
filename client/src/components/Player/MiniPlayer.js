@@ -10,7 +10,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Link from "@material-ui/core/Link";
 import {BottomNavigationContext, isTvContext, PlayContext, PlayerContext} from "../../Contexts";
-import addMediaSession from "../../functions/Helper/addMediaSession";
 import Slide from "@material-ui/core/Slide";
 
 const styles = {
@@ -34,11 +33,11 @@ const MiniPlayer = () => {
             Dialog: false,
             MiniPlayer: false
         });
-        setPlayState({
-            ...playState,
-            playList: null,
-            videoElement: null,
-        });
+        // setPlayState({
+        //     ...playState,
+        //     playList: null,
+        //     videoElement: null,
+        // });
         // if (localStorage.getItem(storageIndex.currentlyCasting)) await sendPauseCast(localStorage.getItem(storageIndex.castingTo));
     };
     const bottomNav = React.useContext(BottomNavigationContext)[0];
@@ -68,18 +67,6 @@ const MiniPlayer = () => {
         // 	rating: 0
         // });
         // if (navigator.onLine) saveHistoryToServer(playState.videoElement);
-        addMediaSession({
-            artist: playState.videoElement.snippet.channelTitle,
-            title: playState.videoElement.snippet.title,
-            artwork: [{
-                src: playState.videoElement.snippet.thumbnails.high.url,
-                sizes: "96x96",
-                type: "image/png"
-            }]
-        }, {
-            playAudio: () => playState.audioElement.play(),
-            pauseAudio: () => playState.audioElement.pause()
-        }, playState.audioElement);
     }, []);
     return <React.Fragment>
         {
