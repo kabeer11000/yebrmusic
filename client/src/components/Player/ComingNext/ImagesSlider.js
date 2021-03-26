@@ -1,6 +1,6 @@
 import React from "react";
 import Grow from "@material-ui/core/Grow";
-import {FocusNode} from "@please/lrud";
+// import {FocusNode} from "@please/lrud";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Preloader from "../../Preloader/Preloader.lazy";
 import PropTypes from "prop-types";
@@ -13,14 +13,10 @@ const CommingNextImagesSlider = (props) => {
     const scrollRef = React.useRef(null);
 
     React.useEffect(() => {
-        scrollRef.current.scrollIntoView({behavior: 'smooth', block: 'center'});
+        if (playState.videoElement) scrollRef.current.scrollIntoView({behavior: 'smooth', block: 'center'});
     }, [playState.videoElement]);
     return (
         <div className={`cardSlider text-left Slider ${!tv ? "mb-0 py-0 pb-3" : "py-0 my-0"}`}
-             onLoad={() => {
-                 // document.querySelector('.SongNextSliderSelected').scrollIntoView({ behavior: 'smooth', block: 'center'  });
-                 // console.log(playState.playList);
-             }}
              style={{scrollSnapType: "both mandatory"}}>
             {
                 !playState.playList ? <Grow in={true}>
@@ -42,7 +38,7 @@ const CommingNextImagesSlider = (props) => {
                     </Grow>
                     : playState.playList.list.items.map((value, index) =>
                         <Grow in={true} key={index} ref={index === playState.playList.index ? scrollRef : null}>
-                            <FocusNode className={"ImageSliderIMG"}>
+                            <div className={"ImageSliderIMG"}>
                                 <ButtonBase>
                                     <img
                                         src={value.isOffline /*playState?.others.offline*/ ? value.videoElement.snippet.thumbnails.high.url : value.snippet.thumbnails.high.url}
@@ -58,9 +54,10 @@ const CommingNextImagesSlider = (props) => {
                                             width: index === playState.playList.index && tv ? "17rem" : "15rem",
                                             height: index === playState.playList.index && tv ? "17rem" : "15rem",
                                             border: index === playState.playList.index ? "white solid 0.1rem" : null
-                                        }} alt={value.isOffline ? value.videoElement.snippet.title : value.snippet.title}/>
+                                        }}
+                                        alt={value.isOffline ? value.videoElement.snippet.title : value.snippet.title}/>
                                 </ButtonBase>
-                            </FocusNode>
+                            </div>
                         </Grow>
                     )
             }

@@ -77,8 +77,10 @@ function getSongStreams()
         $entry_hash = md5($decoded->sub . $_POST["id"]);
         $response = $database->client->query("SELECT * FROM `watch-user-ratings` WHERE `entry_hash`= '$entry_hash' LIMIT 1");
         $streamed = json_decode($response->fetch_assoc()["detail_json"], true);
-        if (is_null($streamed)) echo Jsonify(0);
-        else echo Jsonify($streamed);
+        $yt_video_id = $_POST["id"];
+        if (!$database->client->query("SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$yt_video_id' LIMIT 1;")->fetch_row)
+            if (is_null($streamed)) echo Jsonify(0);
+            else echo Jsonify($streamed);
     }
 }
 

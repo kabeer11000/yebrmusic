@@ -1,0 +1,58 @@
+<BlogNavigation drawer='[
+    {"title": "Abstract", "description": "Evaluating Mathematical Expressions", "navIndex": "1.0"},
+    {"title": "Introduction", "description": "Real-time OCR for Parsing and understanding Mathematical expressions", "navIndex": "1.1"},
+    {"title": "Implementation", "description": "Implementing concepts of our app with conv-nets and java", "navIndex": "1.2"},
+    {"title": "\t 1. Keypoint Detection", "description": "Implementing concepts of our app with conv-nets and java", "navIndex": "1.3"},
+    {"title": "\t 2. Equation Bounding", "description": "Implementing concepts of our app with conv-nets and java", "navIndex": "1.4"}
+]' parents="/" title="Evaluating Mathematical Expressions"/>
+<Pages>
+    <Page navIndex="1.0">
+        # Abstract
+        Optical character recognition (OCR) is an
+        important technique for solving many technical
+        problems. As a few examples, OCR has been
+        used for digitizing books, identifying license
+        plates, and assisting the vision impaired. In this
+        report, we present an Android mobile application that
+        uses OCR to recognize and evaluate arithmetic expressions.
+        The app could be used to help students check their
+        solutions to challenging problems quickly and easily.
+    </Page>
+    <Page navIndex="1.1">
+        # Introduction
+
+        While developing our App, we found a
+        related app called Photomath. The Photomath app
+        requires the user to manually place a bounding
+        box around the text of the equation, and we found
+        the execution time to be somewhat slow (often a
+        few seconds for a simple expression).
+        Furthermore, Photomath can only solve a single
+        equation at a time. Our App addresses each of
+        these shortcomings.
+
+        Currently, Our App can automatically detect
+        multiple equations on a light background,
+        display bounding boxes around each
+        equation, and solve the equations independently.
+        However, in our experience, Our App does not
+        yet recognize text, particularly handwritten text,
+        as accurately as Photomath.
+
+        Furthermore, Our App is currently limited to arithmetic
+        expressions involving integers 0-9 and the following
+        characters: “+-()/x”. We plan to address these issues
+        in our future work.
+    </Page>
+    <Page navIndex="1.2">
+        # Implementation
+        The application’s pipeline can be broken up
+        into six segments: keypoint detection, equation
+        bounding, thresholding, character recognition,
+        evaluation, and display.
+
+        <Image src="https://hosted-kabeersnetwork.000webhostapp.com/Private/uploads1/image--000.png"
+               style="width: auto; height: 6rem"/>
+        Figure 1: Pipeline Diagram
+    </Page>
+</Pages>

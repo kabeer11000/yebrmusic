@@ -27,12 +27,12 @@ const MiniPlayer = () => {
 
     const tv = React.useContext(isTvContext);
     const cutCurrentSongState = async () => {
-        playState.audioElement.pause();
-        playState.audioElement.src = "#";
-        setPlayerState({
-            Dialog: false,
-            MiniPlayer: false
-        });
+        // playState.audioElement.pause();
+        // playState.audioElement.src = "#";
+        // setPlayerState({
+        //     Dialog: false,
+        //     MiniPlayer: false
+        // });
         // setPlayState({
         //     ...playState,
         //     playList: null,
