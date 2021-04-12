@@ -112,17 +112,17 @@ const getPlayList = async (id) => ytPlaylist(id).then(list => ({
             views: video.views,
             thumbnails: {
                 default: {
-                    url: `https://i.ytimg.com/vi/${video.videoId}/default.jpg`,
+                    url: `https://i.ytimg.com/vi/${video.id}/default.jpg`,
                     width: 120,
                     height: 90
                 },
                 medium: {
-                    url: `https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg`,
+                    url: `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
                     width: 320,
                     height: 180
                 },
                 high: {
-                    url: `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`,
+                    url: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
                     width: 480,
                     height: 360
                 }

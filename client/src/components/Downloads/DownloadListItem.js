@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
-import {MoreVert} from "@material-ui/icons";
+import {Delete} from "@material-ui/icons";
 import PropTypes from "prop-types";
 import Divider from "@material-ui/core/Divider";
 
@@ -21,15 +21,14 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
     const classes = useStyles();
     return (
         <React.Fragment>
-            <ListItem button alignItems="flex-start">
+            <ListItem button alignItems="flex-start" className={"mx-0 px-0"}>
                 <React.Fragment>
                     <ListItemAvatar onClick={onClick}>
                         <Avatar alt={song.videoElement.snippet.title}
                                 src={song.videoElement.snippet.thumbnails.high.url}/>
                     </ListItemAvatar>
                     <ListItemText
-                        className={"text-truncate"}
-                        primary={song.videoElement.snippet.title}
+                        primary={<div className={"text-truncate"}>{song.videoElement.snippet.title}</div>}
                         onClick={onClick}
                         secondary={
                             <React.Fragment>
@@ -38,7 +37,7 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
                                     variant="body2"
                                     className={`${classes.inline} text-truncate`}
                                     color="textPrimary">
-                                    <div className={"text-truncate"}>{song.videoElement.snippet.channelTitle}</div>
+                                    {song.videoElement.snippet.channelTitle}
                                 </Typography>
                                 {
                                     song.tags && song.tags.length ? <div className={"cardSlider Slider"}>
@@ -51,7 +50,7 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
                     />
                 </React.Fragment>
                 <IconButton onClick={onMouseLeave}>
-                    <MoreVert/>
+                    <Delete/>
                 </IconButton>
             </ListItem>
             <Divider variant="inset" component="li"/>

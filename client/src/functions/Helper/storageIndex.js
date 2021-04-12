@@ -10,9 +10,18 @@ export const storageIndex = {
         saveObject: "__kn.music.discover.save.details",
         timeObject: "__kn.music.discover.save.time"
     },
+    trendingArtists: {
+        saveObject: "__kn.music.artists.save.details",
+        timeObject: "__kn.music.artists.save.time"
+    },
+    recommendation: {
+        sessionId: "__kn.music.recom.session.id",
+        sessionHistory: "__kn.music.recom.session.history"
+    },
     home: {
         saveObject: "__kn.music.home.save.details",
-        timeObject: "__kn.music.home.save.time"
+        timeObject: "__kn.music.home.save.time",
+        etag: "__kn.music.home.save.etag"
     },
     homeSongObject: "6pcGyKPkNzCc1LIrvJperozvZemGtVK6FKn2uU4",
     homeTimeObject: "b1dvcmxkX0NuOU91VU5UWlJmdWFDbndjNjp1c2V",

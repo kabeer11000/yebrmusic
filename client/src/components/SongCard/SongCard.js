@@ -37,7 +37,8 @@ const SongCard = ({song, ...props}) => (
                 }}>
                     <Typography gutterBottom variant="h6" component="p" className={"text-truncate"}>
                         <ListItemText
-                            primary={song.snippet.title} secondary={song.snippet.channelTitle}/>
+                            primary={<div className={"text-truncate"}>{song.snippet.title}</div>}
+                            secondary={song.snippet.channelTitle}/>
                     </Typography>
                 </CardContent>
             </FocusNode>

@@ -1,5 +1,5 @@
 import {AppBar, IconButton, Typography} from "@material-ui/core";
-import {Close, Pause, PlayCircleOutline} from "@material-ui/icons";
+import {Close, OpenInNew, Pause, PlayCircleOutline} from "@material-ui/icons";
 import React from "react";
 import CustomMiniPlayerSlider from "./CustomMiniPlayerSlider";
 // import {sendPauseCast} from "../../functions/Cast/Cast";
@@ -11,6 +11,10 @@ import CardContent from "@material-ui/core/CardContent";
 import Link from "@material-ui/core/Link";
 import {BottomNavigationContext, isTvContext, PlayContext, PlayerContext} from "../../Contexts";
 import Slide from "@material-ui/core/Slide";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import List from "@material-ui/core/List";
 
 const styles = {
     TVPlayButton: {
@@ -27,19 +31,21 @@ const MiniPlayer = () => {
 
     const tv = React.useContext(isTvContext);
     const cutCurrentSongState = async () => {
-        // playState.audioElement.pause();
-        // playState.audioElement.src = "#";
-        // setPlayerState({
-        //     Dialog: false,
-        //     MiniPlayer: false
-        // });
-        // setPlayState({
-        //     ...playState,
-        //     playList: null,
-        //     videoElement: null,
-        // });
+        playState.audioElement.pause();
+        playState.audioElement.src = "#";
+        setPlayerState({
+            Dialog: false,
+            MiniPlayer: false
+        });
+        setPlayState({
+            ...playState,
+            playList: null,
+            videoElement: null,
+        });
+        document.title = "Kabeer's Music";
         // if (localStorage.getItem(storageIndex.currentlyCasting)) await sendPauseCast(localStorage.getItem(storageIndex.castingTo));
     };
+    const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
     const bottomNav = React.useContext(BottomNavigationContext)[0];
     const [playing, setPlaying] = React.useState(playState.audioElement.paused);
 
@@ -57,7 +63,7 @@ const MiniPlayer = () => {
     });
     React.useEffect(() => {
         // if (playState.audioElement.paused) playState.audioElement.play();
-        console.log("Playing:", playState.videoElement.snippet.title);
+        // console.log("Playing:", playState.videoElement.snippet.title);
         // saveToHistory({
         // 	videoId: playState.videoElement.id,
         // 	title: playState.videoElement.snippet.title,
@@ -68,109 +74,119 @@ const MiniPlayer = () => {
         // });
         // if (navigator.onLine) saveHistoryToServer(playState.videoElement);
     }, []);
-    return <React.Fragment>
-        {
-            tv ?
-                <Slide in={playerState.MiniPlayer} direction={"top"}><AppBar
-                    color={"slideDown primary.miniPlayer.main"} style={{
-                    position: "fixed",
-                    top: "auto",
-                    bottom: "0",
-                    maxWidth: "25rem",
-                    maxHeight: "17rem",
-                }} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
-                    <Card className={"SongCard"} style={{width: "100%", height: "100%", borderRadius: 0}}
-                          variant={"elevation"}
-                          elevation={3}>
-                        <FocusNode>
-                            <CardActionArea disableRipple>
-                                <React.Fragment>
-                                    <IconButton style={{position: "absolute", right: "0.25rem", top: "0.25rem"}}
-                                                onClick={cutCurrentSongState}><Close/></IconButton>
-                                    {
-                                        playing ?
-                                            <IconButton style={{...styles.TVPlayButton}}
-                                                        onClick={playAudio}><PlayCircleOutline
-                                                color={"#fff"}/></IconButton> :
-                                            <IconButton style={{...styles.TVPlayButton}} onClick={pauseAudio}>
-                                                <Pause color={"#fff"}/></IconButton>
-                                    }
-                                    <CardMedia
-                                        className={"-rounded-circle"}
-                                        component={"img"}
-                                        onClick={() => console.log(playState)}
-                                        alt={playState.videoElement.snippet.title}
-                                        image={playState.videoElement.snippet.thumbnails.high.url}
-                                        title={playState.videoElement.snippet.title}
-                                        loading={"lazy"}
-                                        style={{height: "11rem", width: "100%"}}
-                                    />
-                                    <div style={{width: "100%", position: "absolute"}}><CustomMiniPlayerSlider/></div>
-                                </React.Fragment>
-                                <CardContent onClick={ReOpenDialog} className={"text-left"}>
-                                    <Typography gutterBottom variant="h6" component="p" className={"text-truncate"}>
-                                        {playState.videoElement.snippet.title.slice(0, 70) + " ..."}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary"
-                                                style={{textDecoration: "none"}}
-                                                component={Link}
-                                                to={`/artist?id=${playState.videoElement.snippet.channelId}`}
-                                                className={"text-truncate"}>
-                                        {/*{playState.videoElement.snippet.channelTitle}*/}
-                                        {/*{playState.videoElement.snippet.description ? playState.videoElement.snippet.description.slice(0, 70) + " ..." : ""}*/}
-                                        <span className={"text-muted"}>
-											{playState.videoElement.snippet.channelTitle}
+    return tv ?
+        <Slide in={playerState.MiniPlayer} direction={"top"}>
+            <AppBar
+                color={"slideDown primary.miniPlayer.main"} style={{
+                position: "fixed",
+                top: "auto",
+                bottom: "0",
+                maxWidth: "25rem",
+                maxHeight: "17rem",
+            }} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
+                <Card className={"SongCard"} style={{width: "100%", height: "100%", borderRadius: 0}}
+                      variant={"elevation"}
+                      elevation={3}>
+                    <FocusNode>
+                        <CardActionArea disableRipple>
+                            <React.Fragment>
+                                <IconButton style={{position: "absolute", right: "0.25rem", top: "0.25rem"}}
+                                            onClick={cutCurrentSongState}><Close/></IconButton>
+                                {
+                                    playing ?
+                                        <IconButton style={{...styles.TVPlayButton}}
+                                                    onClick={playAudio}><PlayCircleOutline
+                                            color={"#fff"}/></IconButton> :
+                                        <IconButton style={{...styles.TVPlayButton}} onClick={pauseAudio}>
+                                            <Pause color={"#fff"}/></IconButton>
+                                }
+                                <CardMedia
+                                    className={"-rounded-circle"}
+                                    component={"img"}
+                                    alt={Song.snippet.title}
+                                    image={Song.snippet.thumbnails.high.url}
+                                    title={Song.snippet.title}
+                                    loading={"lazy"}
+                                    style={{height: "11rem", width: "100%"}}
+                                />
+                                <div style={{width: "100%", position: "absolute", marginTop: "-0.56rem"}}>
+                                    <CustomMiniPlayerSlider/>
+                                </div>
+                            </React.Fragment>
+                            <CardContent onClick={ReOpenDialog} className={"text-left"}>
+                                <List className={"p-0 m-0"}>
+                                    <ListItem className={"p-0 m-0"}>
+                                        <ListItemText className={"p-0 m-0 text-truncate  w-100"}
+                                                      primary={<Typography gutterBottom variant="h6" component="p"
+                                                                           className={"text-truncate"}>
+                                                          {Song.snippet.title}</Typography>} secondary={
+                                            <Typography variant="body2" color="textSecondary"
+                                                        style={{textDecoration: "none"}}
+                                                        component={Link}
+                                                        to={`/artist?id=${Song.snippet.channelId}`}
+                                                        className={"text-truncate"}>
+                                                {/*{playState.videoElement.snippet.channelTitle}*/}
+                                                {/*{playState.videoElement.snippet.description ? playState.videoElement.snippet.description.slice(0, 70) + " ..." : ""}*/}
+                                                <span className={"text-muted"}>
+											{Song.snippet.channelTitle}
 										</span>
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </FocusNode>
-                    </Card>
-                </AppBar></Slide>
-                :
-                <Slide in={playerState.MiniPlayer} direction={"bottom"}><AppBar
-                    color={"slideDown primary.miniPlayer.main"} style={{
-                    position: "fixed",
-                    top: "auto",
-                    bottom: bottomNav ? "3.5rem" : 0,
-                    width: "100%",
-                }} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
-                    <div className={"d-inline-flex"}>
-                        <div onClick={ReOpenDialog} className={"d-inline-flex"}>
-                            <img
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = 'http://docs-kabeersnetwork-kview-app-sta.rf.gd/Private/uploads/5f58af5918860unnamed.jpg';
-                                }}
-                                src={playState.videoElement.snippet.thumbnails.high.url} style={{
-                                width: "4rem",
-                                height: "3rem",
-                                maxWidth: "5rem!important",
-                                maxHeight: "4rem!important"
+                                            </Typography>}/>
+                                        <ListItemSecondaryAction hidden>
+                                            <IconButton>
+                                                <OpenInNew/>
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                </List>
+                            </CardContent>
+                        </CardActionArea>
+                    </FocusNode>
+                </Card>
+            </AppBar>
+        </Slide>
+        :
+        <Slide in={playerState.MiniPlayer} direction={"bottom"}>
+            <AppBar
+                color={"slideDown primary.miniPlayer.main"} style={{
+                position: "fixed",
+                top: "auto",
+                bottom: bottomNav ? "3.5rem" : 0,
+                width: "100%",
+            }} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
+                <div className={"d-inline-flex"}>
+                    <div onClick={ReOpenDialog} className={"d-inline-flex"}>
+                        <img
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'http://docs-kabeersnetwork-kview-app-sta.rf.gd/Private/uploads/5f58af5918860unnamed.jpg';
                             }}
-                                alt={playState.videoElement.snippet.title} className={"KabeersMiniPlayerImage"}
-                                loading={"lazy"}/>
-                            <Typography component={"span"} className={"text-truncate p-2 KabeersMiniPlayerText"}
-                                        color={"#000"} style={{
-                                width: "10em",
-                                color: "primary.miniPlayer.text"
-                            }}>{playState.videoElement.snippet.title || "Untitled"}
-                            </Typography>
-                        </div>
-                        <div className={"float-right ml-auto"}>
-                            {
-                                playing ? <IconButton onClick={playAudio}><PlayCircleOutline
-                                        color={"#fff"}/></IconButton> :
-                                    <IconButton onClick={pauseAudio}><Pause color={"#fff"}/></IconButton>
-                            }
-                            <IconButton onClick={cutCurrentSongState}><Close/></IconButton>
-                        </div>
+                            src={Song.snippet.thumbnails.high.url} style={{
+                            width: "4rem",
+                            height: "3rem",
+                            maxWidth: "5rem!important",
+                            maxHeight: "4rem!important"
+                        }}
+                            alt={Song.snippet.title} className={"KabeersMiniPlayerImage"}
+                            loading={"lazy"}/>
+                        <Typography component={"span"} className={"text-truncate p-2 KabeersMiniPlayerText"}
+                                    color={"#000"} style={{
+                            width: "10em",
+                            color: "primary.miniPlayer.text"
+                        }}>{Song.snippet.title || "Untitled"}
+                        </Typography>
                     </div>
-                    <CustomMiniPlayerSlider/>
-                </AppBar>
-                </Slide>
-        }
-    </React.Fragment>;
+                    <div className={"float-right ml-auto"}>
+                        {
+                            playing ? <IconButton onClick={playAudio}><PlayCircleOutline
+                                    color={"#fff"}/></IconButton> :
+                                <IconButton onClick={pauseAudio}><Pause color={"#fff"}/></IconButton>
+                        }
+                        <IconButton onClick={cutCurrentSongState}><Close/></IconButton>
+                    </div>
+                </div>
+                <CustomMiniPlayerSlider/>
+            </AppBar>
+        </Slide>;
 };
 
 export default React.memo(MiniPlayer);

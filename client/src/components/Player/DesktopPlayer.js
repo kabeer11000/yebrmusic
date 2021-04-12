@@ -1,6 +1,6 @@
 import Dialog from "@material-ui/core/Dialog";
 import React from "react";
-import {CastContext, CastDialogContext, PlayContext, PlayerContext} from "../../Contexts";
+import {CastContext, CastDialogContext, PlayContext, PlayerContext, ThemeContext} from "../../Contexts";
 import AppBar from "@material-ui/core/AppBar";
 import {Avatar, CircularProgress, Container, Drawer, IconButton, Typography} from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -55,6 +55,7 @@ const LoopingButton = ({playState, setLooping}) => {
 export const DesktopPlayer = React.memo(() => {
     const [playerState, setPlayerState] = React.useContext(PlayerContext);
     if (!playerState.Dialog) return <></>;
+    const [darkmode] = React.useContext(ThemeContext);
 
     const {playState, SkipSong} = React.useContext(PlayContext);
     const [playing, setPlaying] = React.useState(!playState.audioElement.paused);
@@ -66,13 +67,14 @@ export const DesktopPlayer = React.memo(() => {
     const {enqueueSnackbar} = useSnackbar();
     const dialog = useDialog();
     const history = useHistory();
+    const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
 
     const DownloadAudio = async () => {
         if (!navigator.onLine) return enqueueSnackbar("No Connection, Download Failed");
         try {
             setDownloadButton(<Grow in={true}><IconButton><CircularProgress
                 color={"primary.light"} size={25}/></IconButton></Grow>);
-            await DownloadSong({song: playState.videoElement, uri: playState.audioElement.src, rating: 0});
+            await DownloadSong({song: Song, uri: playState.audioElement.src, rating: 0});
             setDownloadButton(<IconButton onClick={DeleteDownload}><Done/></IconButton>)
         } catch (e) {
             enqueueSnackbar("Download Failed");
@@ -87,13 +89,13 @@ export const DesktopPlayer = React.memo(() => {
                     Downloads</div> || "Nothing Here!",
                 message: <div className={"k-dialog-body-inner"}>
                     <div className={"d-flex justify-content-center mb-3"}>
-                        <Avatar src={playState.videoElement.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
+                        <Avatar src={Song.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
                     </div>
-                    Do You want to delete {playState.videoElement.snippet.title} from downloads?
+                    Do You want to delete {Song.snippet.title} from downloads?
                     <br/>
                 </div> || "Nothing Here!",
             });
-            await deleteDownloadedSong(playState.videoElement.id);
+            await deleteDownloadedSong(Song.id);
             setDownloadButton(<IconButton onClick={DownloadAudio}><GetApp/></IconButton>);
         } catch (e) {
         }
@@ -104,7 +106,7 @@ export const DesktopPlayer = React.memo(() => {
     });
 
     React.useEffect(() => {
-        isOfflineAvailable(playState.videoElement.id).then(v => setDownloadButton(v ?
+        isOfflineAvailable(Song.id).then(v => setDownloadButton(v ?
             <IconButton onClick={DeleteDownload}><Done/></IconButton> :
             <IconButton onClick={DownloadAudio}><GetApp/></IconButton>));
     }, [playState.videoElement])
@@ -112,14 +114,14 @@ export const DesktopPlayer = React.memo(() => {
         <React.Fragment>
             <Dialog fullScreen={true} className={"Desktop-Player"} open={playerState.Dialog} PaperProps={{
                 style: {
-                    backgroundImage: `url(${playState.videoElement.snippet.thumbnails.default.url})`,
+                    backgroundImage: `url(${Song.snippet.thumbnails.high.url})`,
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                 }
             }}>
                 <DialogContent style={{
-                    backdropFilter: 'blur(3rem) brightness(60%)',
+                    backdropFilter: darkmode ? 'blur(3rem) brightness(60%)' : 'blur(3rem) brightness(140%)',
                 }} className={"px-5"}>
                     <AppBar color={"transparent"} className={"bg-transparent"} position={"relative"} elevation={0}>
                         <Toolbar>
@@ -137,7 +139,7 @@ export const DesktopPlayer = React.memo(() => {
                                     <Grid item lg={4} md={4} xl={4}>
                                         <ButtonBase>
                                             <Paper className={"rounded"} style={{
-                                                backgroundImage: `url(${playState.videoElement.snippet.thumbnails.default.url})`,
+                                                backgroundImage: `url(${Song.snippet.thumbnails.high.url})`,
                                                 backgroundRepeat: "no-repeat",
                                                 backgroundSize: "cover",
                                                 backgroundPosition: "center",
@@ -151,9 +153,9 @@ export const DesktopPlayer = React.memo(() => {
                                         marginTop: "2rem"
                                     }}>
                                         <Typography
-                                            variant={"h5"}>{playState.videoElement.snippet.title || "Untitled"}</Typography>
+                                            variant={"h5"}>{Song.snippet.title || "Untitled"}</Typography>
                                         <Typography variant={"button"}
-                                                    style={{color: "#c1c1c1"}}>{playState.videoElement.snippet.channelTitle || "Unavailable"}</Typography>
+                                                    style={{color: "#c1c1c1"}}>{Song.snippet.channelTitle || "Unavailable"}</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -249,7 +251,7 @@ export const DesktopPlayer = React.memo(() => {
                                         <IconButton><Grade/></IconButton>
                                         <IconButton onClick={() => setNextDrawer(true)}><Toc/></IconButton>
                                         <IconButton
-                                            onClick={() => navigator.onLine ? (history.push(`/artist?id=${playState.videoElement.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}><AccountCircle/>
+                                            onClick={() => navigator.onLine ? (history.push(`/artist?id=${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}><AccountCircle/>
                                         </IconButton>
                                     </div>
                                     <Container maxWidth={"md"}>
@@ -261,7 +263,10 @@ export const DesktopPlayer = React.memo(() => {
                                             open={nextDrawer}
                                             onClose={() => setNextDrawer(!nextDrawer)}
                                             onOpen={() => setNextDrawer(!nextDrawer)}>
-                                            <ComingNext PlaySong={SkipSong}/>
+                                            <ComingNext PlaySong={(a, i) => SkipSong(a, i, {
+                                                Dialog: true,
+                                                MiniPlayer: false
+                                            })}/>
                                         </Drawer>
                                     </Container>
                                 </Container>

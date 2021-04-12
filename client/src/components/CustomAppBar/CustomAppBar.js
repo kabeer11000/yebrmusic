@@ -14,6 +14,9 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import {DrawerContext, isTvContext, LoadingContext} from "../../Contexts";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
+import {Divider} from "@material-ui/core";
+import {get} from "idb-keyval";
+import {storageIndex} from "../../functions/Helper/storageIndex";
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -43,6 +46,11 @@ const CustomAppBar = () => {
 	const tv = React.useContext(isTvContext);
 	const classes = useStyles();
 	const [loading] = React.useContext(LoadingContext);
+	const [userInfo, setUserInfo] = React.useState(null);
+	React.useEffect(() => {
+		get(storageIndex.cookies.UserData).then(setUserInfo);
+	}, []);
+
 	return tv ?
 		(
 			<React.Fragment>
@@ -60,14 +68,18 @@ const CustomAppBar = () => {
 						<div style={{width: "100%", display: "inline-flex", justifyContent: "center"}}>
 							<Button component={Link} to={"/home"}>HOME</Button>
 							<Button component={Link} to={"/discover"}>DISCOVER</Button>
-							<Button component={Link} to={"/history"}>HISTORY</Button>
+							{/*<Button component={Link} to={"/history"}>HISTORY</Button>*/}
 							<Button component={Link} to={"/downloads"}>DOWNLOADS</Button>
-							<Button component={Link} to={"/trending"}>TRENDING</Button>
+							<Button component={Link} to={"/artists"}>ARTISTS</Button>
 						</div>
-						<div>
+						<div className={"d-flex"}>
 							<IconButton component={Link} to={"/search"}>
 								<Search/>
 							</IconButton>
+							{/*<Divider orientation={"vertical"}/>*/}
+							{/*<IconButton>*/}
+							{/*	<Avatar src={userInfo ? userInfo.account_image : ""}/>*/}
+							{/*</IconButton>*/}
 						</div>
 					</Toolbar>
 				</AppBar>
@@ -79,7 +91,9 @@ const CustomAppBar = () => {
 						<IconButton onClick={() => setDrawer(!drawer)} className={classes.iconButton} aria-label="menu">
 							{drawer ? <ArrowBack/> : <Menu/>}
 						</IconButton>
-						<Link to={"/search"}>
+						<Link to={"/search"} style={{
+							textDecoration: "none",
+						}}>
 							<InputBase
 								disabled
 								// component={Link} to={"/search"}
@@ -89,6 +103,11 @@ const CustomAppBar = () => {
 							/>
 							<IconButton className={classes.iconButton} aria-label="search">
 								<Search/>
+							</IconButton>
+							<Divider orientation={"vertical"} className={classes.divider}/>
+							<IconButton className={classes.iconButton}>
+								<Search/>
+								{/*<Avatar src={userInfo ? userInfo.account_image : ""}/>*/}
 							</IconButton>
 						</Link>
 						{/*<Divider className={classes.divider} orientation="vertical" />*/}

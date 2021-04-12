@@ -8,7 +8,6 @@ import {
     Done,
     Forward10,
     GetApp,
-    Grade,
     Loop,
     Pause,
     PlayCircleOutline,
@@ -68,6 +67,7 @@ const Player = () => {
     const [PlayList, setPlayList] = React.useState(false);
     const [AutoPlayButton, SetAutoPlayButton] = React.useState(playState.autoPlay);
     const [castDialogOpen, setCastDialogOpen] = React.useContext(CastDialogContext);
+    const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
 
     const handleClose = () => setPlayerState({
         MiniPlayer: true,
@@ -79,7 +79,7 @@ const Player = () => {
         try {
             setDownloadButton(<Grow in={true}><IconButton><CircularProgress
                 color={"primary.light"} size={25}/></IconButton></Grow>);
-            await DownloadSong({song: playState.videoElement, uri: playState.audioElement.src, rating: 0});
+            await DownloadSong({song: Song, uri: playState.audioElement.src, rating: 0});
             setDownloadButton(<IconButton onClick={deleteDownload}><Done/></IconButton>)
         } catch (e) {
             enqueueSnackbar("Download Failed");
@@ -94,13 +94,13 @@ const Player = () => {
                     Downloads</div> || "Nothing Here!",
                 message: <div className={"k-dialog-body-inner"}>
                     <div className={"d-flex justify-content-center mb-3"}>
-                        <Avatar src={playState.videoElement.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
+                        <Avatar src={Song.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
                     </div>
-                    Do You want to delete {playState.videoElement.snippet.title} from downloads?
+                    Do You want to delete {Song.snippet.title} from downloads?
                     <br/>
                 </div> || "Nothing Here!",
             });
-            await deleteDownloadedSong(playState.videoElement.id);
+            await deleteDownloadedSong(Song.id);
             setDownloadButton(<IconButton onClick={DownloadAudio}><GetApp/></IconButton>);
         } catch (e) {
         }
@@ -117,7 +117,7 @@ const Player = () => {
     const Cast = React.useContext(CastContext);
 
     React.useEffect(() => {
-        isOfflineAvailable(playState.videoElement.id).then(v => setDownloadButton(v ?
+        isOfflineAvailable(Song.id).then(v => setDownloadButton(v ?
             <IconButton onClick={deleteDownload}><Done/></IconButton> :
             <IconButton onClick={DownloadAudio}><GetApp/></IconButton>));
     }, [playState.videoElement])
@@ -144,17 +144,6 @@ const Player = () => {
                         <IconButton edge="start" onClick={handleClose} aria-label="close">
                             <ArrowBack/>
                         </IconButton>
-                        <div hidden={true}>
-                            <Button onClick={() => {
-                            }}>
-                                Send Request (Do In Incognito)
-                            </Button>
-                            <Button onClick={() => {
-                            }}>
-                                Accept Request (Do In MainTab)
-                            </Button>
-
-                        </div>
                         <div style={{flex: "1 1 auto"}}/>
                         <FormControlLabel
                             control={
@@ -174,9 +163,9 @@ const Player = () => {
                     }}>
                         <ImagesSlider PlaySong={SkipSong}/>
                         <Typography variant={"h6"} component={"div"} className={"mx-4 py-0 text-truncate text-left"}>
-                            {playState.videoElement.snippet.title || "Untitled"}
+                            {Song.snippet.title || "Untitled"}
                             <Typography variant={"body2"} style={{opacity: "50%"}}>
-                                {playState.videoElement.snippet.channelTitle || "Unavailable"}
+                                {Song.snippet.channelTitle || "Unavailable"}
                             </Typography>
                         </Typography>
                         <div className={"mx-4"}><CustomSlider mobile={true}/></div>
@@ -233,13 +222,13 @@ const Player = () => {
                                 setLooping(true);
                                 playState.audioElement.loop = true;
                             }}><Repeat/></IconButton>)}
-
                             {downloadButton ? downloadButton : <IconButton><CircularProgress size={25}/></IconButton>}
-                            <IconButton onClick={() => {
-                            }}><Grade/></IconButton>
+                            {/*<IconButton onClick={() => {*/}
+                            {/*}}><Grade/></IconButton>*/}
                             <IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
                             <IconButton
-                                onClick={() => navigator.onLine ? (history.push(`/artist?id=${playState.videoElement.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}><AccountCircle/>
+                                onClick={() => navigator.onLine ? (history.push(`/artist?id=${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
+                                <AccountCircle/>
                             </IconButton>
                         </div>
                         <Container maxWidth={"md"}>

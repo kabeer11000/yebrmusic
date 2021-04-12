@@ -13,12 +13,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Link, useHistory} from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
-import {downloadsToPlaylist, getSong, getSongFromStorage, SuggestOfflineSongs} from "../../functions/songs";
+import {getSong, SuggestOfflineSongs} from "../../functions/songs";
 import {Slide} from "@material-ui/core";
 import SkeletonList from "../SkeletonList/SkeletonList";
 import Divider from "@material-ui/core/Divider";
-import endPoints from "../../api/endpoints/endpoints";
-import {LoadingContext, PlayContext, PlayerContext, SearchContext} from "../../Contexts";
+import {PlayContext, SearchContext} from "../../Contexts";
+import SessionRecommendation from "../../functions/SessionRecommendation";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,56 +51,10 @@ const SearchResultComponent = () => {
 
     const [open, setOpen] = React.useState(true);
     const [listItems, setListItems] = React.useState(null);
-    const {playState, setPlayState, PlaySong} = React.useContext(PlayContext);
-    const [, setLoading] = React.useContext(LoadingContext);
+    const {PlaySong} = React.useContext(PlayContext);
 
     const abortController = new AbortController();
     const [query] = React.useContext(SearchContext);
-
-    const [playerState, setPlayerState] = React.useContext(PlayerContext);
-    const __PlaySong = async (video, metaData) => {
-        setLoading(true);
-        const song = await getSong(video.id);
-        playState.audioElement.pause();
-        playState.audioElement.src = endPoints.proxyURI(song);
-
-        setPlayState({
-            ...playState,
-            videoElement: video,
-            playList: {
-                list: metaData.list,
-                index: metaData.index
-            }
-        });
-        setPlayerState({
-            ...playerState,
-            Dialog: true
-        })
-        setLoading(false);
-
-    };
-    const PlayOfflineSong = async (data, index) => {
-        setLoading(true);
-        const song = await getSongFromStorage(data.id);
-        if (!song) return null;
-        playState.audioElement.pause();
-        playState.audioElement.src = URL.createObjectURL(song.blob);
-        song.videoElement.snippet.thumbnails.high.url = song.thumbnail;
-        setPlayState({
-            ...playState,
-            videoElement: song.videoElement,
-            componentState: {
-                ...playState.componentState,
-                Dialog: true
-            },
-            playList: {
-                index: index,
-                list: await downloadsToPlaylist()
-            }
-        });
-        playState.audioElement.play();
-        setLoading(false);
-    };
 
     // const errorPage = (message = "No Internet Connection", button = <Button component={Link}
     //                                                                         to={"/search"}>Retry</Button>) => (
@@ -117,6 +71,7 @@ const SearchResultComponent = () => {
 
     React.useEffect(() => {
         if (!query) return history.push("/search");
+        SessionRecommendation.addSearch(query);
         if (navigator.onLine) SearchYoutube(query, abortController).then(setListItems);
         else SuggestOfflineSongs(query).then(a => {
             setListItems({

@@ -15,3 +15,24 @@ export const useNetwork = () => {
 	});
 	return isOnline;
 };
+
+export const _useInterval = (interval) => {
+	const [state, setState] = useState(0);
+	setInterval(() => setState(state + 1), interval);
+	return state;
+}
+
+export const useInterval = (handler, delay, immediate = true) => {
+	useEffect(() => {
+		let interval
+
+		const start = () => {
+			clearInterval(interval)
+			interval = setInterval(() => handler(start), delay)
+		}
+
+		handler(start)
+
+		return () => clearInterval(interval)
+	}, []);
+}

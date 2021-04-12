@@ -10,6 +10,8 @@ router.get("/feed/topartist", songs.topArtist);
 router.get("/feed/artists/all", songs.getArtists);
 router.get("/feed/trending/artists", songs.topArtistsRanked);
 
+router.get("/feed/discover", songs.Discover);
+
 module.exports = router;
 // TODO Because you lisened to travis scott
 // Record artist name to database for that user

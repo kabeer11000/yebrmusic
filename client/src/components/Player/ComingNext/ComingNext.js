@@ -22,9 +22,9 @@ const ComingNext = (props) => {
                     playState.playList ? playState.playList.list.items.map((value, index) => <NextListItem
                             onClick={() => props.PlaySong(value, index)} currentIndex={index}
                             keyIndex={playState.playList.index} key={index}
-                            title={value.isOffline ? value.videoElement.snippet.title : value.snippet.title}
-                            channelTitle={value.isOffline ? value.videoElement.snippet.channelTitle : value.snippet.channelTitle}
-                            image={value.isOffline ? value.videoElement.snippet.thumbnails.high.url : value.snippet.thumbnails.high.url}/>) :
+                            title={playState.others.offline ? value.videoElement.snippet.title : value.snippet.title}
+                            channelTitle={playState.others.offline ? value.videoElement.snippet.channelTitle : value.snippet.channelTitle}
+                            image={playState.others.offline ? value.videoElement.snippet.thumbnails.high.url : value.snippet.thumbnails.high.url}/>) :
                         <NextListItem onClick={() => {
                             // props.playSong({video: value, index: index});
                         }} currentIndex={0} keyIndex={0} title={playState.videoElement.snippet.title}

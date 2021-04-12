@@ -6,7 +6,6 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 10 minutes 20 request
     max: 100 // limit each IP to 100 requests per windowMs TODO Default 10
@@ -36,11 +35,9 @@ const recomRouter = require("./routes/RecomAPI/simpleRecom");
 //app.use('/api/', limiter);
 app.use(cors());
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(express.json({}));
 app.use(express.urlencoded({extended: true}));
-app.use(express.json());
 app.use(session({
     secret: "5s323720194bccb1cb94164a13E144994E3E17F9B",
     resave: true,

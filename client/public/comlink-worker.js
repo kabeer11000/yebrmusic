@@ -13,10 +13,9 @@ songsDB["version"](10).stores({songs: "&id, valid, time, rating"});
 
 let interVal = null
 const main = {
-    JSON: {
-        parse: (string) => JSON.parse(string),
-        stringify: (object) => JSON.stringify(object)
-    },
+    JSON: JSON,
+    // localStorage: localStorage,
+    // sessionStorage: sessionStorage,
     fetch: (uri, config) => fetch(uri, config).then(r => r.ok ? r.json() : null),
     fetchNonJSON: (uri, config) => fetch(uri, config),
     fuseSetup: async (data, options) => {

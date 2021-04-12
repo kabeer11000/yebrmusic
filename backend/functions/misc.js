@@ -37,8 +37,20 @@ const getMaximum = (e) => {
     }
     return t && n ? {name: t, times: n} : {name: e[0], times: 1};
 };
-
+const IndexSongOnRequest = async (id) => {
+    const scraper = require("./scraper");
+    const axios = require("axios");
+    try {
+        const songDetails = await scraper.getSong(id);
+        await axios.post("http://localhost/api/index-song", JSON.stringify({
+            song: songDetails, token: process.env.DATA_SERVER_TOKEN
+        }));
+    } catch (e) {
+        console.log(e)
+    }
+}
 module.exports = {
+    IndexSongOnRequest,
     makeId,
     playlistsIds,
     YouTubeGetID,

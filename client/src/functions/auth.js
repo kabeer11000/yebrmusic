@@ -4,6 +4,7 @@ import {storageIndex} from "./Helper/storageIndex";
 //import {registerDeviceCast} from "./Cast/Cast";
 // import {AfterAuthFunction} from "./afterAuth";
 import {get, set} from "idb-keyval";
+import {DebugLog} from "./Log";
 
 const cookies = {
     getCookie(e) {
@@ -39,7 +40,7 @@ export const initAuth = async () => {
     if (!cookies.getCookie(storageIndex.cookies.UserData)) return window.location.href = endPoints.authRedirect;
     const stored = await get(storageIndex.cookies.UserData);
     if (!stored) {
-        console.log(JSON.parse(cookies.getCookie(storageIndex.cookies.UserData)))
+        // console.log(JSON.parse(cookies.getCookie(storageIndex.cookies.UserData)))
         await set(storageIndex.cookies.UserData, JSON.parse(cookies.getCookie(storageIndex.cookies.UserData)));
         // return localStorage.setItem(storageIndex.userData, btoa(cookies.getCookie(storageIndex.cookies.UserData)));
     } else {
@@ -50,9 +51,9 @@ export const initAuth = async () => {
                     'Authorization': `Bearer ${await initAuth()}`
                 }
             }).then(a => a.json());
-            console.log("Music: ", window.__kn.music["data-collection"].token)
+            // Log(window.__kn.music["data-collection"].token)
         } catch (e) {
-            console.log("Music: ", e);
+            DebugLog(e);
         }
     }
 

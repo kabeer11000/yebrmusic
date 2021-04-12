@@ -1,2 +1,6 @@
 .Downloads {
 }
+
+.NoDownloadsIndicator {
+    height: 30vh !important;
+}

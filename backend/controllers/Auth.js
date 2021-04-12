@@ -123,6 +123,25 @@ const GetDataServerKey = async (req, res) => {
         return res.status(400).json(e.message);
     }
 }
+const GetAPITokenWithoutLogin = async (req, res) => {
+    // if (req.cookies['__kn.music.user.device-id']) {
+    const token = await jwt.sign({
+        type: "access_token",
+        kind: "KabeersMusic#DeviceIDAccessToken",
+        app_name: "Kabeers Music App",
+        app_id: "S565ds6887df646k5Y4f56IOiDWxRXS840lnnmD",
+        scope: "openid|s564d68a34dCn9OuUNTZRfuaCnwc6:getSong|s564d68a34dCn9OuUNTZRfuaCnwc6:search|s564d68a34dCn9OuUNTZRfuaCnwc6:feed|s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite",
+        jti: uuid.v4(),
+        sub: "a8aa4c32-4e02-4fd6-b5b6-ade4543969d0" //||req.cookies['__kn.music.user.device-id']
+    }, keys.KabeerAuthPlatform_Public_RSA_Key_PRIVATE, {
+        expiresIn: "20h",
+        algorithm: 'RS256'
+    });
+    console.log(token)
+    // res.json(token);
+    // }
+}
+// GetAPITokenWithoutLogin();
 module.exports = {
     OAuthCallbackHandler,
     OAuthRedirect,

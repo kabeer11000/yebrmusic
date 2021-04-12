@@ -4,7 +4,7 @@ function Jsonify($text)
 {
     header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
-    return json_encode($text);
+    return json_encode($text, JSON_PRETTY_PRINT);
 }
 
 class DatabaseClient
@@ -16,11 +16,59 @@ class DatabaseClient
         $this->client = $client;
     }
 
+    function insertSearch($details, $user_id)
+    {
+        $entry_hash = md5(uniqid());
+        $search_query = $details['query'];
+        $details = json_encode($details);
+
+        $query = "INSERT INTO `search-queries`(`entry`, `query`, `detail_json`, `user_id`) VALUES ('$entry_hash', '$search_query', '$details', '$user_id')";
+        $this->client->query($query);
+    }
+
+    function getSearches($user_id)
+    {
+        $results = $this->client->query("SELECT * FROM `search-queries` WHERE `user_id` = '$user_id'");
+        $results = $results->fetch_all(MYSQLI_ASSOC);
+        $a = [];
+        for ($i = 0; $i < count($results); $i++) {
+            array_push($a, array(
+                "entry" => $results[$i]["entry"],
+                "query" => $results[$i]["query"],
+                "detail_json" => json_decode($results[$i]['detail_json'], true),
+                "user_id" => $results[$i]['user_id']
+            ));
+        }
+        return $a;
+    }
+
+    function insertSession($session)
+    {
+        $session_encoded = $session;
+        $session = json_decode($session);
+        $session_id = $session['id'];
+        $exists = $this->client->query("SELECT * FROM `user_sessions` WHERE `session_id` = '$session_id' LIMIT 1;")->num_rows;
+        if ($exists !== 0) $query = "UPDATE `user_sessions` SET `json`='$session_encoded' WHERE `id` = '$session_id'";
+        else $query = "INSERT INTO `user_sessions`(`id`, `json`) VALUES ('$session_id', '$session_encoded')";
+        return $this->client->query($query);
+    }
+
     function getSong($id)
     {
-        $query = "SELECT *  FROM `watched-songs` WHERE `yt_video_id` = '$id' LIMIT 1;";
+        $query = "SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$id' LIMIT 1;";
         $result = $this->client->query($query);
-        return $result->fetch_assoc();
+        if (!is_null($result)) return $result->fetch_assoc();
+        else return null;
+    }
+
+    function getHistory($user_id, $limit)
+    {
+
+        $limit = intval($limit);
+        if (!is_null($user_id)) $query = "SELECT * FROM `watch-user-ratings` WHERE `user_id` = '$user_id' LIMIT $limit;";
+        else $query = "SELECT * FROM `watch-user-ratings`;";
+        $results = $this->client->query($query);
+        return $results->fetch_all(MYSQLI_ASSOC);
     }
 
     function indexSong($song)
@@ -30,9 +78,9 @@ class DatabaseClient
             $channel_id = $song['channelId'];
             $title = $song["snippet"]["title"];
             $song_encoded = json_encode($song);
-            $exists = $this->client->query("SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$video_id' LIMIT 1;")->fetch_assoc();
-            if (isset($exists) && !empty($exists)) {
-                http_response_code(409);
+            $exists = $this->client->query("SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$video_id' LIMIT 1;")->num_rows;
+            if ($exists !== 0) {
+//                http_response_code(409);
                 return "Already Exists";
             } else {
                 $query = "INSERT INTO `indexed_songs`(`yt_video_id`, `yt_channel_id`, `yt_video_title`, `yt_video_json`) VALUES ('$video_id', '$channel_id', '$title', '$song_encoded')";

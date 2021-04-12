@@ -18,8 +18,9 @@ import {Link} from "react-router-dom";
 import {storageIndex} from "../../functions/Helper/storageIndex";
 import {FocusNode} from "@please/lrud";
 import {DrawerContext, isTvContext} from "../../Contexts";
+import {get} from "idb-keyval";
 
-const drawerWidth = 240;
+const drawerWidth = 340;
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
@@ -102,7 +103,12 @@ const DrawerComponent = ({children}) => {
 	const [open, setOpen] = React.useContext(DrawerContext);
 	const tv = React.useContext(isTvContext);
 	const handleDrawerToggle = () => setOpen(!open);
-	const userData = localStorage.getItem(storageIndex.userData) ? JSON.parse(atob(localStorage.getItem(storageIndex.userData))) : {};
+	const [userInfo, setUserInfo] = React.useState(null);
+	React.useEffect(() => {
+		get(storageIndex.cookies.UserData).then(setUserInfo);
+	}, []);
+
+	// const userData = localStorage.getItem(storageIndex.userData) ? JSON.parse(atob(localStorage.getItem(storageIndex.userData))) : {};
 
 	// const container = window !== undefined ? () => window().document.body : undefined;
 	return (
@@ -118,10 +124,11 @@ const DrawerComponent = ({children}) => {
 						<List className={classes.root}>
 							<ListItem>
 								<ListItemAvatar>
-									<Avatar src={userData["account_image"]} alt={userData.username}/>
+									<Avatar src={userInfo ? userInfo["account_image"] : ""}
+											alt={userInfo ? userInfo.username : ""}/>
 								</ListItemAvatar>
-								<ListItemText className={"text-truncate"} primary={userData.username}
-											  secondary={userData.email}/>
+								<ListItemText className={"text-truncate"} primary={userInfo ? userInfo.username : ""}
+											  secondary={userInfo ? userInfo.email : ""}/>
 							</ListItem>
 						</List>
 						<div className={"classes.toolbar"}/>
@@ -161,10 +168,12 @@ const DrawerComponent = ({children}) => {
 					<List className={classes.root}>
 						<ListItem>
 							<ListItemAvatar>
-								<Avatar src={userData["account_image"]} alt={userData.username}/>
+								<Avatar src={userInfo ? userInfo["account_image"] : ""}
+										alt={userInfo ? userInfo.username : ""}/>
 							</ListItemAvatar>
-							<ListItemText className={"text-truncate"} primary={userData.username}
-										  secondary={userData.email}/>
+							<ListItemText className={"text-truncate"}>
+								{userInfo ? userInfo.username : ""}
+							</ListItemText>
 						</ListItem>
 					</List>
 					<div className={"classes.toolbar"}/>
@@ -200,7 +209,8 @@ const DrawerComponent = ({children}) => {
 						<Divider/>
 						<ListItem button>
 							<Typography muted small>
-								<div className={"text-muted small"}>&copy; Kabeers Network</div>
+								<div className={"text-muted small"}>&copy; {new Date().getFullYear()} Kabeer's Network
+								</div>
 							</Typography>
 						</ListItem>
 					</List>

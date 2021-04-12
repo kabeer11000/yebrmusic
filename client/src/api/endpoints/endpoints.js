@@ -41,10 +41,16 @@ const endPoints = {
     getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`,
 
     DataCollection: {
+        saveSessionHistory: `${DataCollection}/api/history/save-session`,
         getToken: `${hostName}/auth/external/data-collection/generate`,
         rate: ({id, token}) => `${DataCollection}/api/update-rating?video_id=${id}&token=${token}`,
         details: {
             getStreams: (token) => `${DataCollection}/api/details/streams?token=${token}`,
+        }
+    },
+    Recommendations: {
+        deprecated: {
+            getRecommendations: `${hostName}/recom/backend/discover/deprecated/knn`
         }
     }
 };

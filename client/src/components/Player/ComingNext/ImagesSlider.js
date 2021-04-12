@@ -11,9 +11,10 @@ const CommingNextImagesSlider = (props) => {
     const tv = React.useContext(isTvContext);
     const loading = React.useContext(LoadingContext);
     const scrollRef = React.useRef(null);
+    const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
 
     React.useEffect(() => {
-        if (playState.videoElement) scrollRef.current.scrollIntoView({behavior: 'smooth', block: 'center'});
+        if (Song) scrollRef.current.scrollIntoView({behavior: 'smooth', block: 'center'});
     }, [playState.videoElement]);
     return (
         <div className={`cardSlider text-left Slider ${!tv ? "mb-0 py-0 pb-3" : "py-0 my-0"}`}
@@ -21,11 +22,11 @@ const CommingNextImagesSlider = (props) => {
             {
                 !playState.playList ? <Grow in={true}>
                         <ButtonBase ref={scrollRef}>
-                            <img src={playState.videoElement.snippet.thumbnails.high.url}
+                            <img src={Song.snippet.thumbnails.high.url}
                                  className={`image mb-0 mx-3 img-fluid rounded shadow SongNextSliderSelected`}
                                  onError={(e) => {
                                      e.target.onerror = null;
-                                     e.target.src = "http://docs-kabeersnetwork-kview-app-sta.rf.gd/Private/uploads/5f6d7b19418f3---images.png"
+                                     e.target.src = "https://hosted-kabeersnetwork.000webhostapp.com/Private/uploads/605e036666508---5f6d7b19418f3---images.png"
                                  }}
                                  style={{
                                      scrollSnapAlign: "center",
@@ -33,7 +34,7 @@ const CommingNextImagesSlider = (props) => {
                                      width: tv ? "17rem" : "15rem",
                                      height: tv ? "17rem" : "15rem",
                                      border: "white solid 0.1rem"
-                                 }} alt={playState.videoElement.snippet.title}/>
+                                 }} alt={Song.snippet.title}/>
                         </ButtonBase>
                     </Grow>
                     : playState.playList.list.items.map((value, index) =>
@@ -41,11 +42,11 @@ const CommingNextImagesSlider = (props) => {
                             <div className={"ImageSliderIMG"}>
                                 <ButtonBase>
                                     <img
-                                        src={value.isOffline /*playState?.others.offline*/ ? value.videoElement.snippet.thumbnails.high.url : value.snippet.thumbnails.high.url}
+                                        src={playState.others.offline ? value.videoElement.snippet.thumbnails.high.url : value.snippet.thumbnails.high.url}
                                         className={`image mb-0 mx-3 img-fluid rounded shadow ${index === playState.playList.index ? "SongNextSliderSelected" : ""}`}
                                         onError={(e) => {
                                             e.target.onerror = null;
-                                            e.target.src = "https://docs-kabeersnetwork-kview-app-sta.rf.gd/Private/uploads/5f6d7b19418f3---images.png"
+                                            e.target.src = "https://hosted-kabeersnetwork.000webhostapp.com/Private/uploads/605e036666508---5f6d7b19418f3---images.png"
                                         }}
                                         onClick={() => index === playState.playList.index ? null : props.PlaySong(value, index)}
                                         style={{
@@ -55,7 +56,7 @@ const CommingNextImagesSlider = (props) => {
                                             height: index === playState.playList.index && tv ? "17rem" : "15rem",
                                             border: index === playState.playList.index ? "white solid 0.1rem" : null
                                         }}
-                                        alt={value.isOffline ? value.videoElement.snippet.title : value.snippet.title}/>
+                                        alt={playState.others.offline ? value.videoElement.snippet.title : value.snippet.title}/>
                                 </ButtonBase>
                             </div>
                         </Grow>

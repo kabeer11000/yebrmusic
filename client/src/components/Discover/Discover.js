@@ -15,6 +15,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import {Link} from "react-router-dom";
 import {OpenInNew} from "@material-ui/icons";
+import SessionRecommendation from "../../functions/SessionRecommendation";
+import {useNetwork} from "../../Hooks";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,43 +38,52 @@ const Discover = (props) => {
     const classes = useStyles();
     const [state, setState] = React.useState(null);
     const [error, setError] = React.useState(false);
+    const online = useNetwork();
 
     React.useEffect(() => {
+        const b = async () => {
+            // return await comLinkWorker.fetch("http://localhost:9000/api/feed/discover" || "http://127.0.0.1:5000/feed/home/recom?for_each_history=2", {
+            //     headers: {
+            //         Authorization: `Bearer ${await initAuth()}`
+            //     }
+            // });
+            return SessionRecommendation.getRecommendations();
+        }
         const a = async () => {
             try {
-                if (!await get(storageIndex.discover.saveObject) || !(Date.now() - await get(storageIndex.discover.timeObject)) / (100 * 60) > 1) fetch("http://127.0.0.1:5000/feed/home/recom?for_each_history=2").then(a => a.json()).then(homeObject => {
+                // !await get(storageIndex.discover.saveObject) || !(Date.now() - await get(storageIndex.discover.timeObject)) / (100 * 60) > 1
+                if (online) {
+                    const recommendations = await SessionRecommendation.getRecommendations();
                     setState({
-                        ...homeObject,
-                        items: props.embedded ? homeObject.items.slice(0, props.items || 15) : homeObject.items
+                        ...recommendations,
+                        items: props.embedded ? recommendations.items.slice(0, props.items || 15) : recommendations.items
                     });
-                }).catch(() => setError(!error));
-                else {
+                    await set(storageIndex.discover.timeObject, Date.now());
+                    await set(storageIndex.discover.saveObject, recommendations);
+                } else {
                     const homeObject = await get(storageIndex.discover.saveObject);
                     setState({
                         ...homeObject,
                         items: props.embedded ? homeObject.items.slice(0, props.items || 15) : homeObject.items
                     });
                 }
-
-                // fetch("http://localhost:9000/feed/_____test").then(a => a.json()).then(setState).catch(() => setError(!error));
-                // fetch("http://localhost:5000/feed/home/recom?history_items=2&for_each_history=3").then(a => a.json()).then(setState).catch(() => setError(!error));
             } catch (e) {
                 setError(!error);
             }
         };
         a();
     }, []);
-    React.useEffect(() => {
-        const a = async () => {
-            if (!state) return;
-            const saved = await get(storageIndex.discover.saveObject);
-            if (!saved || saved.etag !== state.etag) {
-                await set(storageIndex.discover.timeObject, Date.now());
-                await set(storageIndex.discover.saveObject, state);
-            }
-        };
-        a();
-    }, [state]);
+    // React.useEffect(() => {
+    //     const a = async () => {
+    //         if (!state) return;
+    //         const saved = await get(storageIndex.discover.saveObject);
+    //         if (!saved || saved.etag !== state.etag) {
+    //             await set(storageIndex.discover.timeObject, Date.now());
+    //             await set(storageIndex.discover.saveObject, state);
+    //         }
+    //     };
+    //     a();
+    // }, [state]);
     const tv = React.useContext(isTvContext);
     const {PlaySong} = React.useContext(PlayContext);
 

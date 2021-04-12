@@ -6,10 +6,11 @@ import {Cast, Events} from "./functions/Cast/NewNewCast";
 import endPoints from "./api/endpoints/endpoints";
 import {useSnackbar} from "notistack";
 import {get, set} from "idb-keyval";
-import {storageIndex, storageIndex as StorageIndex} from "./functions/Helper/storageIndex";
+import {storageIndex} from "./functions/Helper/storageIndex";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 import {comLinkWorker} from "./functions/Worker/worker-export";
 import Log, {DebugLog} from "./functions/Log";
+import SessionRecommendation from "./functions/SessionRecommendation";
 
 // const comlinkWorker = Comlink.wrap(new Worker("./comlink-worker.js"));
 export const CastDialogContext = React.createContext(false);
@@ -62,24 +63,15 @@ export const RatingProvider = ({children}) => {
         explicit_rating: 0,
         watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
         viewed_artist: 0,
-        times_streamed: 0,
+        times_streamed: 1,
     });
     const UpdateState = async ({is_casting, explicit_rating, viewed_artist}) => {
         try {
-            const response = await comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
-                method: "post",
-                body: JSON.stringify({id: playState.videoElement.id}),
-            })
-            setRating({
-                is_casting,
-                repeat_enabled: window.__kn.music.audio.loop ? 1 : 0.5,
-                player_type: playState.Dialog ? 1 : 0.5,
-                volume: window.__kn.music.audio.volume,
-                explicit_rating,
-                watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
-                viewed_artist: viewed_artist ? 1 : 0,
-                times_streamed: parseInt(response.times_streamed) + 1,
-            });
+            // const response = await comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
+            //     method: "post",
+            //     body: JSON.stringify({id: playState.videoElement.id}),
+            // });
+
             await comLinkWorker.fetch(endPoints.DataCollection.rate({
                 id: playState.videoElement.id,
                 token: window.__kn.music["data-collection"].token.access_token
@@ -93,23 +85,86 @@ export const RatingProvider = ({children}) => {
                     explicit_rating,
                     watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
                     viewed_artist: viewed_artist ? 1 : 0,
-                    times_streamed: parseInt(response.times_streamed) + 1,
+                    times_streamed: rating.times_streamed,
                 })
             });
+            setRating({
+                is_casting,
+                repeat_enabled: window.__kn.music.audio.loop ? 1 : 0.5,
+                player_type: playState.Dialog ? 1 : 0.5,
+                volume: window.__kn.music.audio.volume,
+                explicit_rating,
+                watch_percent: window.__kn.music.audio.currentTime / window.__kn.music.audio.duration,
+                viewed_artist: viewed_artist ? 1 : 0,
+                times_streamed: rating.times_streamed,
+            });
+
         } catch (e) {
+            console.log(e);
             Log("Exception: ", e);
         }
     }
+
+    // useInterval(async (next) => {
+    //     console.log("useInterval Called")
+    //     if (!playState.videoElement) {
+    //         console.log("Returned", playState)
+    //         return next();
+    //     }
+    //     console.log("UpdateRating");
+    //     await UpdateState({
+    //         is_casting: rating.is_casting,
+    //         explicit_rating: rating.explicit_rating,
+    //         viewed_artist: rating.viewed_artist
+    //     });
+    //     Log("Updated-Rating");
+    //     next();
+    // }, 6000);
+    // React.useEffect(() => {
+    //     let interval
+    //
+    //     const start = () => {
+    //         clearInterval(interval)
+    //         interval = setInterval(() => handler(start), delay)
+    //     }
+    //
+    //     if (!playState.videoElement) return clearInterval(interval);
+    //     handler(start)
+    //
+    //     return () => clearInterval(interval)
+    // }, [playerState.videoElement]);
+    // React.useEffect(() => {
+    //     if (playState.videoElement) {
+    //         const timer = setInterval(async () => {
+    //             if (!playState.videoElement) return clearInterval(timer) && console.log("Returned From Interval");
+    //             await UpdateState({
+    //                 is_casting: rating.is_casting,
+    //                 explicit_rating: rating.explicit_rating,
+    //                 viewed_artist: rating.viewed_artist
+    //             });
+    //             Log("Updated-Rating");
+    //         }, 6000);
+    //         return () => {
+    //             console.log("Setimeout Return called")
+    //             // clearInterval(timer);
+    //         }
+    //     }
+    // }, [playState.videoElement]);
+
     React.useEffect(() => {
-        if (playState.videoElement && window.__kn.music["data-collection"].token?.access_token) return comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
+        if (playState.videoElement && window.__kn.music["data-collection"].token?.access_token) comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
             method: "post",
             body: JSON.stringify({id: playState.videoElement.id}),
-        }).then(response => {
-            console.log(response);
-            // setRating({
-            //     ...rating,
-            //     times_streamed: parseInt(response.times_streamed),
-            // });
+        }).then(async response => {
+            await UpdateState({
+                is_casting: rating.is_casting,
+                explicit_rating: rating.explicit_rating,
+                viewed_artist: rating.viewed_artist
+            });
+            setRating(rating => ({
+                ...rating,
+                times_streamed: response.times_streamed + 1,
+            }));
         });
     }, [playState.videoElement]);
     return <RatingContext.Provider value={{rating, setRating, UpdateState}}>{children}</RatingContext.Provider>;
@@ -118,28 +173,31 @@ export const PlayContext = React.createContext({
     audioElement: window.__kn.music.audio,
     videoElement: null,
     playList: null,
-    others: null,
+    others: {},
     autoPlay: false
 });
 export const PlayProvider = React.memo(({children}) => {
     const {enqueueSnackbar} = useSnackbar();
-    const [, setPlayerState] = React.useContext(PlayerContext);
-    const {rating: rating, UpdateState: UpdateRatingState} = React.useContext(RatingContext);
+    const [playerState, setPlayerState] = React.useContext(PlayerContext);
+    // const {rating, UpdateState: UpdateRatingState} = React.useContext(RatingContext);
     const [playState, setPlayState] = React.useState({
         audioElement: window.__kn.music.audio,
         videoElement: null,
         playList: null,
-        others: null,
+        others: {},
         autoPlay: false
     });
     const tv = React.useContext(isTvContext);
     const setLoading = React.useContext(LoadingContext)[1];
-    const SkipSong = async (song, index) => {
-        if (!song) return;
-        if (song.isOffline) await PlaySong({
+    const SkipSong = async (song, index, componentState = null) => {
+        if (playState.others.offline) await PlaySong({
             useProxy: false,
+            others: {
+                offline: true
+            },
+            componentState,
             songURI: URL.createObjectURL(song.blobs.audio),
-            song: song.videoElement,
+            song: song,//.videoElement,
             playList: {
                 ...playState.playList,
                 index: index
@@ -148,6 +206,7 @@ export const PlayProvider = React.memo(({children}) => {
         else await PlaySong({
             useProxy: true,
             song: song,
+            componentState,
             playList: {
                 ...playState.playList,
                 index: index
@@ -163,22 +222,19 @@ export const PlayProvider = React.memo(({children}) => {
     };
     //TODO 3D Audio Feature
     React.useEffect(() => {
-        const a = async () => {
-            const id = new URLSearchParams(window.location.search).get("play");
-            if (!id) return;
-            const songDetails = await getSongDetails(id);
-            if (!songDetails) return;
-            await PlaySong({
-                useProxy: true,
-                song: songDetails,
-            });
-        }
-        a()
+        get(storageIndex.recommendation.sessionHistory).then(console.log)
+        const id = new URLSearchParams(window.location.search).get("play");
+        if (!id) return;
+        const song = getSongDetails(id);
+        if (song) PlaySong({
+            useProxy: true,
+            song: song,
+        });
     }, []);
-    const PlaySong = async ({song, playList, componentState, useProxy, others, ...options}) => {
-        setLoading(true);
-        // const {song, playList, componentState, useProxy, others} = options;
+    const PlaySong = async ({song, playList, componentState, useProxy, others = {}, ...options}) => {
+        if (!song) return;
         try {
+            setLoading(true);
             await playState.audioElement.pause();
             if (useProxy) {
                 const songURI = await getSong(song.id);
@@ -188,17 +244,17 @@ export const PlayProvider = React.memo(({children}) => {
                 ...playState,
                 videoElement: song,
                 playList: playList,
-                others: others
+                others: others || playState.others
             });
-            setPlayerState(componentState || ({
+            setPlayerState(componentState || {
                 Dialog: !tv,
                 MiniPlayer: tv
-            }));
+            });
             await addMediaSession({
-                artist: others?.offline ? song.videoElement.snippet.channelTitle : song.snippet.channelTitle,
-                title: others?.offline ? song.videoElement.snippet.title : song.snippet.title,
+                artist: others && others.offline ? song.videoElement.snippet.channelTitle : song.snippet.channelTitle,
+                title: others && others.offline ? song.videoElement.snippet.title : song.snippet.title,
                 artwork: [{
-                    src: others?.offline ? song.videoElement.snippet.thumbnails.high.url : song.snippet.thumbnails.high.url,
+                    src: others && others.offline ? song.videoElement.snippet.thumbnails.high.url : song.snippet.thumbnails.high.url,
                     sizes: "96x96",
                     type: "image/png"
                 }]
@@ -206,24 +262,29 @@ export const PlayProvider = React.memo(({children}) => {
                 playAudio: () => playState.audioElement.play(),
                 pauseAudio: () => playState.audioElement.pause()
             }, playState.audioElement);
+            document.title = `${others && others.offline ? song.videoElement.snippet.title : song.snippet.title} - Kabeer's Music`
             await playState.audioElement.play();
             setLoading(false);
+            await SessionRecommendation.addWatch({
+                song: others && others.offline ? song.videoElement : song,
+                playerState: playerState
+            });
         } catch (e) {
+            DebugLog("An Error Occurred: ", e);
             setLoading(false);
-            enqueueSnackbar("Error: " + e.message, " Occurred at: ", e.lineNumber);
+            enqueueSnackbar("Error: " + e.message);
         }
     };
-
-    React.useEffect(() => {
-        DebugLog("PlayStateChanged");
-        if (playState.videoElement) {
-            setInterval(async () => {
-                console.log(rating);
-                // await UpdateRatingState({is_casting: rating.is_casting, explicit_rating: rating.explicit_rating, viewed_artist: rating.viewed_artist});
-                Log("Updated-Rating");
-            }, 7000);
-        }
-    }, [playState]);
+    // React.useEffect(() => {
+    //     DebugLog("PlayStateChanged");
+    //     // if (playState.videoElement) {
+    //     //     setInterval(async () => {
+    //     //         console.log(rating);
+    //     //         // await UpdateRatingState({is_casting: rating.is_casting, explicit_rating: rating.explicit_rating, viewed_artist: rating.viewed_artist});
+    //     //         Log("Updated-Rating");
+    //     //     }, 7000);
+    //     // }
+    // }, [playState]);
     return <PlayContext.Provider
         value={{playState, setPlayState, SkipSong, AutoPlay, PlaySong}}>{children}</PlayContext.Provider>;
 });
@@ -283,14 +344,14 @@ export const CastProvider = React.memo(({children}) => {
         Cast.socket.on(Events.DevicePeerConnectEvent, Cast.onPeerRequest);
         // Someone Accepted Request
         Cast.socket.on(Events.DeviceConnectAcceptEvent, async deviceId => {
-            await set(StorageIndex.castAcceptedDevices, [...await get(StorageIndex.castAcceptedDevices), deviceId]);
-            Log("Someone Accepted Your Request, Accepted Devices : ", await get(StorageIndex.castAcceptedDevices));
+            await set(storageIndex.castAcceptedDevices, [...await get(storageIndex.castAcceptedDevices), deviceId]);
+            Log("Someone Accepted Your Request, Accepted Devices : ", await get(storageIndex.castAcceptedDevices));
             Cast.onPeerAccept();
         });
         // Devices Updated
         Cast.socket.on(Events.DeviceListUpdate, async devices => {
             const deviceId = await Cast.info.getDeviceId();
-            await set(StorageIndex.castDevices, devices.filter(d => d !== deviceId));
+            await set(storageIndex.castDevices, devices.filter(d => d !== deviceId));
             Log("Cast Devices Updated: ", devices);
         });
     }, []);

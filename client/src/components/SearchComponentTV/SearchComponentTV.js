@@ -22,7 +22,8 @@ import {storageIndex} from "../../functions/Helper/storageIndex";
 import Slide from "@material-ui/core/Slide";
 import Grow from "@material-ui/core/Grow";
 import Log from "../../functions/Log";
-import {LoadingContext, PlayContext, SearchContext} from "../../Contexts";
+import {PlayContext, SearchContext} from "../../Contexts";
+import SessionRecommendation from "../../functions/SessionRecommendation";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -81,8 +82,7 @@ const SearchComponentTV = () => {
     const history = useHistory();
     const [query, setQuery] = React.useContext(SearchContext);
     const [open, setOpen] = React.useState(false);
-    const [, setLoading] = React.useContext(LoadingContext);
-    const {playState, setPlayState, PlaySong} = React.useContext(PlayContext);
+    const {PlaySong} = React.useContext(PlayContext);
     const [state, setState] = React.useState(null);
     const [predictions, setPredictions] = React.useState(null);
 
@@ -101,6 +101,7 @@ const SearchComponentTV = () => {
                 pathname: "search",
                 search: "?" + new URLSearchParams({q: query}).toString()
             });
+            await SessionRecommendation.addSearch(query);
         } catch (e) {
             Log("An Error Occurred", e.message);
         }

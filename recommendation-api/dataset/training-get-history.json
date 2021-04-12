@@ -1,0 +1,82 @@
+[
+  {
+    "user_id": "a8aa4c32-4e02-4fd6-b5b6-ade4543969d0",
+    "rating": "2.05698",
+    "song": {
+      "kind": "KabeersMusic#Song",
+      "etag": "9e2d0007-f398-4b63-af8c-ea609eb836b2",
+      "id": "6ONRf7h3Mdk",
+      "channelId": "UCtxdfwb9wfkoGocVUAJ-Bmg",
+      "snippet": {
+        "publishedAt": "2 years ago",
+        "title": "Travis Scott - SICKO MODE ft. Drake",
+        "description": "Directors: Dave Meyers and Travis Scott Producers: Nathan Scherrer for Freenjoy, inc, Sam Lecca Travis Scott online:u00a0...",
+        "channelTitle": "Travis Scott",
+        "channelId": "UCtxdfwb9wfkoGocVUAJ-Bmg",
+        "duration": {
+          "seconds": 323,
+          "timestamp": "5:23"
+        },
+        "views": 812637474,
+        "thumbnails": {
+          "default": {
+            "url": "https:\/\/i.ytimg.com\/vi\/6ONRf7h3Mdk\/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https:\/\/i.ytimg.com\/vi\/6ONRf7h3Mdk\/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https:\/\/i.ytimg.com\/vi\/6ONRf7h3Mdk\/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        }
+      }
+    },
+    "song_id": "6ONRf7h3Mdk"
+  },
+  {
+    "user_id": "a8aa4c32-4e02-4fd6-b5b6-ade4543969d0",
+    "rating": "1.17022",
+    "song": {
+      "kind": "KabeersMusic#Song",
+      "etag": "3682fc5f-1e4e-483a-914a-5a12517550f5",
+      "id": "2a8PgqWrc_4",
+      "channelId": "UCtxdfwb9wfkoGocVUAJ-Bmg",
+      "snippet": {
+        "publishedAt": "2 years ago",
+        "title": "Travis Scott - STARGAZING (Audio)",
+        "description": "(C) 2018 Epic Records, a division of Sony Music Entertainment.",
+        "channelTitle": "Travis Scott",
+        "channelId": "UCtxdfwb9wfkoGocVUAJ-Bmg",
+        "duration": {
+          "seconds": 273,
+          "timestamp": "4:33"
+        },
+        "views": 98701041,
+        "thumbnails": {
+          "default": {
+            "url": "https:\/\/i.ytimg.com\/vi\/2a8PgqWrc_4\/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https:\/\/i.ytimg.com\/vi\/2a8PgqWrc_4\/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https:\/\/i.ytimg.com\/vi\/2a8PgqWrc_4\/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        }
+      }
+    },
+    "song_id": "2a8PgqWrc_4"
+  }
+]

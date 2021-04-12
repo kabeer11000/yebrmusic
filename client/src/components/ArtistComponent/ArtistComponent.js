@@ -108,7 +108,7 @@ const ArtistComponent = ({history}) => {
                                 <ArrowBack/>
                             </IconButton>
                             <Typography variant="h6" style={{
-                                color: "#FFF"
+                                // color: "#FFF"
                             }}>
                                 {state.author.name}
                             </Typography>
@@ -142,7 +142,8 @@ const ArtistComponent = ({history}) => {
                     <Typography style={{
                         position: "absolute",
                         bottom: "0.5rem",
-                        width: "100%"
+                        width: "100%",
+                        color: "#FFF"
                     }} variant={"h3"} className={"text-truncate"}>{state.author.name}</Typography>
                 </Container>
             </CardActionArea>
@@ -150,7 +151,7 @@ const ArtistComponent = ({history}) => {
             <List>
                 <ListItem>
                     <ListItemText primary={state.lastUpdated}
-                                  secondary={`${state.views} followers,  ${state.estimatedItemCount} songs`}/>
+                                  secondary={`${state.views} listeners,  ${state.estimatedItemCount} audios`}/>
                     <ListItemSecondaryAction>
                         <IconButton style={{
                             width: "10vh",

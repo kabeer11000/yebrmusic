@@ -14,16 +14,41 @@ import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-expo
 import SongCard from "../SongCard/SongCard";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
+import {get, set} from "idb-keyval";
+import {storageIndex} from "../../functions/Helper/storageIndex";
 
 
 // Trending PL-DfNcB3lim9L-rrvhrR3AoFB9Sa-KoxW
 const TrendingArtists = () => {
     const [state, setState] = React.useState(null);
+    const [error, setError] = React.useState(false);
+
     React.useEffect(() => {
-        initAuth().then(token => comlinkWorker.fetch(endPoints.getTrendingArtistsRanked, {
-            headers: {"Authorization": `Bearer ${token}`}
-        }).then(setState));
+        const b = async () => comlinkWorker.fetch(endPoints.getTrendingArtistsRanked, {
+            headers: {"Authorization": `Bearer ${await initAuth()}`}
+        });
+        const a = async () => {
+            try {
+                if (!await get(storageIndex.trendingArtists.saveObject) || !(Date.now() - await get(storageIndex.trendingArtists.timeObject)) / (100 * 60) > 1) {
+                    setState(await b());
+                } else setState(await get(storageIndex.trendingArtists.saveObject));
+            } catch (e) {
+                setError(!error);
+            }
+        };
+        a();
     }, []);
+    React.useEffect(() => {
+        const a = async () => {
+            if (!state) return;
+            const saved = await get(storageIndex.trendingArtists.saveObject);
+            if (!saved || saved.etag !== state.etag) {
+                await set(storageIndex.trendingArtists.timeObject, Date.now());
+                await set(storageIndex.trendingArtists.saveObject, state);
+            }
+        };
+        a();
+    }, [state]);
     const {PlaySong} = React.useContext(PlayContext);
     const isTv = React.useContext(isTvContext);
 
@@ -90,6 +115,19 @@ const TrendingArtists = () => {
                     <Divider/>
                 </React.Fragment>) : null
                 }
+                {error ? <div className="Preloader text-center" style={{
+                    width: "10rem",
+                    height: "10rem",
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)"
+                }}>
+                    <img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}
+                         alt={"Kabeers Music Logo"}/>
+
+                </div> : null}
+
                 {/*<Grid container spacing={2}>*/}
                 {/*    {state && state.artists ? state.artists.map((artist, index) => <Grid key={index} item xs={6}*/}
                 {/*                                                                         sm={2}><SongCard2*/}

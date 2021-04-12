@@ -1,7 +1,7 @@
 import React from "react";
 import "./CustomBottomNavigation.css";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import {Explore, GetApp, Home, TrendingUp} from "@material-ui/icons";
+import {Explore, GetApp, Home, Subscriptions} from "@material-ui/icons";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import AppBar from "@material-ui/core/AppBar";
@@ -56,9 +56,12 @@ const CustomBottomNavigation = () => {
 				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/downloads"}
 										label="Downloads" value="downloads"
 										icon={<GetApp/>}/>
-				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/trending"}
-										label="Trending" value="trending"
-										icon={<TrendingUp/>}/>
+				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/artists"}
+										label="Artists" value="artists"
+										icon={<Subscriptions/>}/>
+				{/*<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/trending"}*/}
+				{/*						label="Trending" value="trending"*/}
+				{/*						icon={<TrendingUp/>}/>*/}
 			</BottomNavigation>
 		</AppBar>
 	);

@@ -21,7 +21,7 @@
     "morgan": "~1.9.1",
     "socket.io": "^2.3.0",
     "uuid": "^8.3.2",
-    "yt-search": "^2.5.2",
+    "yt-search": "^2.7.5",
     "ytdl-core": "^4.5.0",
     "ytfps": "^1.0.4",
     "ytpl": "^2.0.4"
