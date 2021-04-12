@@ -1,8 +1,9 @@
 //export const hostName = `${window.location.protocol}//${window.location.host}`;
-export const hostName = `${window.location.protocol}//${window.location.hostname}:9000`;
-const proxy = "http://localhost:8080";
-const CastServer = `http://localhost:3240`
-const DataCollection = `http://localhost:80`;
+
+export const hostName = window.__kn.music.config.hosts['api'] || `${window.location.protocol}//${window.location.hostname}:9000`;
+const proxy = window.__kn.music.config.hosts['proxy'] || "http://localhost:8080";
+const CastServer = window.__kn.music.config.hosts['cast-server'] || `http://localhost:3240`
+const DataCollection = window.__kn.music.config.hosts['data-collection-server'] || `http://localhost:80`;
 
 const endPoints = {
     castServer: CastServer,

@@ -88,6 +88,12 @@
                     "debugging-enabled": true
                 },
                 config: {
+                    hosts: {
+                        api: "http://localhost:9000",
+                        "data-collection-server": `http://localhost:80`,
+                        "cast-server": `http://localhost:3240`,
+                        proxy: "http://localhost:8080"
+                    },
                     recom: {
                         last_session_carry_recom_length: 5
                     }
