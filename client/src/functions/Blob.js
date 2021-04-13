@@ -1,10 +1,10 @@
-import endPoints from "../api/endpoints/endpoints";
-import {initAuth} from "./auth";
-import Log from "./Log";
+import endPoints from "../api/EndPoints/EndPoints";
+import {initAuth} from "./Auth";
+import {DebugLog} from "./Log";
 
 
-export const fetchProxiedBlob = async (uri) => {
-    Log("Fetching: ", uri);
+export const FetchBlob = async (uri) => {
+    DebugLog("Fetching: ", uri);
     try {
         const token = await initAuth();
         return fetch(uri, {

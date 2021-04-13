@@ -1,16 +1,14 @@
-import {fetchProxiedBlob} from "./getBlob";
-import endPoints from "../api/endpoints/endpoints";
-import {initAuth} from "./auth";
+import {FetchBlob} from "./Blob";
+import endPoints from "../api/EndPoints/EndPoints";
+import {initAuth} from "./Auth";
 import {v4} from "uuid";
-import * as Comlink from "comlink";
+import {comLinkWorker as WebWorker} from "./Worker/worker-export";
 
-
-const WebWorker = Comlink.wrap(new Worker("./comlink-worker.js"));
 export const DownloadSong = async ({song, uri, rating}) => WebWorker.indexedDB.songs.put({
     id: song.id,
     blobs: {
-        thumbnail: await fetchProxiedBlob(endPoints.proxyURI(`https://i.ytimg.com/vi/${song.id}/hqdefault.jpg`)),
-        audio: await fetchProxiedBlob(uri)
+        thumbnail: await FetchBlob(endPoints.proxyURI(`https://i.ytimg.com/vi/${song.id}/hqdefault.jpg`)),
+        audio: await FetchBlob(uri)
     },
     valid: true,
     time: Date.now(),

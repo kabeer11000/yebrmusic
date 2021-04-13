@@ -1,165 +1,133 @@
-import endPoints, {hostName} from "../../api/endpoints/endpoints";
-import {storageIndex} from "../Helper/storageIndex";
-import uniqid from "../Helper/randomKey";
-import {createWorker} from "../Worker/createWorker";
-import * as Comlink from "comlink";
-import {get} from "idb-keyval";
-//import Peer from "peerjs";
-//import P2P from "socket.io-p2p";
-//import Peer from 'peerjs';
-const comlinkWorker = Comlink.wrap(new Worker("./comlink-worker.js"));
+import {get, set} from "idb-keyval";
+import {storageIndex} from "../Helper/StorageIndex";
+import io from "socket.io-client";
+import endPoints from "../../api/EndPoints/EndPoints";
+import {comLinkWorker} from "../Worker/worker-export";
+import {Cookies} from "../Cookies";
+// import endPoints from "../../api/EndPoints/EndPoints";
 
-const fetchWorker = createWorker(e => {
-	const s = JSON.parse(e.data);
-	fetch(s.url, s).then(e => e.json()).then(e => postMessage(JSON.stringify(e)));
-});
+const user = get(storageIndex.cookies.UserData);
+export const Events = {
+	RegisterDevice: "RegisterDevice",
+	DeviceListUpdate: "DevicesListUpdateEvent",
 
-const prefix = {
-	client2server: "___CLIENT---SERVER___",
-	client: "___CLIENT___",
-};
-/*
-const fetchWorker = createWorker((e) => {
-	this.postMessage(async () => await fetch(e.data.url, e.data).then(value => value.json()));
-});
+	DevicePeerConnectEvent: "DeviceConnectEvent",
+	DeviceConnectAcceptEvent: "DeviceConnectAcceptEvent",
 
-fetchWorker.onmessage = function (e) {
-	console.log(e.data); // HELLO FROM AN INLINE WORKER!
+	DevicePlayEvent: "DevicePlayEvent",
+	DevicePauseEvent: "DevicePauseEvent",
 };
-fetchWorker.postMessage("hello from an inline fetchWorker!");
-*/
-const userId = get(storageIndex.cookies.UserData).then(d => d.user_id);
-const deviceId = localStorage.getItem(storageIndex.deviceEtag) ? localStorage.getItem(storageIndex.deviceEtag) : null;
-//const DCS = socketIOClient(`${hostName}?userId=${userId}&deviceId=${deviceId}`, {headers: {Authorization: "Bearer authorization_token_here"}});
-export const castEvent = new EventSource(endPoints.castURL(userId, deviceId));
-export const castEnabled = localStorage.getItem(storageIndex.castEnabled);
-castEvent.addEventListener(`pingtest-${deviceId}`, (e) => {
-});
-castEvent.onmessage = m => console.log(m);
-castEvent.onerror = m => console.log(m);
-castEvent.onopen = m => console.log(m);
-/*
-DCS.on(`deviceConnectionTest-5f6d20d5c41894`, e => {
-	console.log('DCS');
-	DCS.emit(`deviceConnectionReply-5f6d20d5c41894`, e);
-});
-DCS.on(`socketTest-5f6d20d5c41894`, d => {
-	console.log(d);
-});
-DCS.on("connect", d => {
-	console.log(d);
-});
 
- */
-const internal = {
-	pingReturn: async () => fetch(endPoints.castPingTest, {
-		method: "POST",
-		headers: new Headers({
-			deviceid: deviceId,
-			userid: await userId
-		})
-	})
-};
-export const setCastDeviceUpdateListener = async (method, callback = () => null) => {
-	method ?
-		(castEvent.addEventListener(`deviceListUpdate-${await userId}`, (e) => e.origin !== hostName ? null :
-			(localStorage.setItem(storageIndex.castDevices, JSON.stringify(JSON.parse(e.data).castDevices.filter(e => e !== deviceId))), console.log(e), callback(e)))) :
-		(castEvent.removeEventListener(`deviceListUpdate-${await userId}`, callback));
-};
-export const setCastDeviceRemoveListener = async (method, callback = () => null) => {
-	return method ?
-		(castEvent.addEventListener(`devicePlayRemoveListener-${await userId}-${deviceId}`, (e) => e.origin !== hostName ? null : (localStorage.removeItem(storageIndex.currentlyCasting), callback(e)))) :
-		(castEvent.removeEventListener(`devicePlayRemoveListener-${await userId}-${deviceId}`, callback));
-};
-export const setCastDevicePlayListener = async (method, callback = () => null) => {
-	return method && localStorage.getItem(storageIndex.castEnabled) !== null ?
-		(castEvent.addEventListener(`devicePlay-${await userId}-${deviceId}`, async (e) => e.origin !== hostName ? null : ((noRepeatFunctions.getNoRepeatId(e.timeStamp) ? callback(e) : null), noRepeatFunctions.setNoRepeatId(e.timeStamp)), localStorage.setItem(storageIndex.currentlyCasting, true))) :
-		(castEvent.removeEventListener(`devicePlay-${await userId}-${deviceId}`, callback));
-};
-export const registerDeviceCast = async () => {
-	fetchWorker.json({
-		url: endPoints.updateActiveDevices,
-		method: "POST",
-		headers: {
-			deviceid: localStorage.getItem(storageIndex.deviceEtag),
-			userdata: await userId,
-		},
-		body: {
-			deviceid: localStorage.getItem(storageIndex.deviceEtag),
-			userdata: await userId,
-		}
-	});
-	fetchWorker.onmessage = (value) => {
-		console.log(value.data);
-		fetchWorker.end();
-	};
+// const localConnection = new RTCPeerConnection();
+//
+// const sendChannel = localConnection.createDataChannel("sendChannel");
+// sendChannel.onopen = (d) => console.log("onopen", d);
+// sendChannel.onclose = (d) => console.log("onclose", d);
+// sendChannel.ondatachannel = (d) => console.log("ondatachannel", d);
+//
 
-};
-export const addDeviceEtag = async () => {
-	if (!localStorage.getItem(storageIndex.deviceEtag)) localStorage.setItem(storageIndex.deviceEtag, uniqid());
-};
-export const unRegisterDevice = async (remoteId) => {
-	localStorage.removeItem(storageIndex.castDevices);
-	localStorage.removeItem(storageIndex.currentlyCasting);
-	localStorage.removeItem(storageIndex.castPreventRepeat);
-	await fetch(endPoints.unregisterDevice, {
-		method: "POST",
-		headers: new Headers({
-			deviceid: remoteId ? remoteId : deviceId,
-			userdata: await userId,
-		})
-	});
-	return true;
-};
-export const sendCast = async (video, deviceId) => {
-	fetchWorker.postMessage(JSON.stringify({
-		url: endPoints.sendCastPlay,
-		method: "POST",
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-			remotedeviceid: deviceId,
-			deviceid: JSON.parse(localStorage.getItem(storageIndex.castDevices))[0],
-			userdata: await get(storageIndex.cookies.UserData),
-			videoelement: JSON.stringify(video)
-		},
-		body: {}
-	}).toString());
-	fetchWorker.onmessage = (value) => (localStorage.setItem(storageIndex.castingTo, deviceId), localStorage.setItem(storageIndex.currentlyCasting, true));
-	return true;
-};
-export const sendPauseCast = async (deviceId) => {
-	await fetch(endPoints.sendCastPause, {
-		method: "POST",
-		headers: new Headers({
-			"Content-Type": "application/x-www-form-urlencoded",
-			remotedeviceid: deviceId,
-			deviceid: localStorage.getItem(storageIndex.deviceEtag), //JSON.parse(localStorage.getItem(storageIndex.castDevices))[0],
-			userdata: await get(storageIndex.cookies.UserData),
-		}),
-		body: {}
-	}).then(value => console.log("Cast Paused", value.json()), localStorage.removeItem(storageIndex.currentlyCasting));
-	return true;
-};
-export const getCastDevices = () => JSON.parse(localStorage.getItem(storageIndex.castDevices)) || [];
-export const currentlyCasting = localStorage.getItem(storageIndex.currentlyCasting) !== null;
-export const getDeviceId = () => deviceId;
-export const noRepeatFunctions = {
-	setNoRepeatId: (id) => localStorage.setItem(storageIndex.castPreventRepeat, id),
-	ggetNoRepeatId: e => {
-		const t = localStorage.getItem(storageIndex.castPreventRepeat);
-		return null === t || t !== e;
+// const accessToken = JSON.parse(cookies.getCookie(S.cookies.Tokens))["access_token"];
+const Tokens = comLinkWorker.JSON.parse(Cookies.getCookie(storageIndex.cookies.Tokens));
+const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoicmVmcmVzaF90b2tlbiIsImFwcF9uYW1lIjoiS2FiZWVycyBNdXNpYyBBcHAiLCJhcHBfaWQiOiJTNTY1ZHM2ODg3ZGY2NDZrNVk0ZjU2SU9pRFd4UlhTODQwbG5ubUQiLCJzY29wZSI6Im9wZW5pZHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpnZXRTb25nfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2OnNlYXJjaHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpmZWVkfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2Omhpc3RvcnkucmVhZHdyaXRlIiwianRpIjoiODZmOTVkMWYtMzI0OS00NDM4LWFjZDctMjM2YTBlNTQ4MWJkIiwiaWF0IjoxNjEwNjg3NjMyLCJleHAiOjE2MTE1NTE2MzJ9.pjCUryvehhrUzPeb9htAuFZEV7c85lfKXRl5CpBdiMmNfY-isqhwQq8wnqw06DuJpHIFcDlYOrkJUxQHJ-dcIhlIml0oA6d_xJ_ZrcxetRvquZJeI0wSvhFgE1s2j_cVZw40vjgMlvma9dewouVGyAPwW0cizz4mtn1aS6dO_zI";
+const castEnabled = true;
+const deviceId = localStorage.getItem(storageIndex.deviceEtag);
+
+const socket = io.connect(endPoints.castServer || "localhost:9000");
+
+const RegisterDevice = async () => socket.emit(Events.RegisterDevice, {
+	token: (await Tokens)['access_token'],
+	id_token: (await Tokens)['id_token'],
+	deviceId: deviceId
+});
+const ConnectToPeer = async (id) => socket.emit(Events.DevicePeerConnectEvent, {
+	// token: await Tokens['access_token'],
+	remoteId: id
+});
+const SendPlayCast = async (id, playState) => socket.emit(Events.DevicePlayEvent, {
+	// token: await Tokens['access_token'],
+	remoteId: id,
+	deviceId: deviceId,
+	playState: playState
+});
+const SendPauseCast = async (id) => socket.emit(Events.DevicePauseEvent, {
+	// token: await Tokens['access_token'],
+	remoteDeviceId: id,
+});
+const PeerRequestAccept = async (id) => socket.emit(Events.DeviceConnectAcceptEvent, {
+	token: accessToken,
+	remoteDeviceId: id
+});
+export const Cast = {
+	onPeerRequest: () => {
+		//	Call a dialog or something in player
 	},
-	getNoRepeatId: (e) => true
+	onPeerAccept: () => {
+		//	Accepted Your Cast Request
+	},
+	onPlayRequest: (d) => {
+		console.log("AAAAAA");
+	},
+	onPauseRequest: () => {
+	},
+	controls: {
+		SendPauseCast,
+		SendPlayCast
+	},
+	socket: socket,
+	peers: {
+		ConnectToPeer,
+		PeerRequestAccept
+	},
+	devices: {
+		RegisterDevice,
+	},
+	set: {
+		setPlayHandler: (f) => {
+			// Someone Wants To Play
+			socket.on(Events.DevicePlayEvent, async (d) => {
+				return d.remoteId === deviceId ? f(d) : null;
+				// const acceptedDevices = await get(S.castAcceptedDevices) || [];
+				// if (acceptedDevices.includes(d.from) && d.remoteDeviceId === deviceId) f(d);
+			});
+		},
+		setPauseHandler: (f) => {
+			// Someone Wants To Pause
+			socket.on(Events.DevicePlayEvent, async (d) => {
+				return d.remoteDeviceId === deviceId ? f(d) : null;
+				// const acceptedDevices = await get(S.castAcceptedDevices) || [];
+				// if (acceptedDevices.includes(d.from) && d.remoteDeviceId === deviceId) f(d);
+			});
+		},
+		setOnPeerRequestHandler: (f) => {
+			// Someone Wants To Connect
+			socket.on(Events.DevicePeerConnectEvent, async (d) => {
+				console.log(d);
+				return d === deviceId ? f(d) : null;
+			});
+		},
+
+	},
+	info: {
+		getPeerDevices: async () => get(storageIndex.castDevices),
+		getAcceptedPeerDevices: async () => get(storageIndex.castAcceptedDevices),
+		getDeviceId: async () => deviceId
+	}
 };
-export const castSnackbar = {
-	setSnackbarKey: key => localStorage.setItem(storageIndex.castSnackbarKey, key),
-	getSnackbarKey: () => localStorage.getItem(storageIndex.castSnackbarKey),
-	removeSnackbarKey: () => localStorage.removeItem(storageIndex.castSnackbarKey),
+window.onbeforeunload = () => {
+	set(storageIndex.castDevices, []);
 };
-export const CastAfterAuthFunctions = async () => {
-	localStorage.removeItem(storageIndex.currentlyCasting);
-	localStorage.removeItem(storageIndex.castPreventRepeat);
-	addDeviceEtag()
-		.then((localStorage.getItem(storageIndex.castEnabled) !== null ? registerDeviceCast().then(localStorage.setItem(storageIndex.castEnabled, true)) : null)).catch(e => console.log(e));
-	if (localStorage.getItem(storageIndex.castEnabled) === null) localStorage.setItem(storageIndex.castEnabled, true);
+
+export const _Cast = ({onPlay}) => {
+	const a = ({
+		...Cast,
+		onPlayRequest: onPlay
+	});
+	// Someone Wants To Play
+	socket.on(Events.DevicePlayEvent, a.onPlayRequest);
+	// Someone Wants To Pause
+	socket.on(Events.DevicePlayEvent, a.onPauseRequest);
+	// Someone Wants To Connect
+	socket.on(Events.DevicePeerConnectEvent, a.onPeerRequest);
+
+	return a;
 };

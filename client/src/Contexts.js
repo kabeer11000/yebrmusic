@@ -1,18 +1,17 @@
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
-import {getSong, getSongDetails} from "./functions/songs";
-import addMediaSession from "./functions/Helper/addMediaSession";
-import {Cast, Events} from "./functions/Cast/NewNewCast";
-import endPoints from "./api/endpoints/endpoints";
+import {getSong, getSongDetails} from "./functions/SongsUtility";
+import {AddMediaSession} from "./functions/Helper/MediaSession";
+import {Cast, Events} from "./functions/Cast/Cast";
+import endPoints from "./api/EndPoints/EndPoints";
 import {useSnackbar} from "notistack";
 import {get, set} from "idb-keyval";
-import {storageIndex} from "./functions/Helper/storageIndex";
+import {storageIndex} from "./functions/Helper/StorageIndex";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 import {comLinkWorker} from "./functions/Worker/worker-export";
 import Log, {DebugLog} from "./functions/Log";
 import SessionRecommendation from "./functions/SessionRecommendation";
 
-// const comlinkWorker = Comlink.wrap(new Worker("./comlink-worker.js"));
 export const CastDialogContext = React.createContext(false);
 export const CastDialogProvider = ({children}) => {
     const [a, b] = React.useState(false);
@@ -39,7 +38,6 @@ export const DrawerProvider = React.memo(({children}) => {
     const [drawer, setDrawer] = React.useState(false);
     return <DrawerContext.Provider value={[drawer, setDrawer]}>{children}</DrawerContext.Provider>;
 });
-//window.__kn.music["data-collection"].token.access_token
 export const PlayerContext = React.createContext({
     Dialog: false,
     MiniPlayer: false
@@ -250,7 +248,7 @@ export const PlayProvider = React.memo(({children}) => {
                 Dialog: !tv,
                 MiniPlayer: tv
             });
-            await addMediaSession({
+            await AddMediaSession({
                 artist: others && others.offline ? song.videoElement.snippet.channelTitle : song.snippet.channelTitle,
                 title: others && others.offline ? song.videoElement.snippet.title : song.snippet.title,
                 artwork: [{

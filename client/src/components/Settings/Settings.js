@@ -10,7 +10,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import FeedbackButton from "../FeedBack/FeedBack";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import {useDialog} from "muibox";
 import TextField from "@material-ui/core/TextField";
 import AppBar from "@material-ui/core/AppBar";

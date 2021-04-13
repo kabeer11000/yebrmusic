@@ -96,7 +96,7 @@ const App = () => {
                                                     <Route exact path={"/discover"} component={Discover}/>
                                                     {/*<Route exact path={"/history"} component={HistoryComponent}/>*/}
                                                     {/*<Route exact path={"/charts"} component={PlayLists}/>*/}
-                                                    <Route exact path={"/artist"} component={ArtistComponent}/>
+                                                    <Route exact path={"/artist/:id"} component={ArtistComponent}/>
                                                     {/*<Route exact path={"/TestArtistComponent"}*/}
                                                     {/*       component={TestArtistComponent}/>*/}
                                                     {/*Trending*/}

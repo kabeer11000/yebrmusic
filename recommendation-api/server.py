@@ -46,9 +46,6 @@ def _rank_candidates_with_knn():
         song = candidates[candidates['id'] == i]
         if not song.empty:
             response.append(json.loads(song['json'].values[0]))
-            # if len(song):
-            #     song = song.drop_duplicates()
-            # response.append(json.loads(song['json'].item()))
 
     res = jsonify(response)
     res.headers.add("Access-Control-Allow-Origin", "*")

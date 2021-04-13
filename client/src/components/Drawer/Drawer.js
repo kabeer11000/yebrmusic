@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import {AccountCircle, Favorite, GetApp, History, Home, Settings} from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import {FocusNode} from "@please/lrud";
 import {DrawerContext, isTvContext} from "../../Contexts";
 import {get} from "idb-keyval";
@@ -163,6 +163,11 @@ const DrawerComponent = ({children}) => {
 				disableSwipeToOpen={tv}
 				onClose={handleDrawerToggle}
 				onOpen={handleDrawerToggle}
+				PaperProps={{
+					style: {
+						width: "16rem"
+					}
+				}}
 				ModalProps={{keepMounted: true}}>
 				<React.Fragment>
 					<List className={classes.root}>

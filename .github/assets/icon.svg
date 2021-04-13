@@ -8,7 +8,7 @@
             <stop offset="1" stop-color="#4dd8ef"/>
         </linearGradient>
         <filter id="b" x="0" y="0" width="65" height="65" filterUnits="userSpaceOnUse">
-            <feOffset dy="3"/>
+            <feOffset dy="3" input="SourceAlpha"/>
             <feGaussianBlur stdDeviation="3" result="c"/>
             <feFlood flood-opacity="0.161"/>
             <feComposite operator="in" in2="c"/>

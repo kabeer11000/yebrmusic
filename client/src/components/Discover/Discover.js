@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import SongCard from "../SongCard/SongCard";
 import Preloader from "../Preloader/Preloader";
 import {get, set} from "idb-keyval";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import {Link} from "react-router-dom";

@@ -20,13 +20,14 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Card from "@material-ui/core/Card";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import Slide from "@material-ui/core/Slide";
-import {initAuth} from "../../functions/auth";
+import {initAuth} from "../../functions/Auth";
 import {useSnackbar} from "notistack";
 import {get, set} from "idb-keyval";
-import {storageIndex} from "../../functions/Helper/storageIndex";
-import {withRouter} from "react-router-dom";
-import endPoints from "../../api/endpoints/endpoints";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
+import {useParams, withRouter} from "react-router-dom";
+import endPoints from "../../api/EndPoints/EndPoints";
 import {comLinkWorker} from "../../functions/Worker/worker-export";
+import {DebugLog} from "../../functions/Log";
 
 const ArtistComponent = ({history}) => {
     const [state, setState] = useState(null);
@@ -38,14 +39,16 @@ const ArtistComponent = ({history}) => {
     });
 
     const [error, setError] = React.useState(false);
+    const {id} = useParams();
     useEffect(() => {
         const LoadArtist = async () => {
             try {
-                const id = new URLSearchParams(window.location.search).get("id")
+                // const id = new URLSearchParams(window.location.search).get("id")
+                if (!id) return;
                 const saved = await get(storageIndex.artists.saveObject(id));
                 if (!saved || saved.etag !== state.etag) {
                     const token = await initAuth();
-                    const response = await comLinkWorker.fetch(endPoints.getArtistInfo(new URLSearchParams(window.location.search).get("id")), {
+                    const response = await comLinkWorker.fetch(endPoints.getArtistInfo(id), {
                         headers: {Authorization: `Bearer ${token}`},
                     })
                     setState(response);
@@ -57,7 +60,7 @@ const ArtistComponent = ({history}) => {
                     setLoadedLength(loadedLength + 4);
                 }
             } catch (e) {
-                console.log(e);
+                DebugLog(e);
                 enqueueSnackbar("Failed to Load Artist");
                 setError(true);
             }

@@ -5,8 +5,8 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
-import {initAuth} from "../../functions/auth";
-import endPoints from "../../api/endpoints/endpoints";
+import {initAuth} from "../../functions/Auth";
+import endPoints from "../../api/EndPoints/EndPoints";
 import {Button} from "@material-ui/core";
 import {pure} from "recompose";
 

@@ -6,14 +6,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import {ArrowBack} from "@material-ui/icons";
 import InputBase from "@material-ui/core/InputBase";
-import {SearchYoutube} from "../../functions/suggestSearch";
+import {SearchYoutube} from "../../functions/Search";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {Link, useHistory} from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
-import {getSong, SuggestOfflineSongs} from "../../functions/songs";
+import {getSong, SuggestOfflineSongs} from "../../functions/SongsUtility";
 import {Slide} from "@material-ui/core";
 import SkeletonList from "../SkeletonList/SkeletonList";
 import Divider from "@material-ui/core/Divider";
@@ -116,7 +116,7 @@ const SearchResultComponent = () => {
                                     <React.Fragment>
                                         {listItems.accounts.map((value, index) => (
                                             <ListItem component={Link} button key={index}
-                                                      to={`/artist?id=${value.url.split("/").slice(-1)[0]}`}>
+                                                      to={`/artist/${value.url.split("/").slice(-1)[0]}`}>
                                                 <ListItemIcon>
                                                     <Avatar alt={value.title} src={value.image}/>
                                                 </ListItemIcon>

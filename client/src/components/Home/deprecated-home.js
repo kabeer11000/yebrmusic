@@ -1,13 +1,13 @@
 import React, {useContext} from "react";
 import "./home.css";
-import endPoints from "../../api/endpoints/endpoints";
+import endPoints from "../../api/EndPoints/EndPoints";
 import SongCard from "../SongCard/SongCard.lazy";
-import {initAuth} from "../../functions/auth";
+import {initAuth} from "../../functions/Auth";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Preloader from "../Preloader/Preloader";
 import Grow from "@material-ui/core/Grow";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import Avatar from "@material-ui/core/Avatar";
 import Chip from "@material-ui/core/Chip";
 import {Done} from "@material-ui/icons";
@@ -120,7 +120,7 @@ const HomeComponent = () => {
                             <Grow in={true} key={index}>
                                 <Chip
                                     component={Link}
-                                    to={"/artist?id=" + artist.id}
+                                    to={"/artist/" + artist.id}
                                     avatar={<Avatar>{artist.name.charAt(0)}</Avatar>}
                                     label={artist.name}
                                     clickable

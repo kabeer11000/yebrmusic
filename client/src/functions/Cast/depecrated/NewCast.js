@@ -1,5 +1,5 @@
 import {get, set} from "idb-keyval";
-import {storageIndex as S} from "../Helper/storageIndex";
+import {storageIndex as S} from "../Helper/StorageIndex";
 import io from "socket.io-client";
 
 const user = get(S.cookies.UserData);

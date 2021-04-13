@@ -20,7 +20,7 @@ import {
     VolumeUp,
 } from "@material-ui/icons";
 import Replay10Icon from "@material-ui/icons/Replay10";
-import {deleteDownloadedSong, DownloadSong, isOfflineAvailable} from "../../functions/songs";
+import {deleteDownloadedSong, DownloadSong, isOfflineAvailable} from "../../functions/SongsUtility";
 import CustomSlider from "./CustomSlider";
 import {useSnackbar} from "notistack";
 import ComingNext from "./ComingNext/ComingNext";
@@ -227,7 +227,7 @@ const Player = () => {
                             {/*}}><Grade/></IconButton>*/}
                             <IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
                             <IconButton
-                                onClick={() => navigator.onLine ? (history.push(`/artist?id=${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
+                                onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
                                 <AccountCircle/>
                             </IconButton>
                         </div>

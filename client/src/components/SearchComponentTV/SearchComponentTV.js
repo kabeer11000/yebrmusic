@@ -1,7 +1,7 @@
 import React from "react";
 import "./SearchComponentTV.css";
-import {SearchYoutube, SuggestSearch} from "../../functions/suggestSearch";
-import {downloadsToPlaylist, getSong, SuggestOfflineSongs} from "../../functions/songs";
+import {SearchYoutube, SuggestSearch} from "../../functions/Search";
+import {downloadsToPlaylist, getSong, SuggestOfflineSongs} from "../../functions/SongsUtility";
 import {useHistory} from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -18,7 +18,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import Container from "@material-ui/core/Container";
 import SongCard from "../SongCard/SongCard.lazy";
 import {FocusNode} from "@please/lrud";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import Slide from "@material-ui/core/Slide";
 import Grow from "@material-ui/core/Grow";
 import Log from "../../functions/Log";

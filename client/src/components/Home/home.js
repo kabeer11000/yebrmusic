@@ -1,8 +1,8 @@
 import React from "react";
 import {isTvContext, PlayContext} from "../../Contexts";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
-import endPoints from "../../api/endpoints/endpoints";
-import {initAuth} from "../../functions/auth";
+import endPoints from "../../api/EndPoints/EndPoints";
+import {initAuth} from "../../functions/Auth";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
 import {Link} from "react-router-dom";
@@ -13,7 +13,7 @@ import Container from "@material-ui/core/Container";
 import SongCard from "../SongCard/SongCard";
 import Preloader from "../Preloader/Preloader";
 import {get, set} from "idb-keyval";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 import Divider from "@material-ui/core/Divider";
 import Discover from "../Discover/Discover";
 import Paper from "@material-ui/core/Paper";
@@ -40,7 +40,7 @@ const ArtistsSlider = () => {
                         <Grow in={true} key={index}>
                             <Chip
                                 component={Link}
-                                to={"/artist?id=" + artist.id}
+                                to={"/artist/" + artist.id}
                                 avatar={<Avatar>{artist.name.charAt(0)}</Avatar>}
                                 label={artist.name}
                                 clickable

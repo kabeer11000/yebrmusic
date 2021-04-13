@@ -1,4 +1,4 @@
-import {storageIndex as S} from "./Helper/storageIndex";
+import {storageIndex as S} from "./Helper/StorageIndex";
 
 export const Device = {
     getId: () => {

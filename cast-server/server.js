@@ -1,20 +1,18 @@
 require("dotenv").config({});
 const httpServer = require("http").createServer();
-const io = require("socket.io")(httpServer, {
-    serveClient: true,
+const jwt = require("jsonwebtoken");
+const keys = require("./keys");
 
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
-        credentials: true
-    },
-    allowEIO3: true,
-});
-
-Set.prototype.find = function (cb) {
-    for (const e of this) if (cb(e)) return e;
-    return undefined;
-};
+/**
+ * TODO Add new cast-server scope to KabeerIdentityPlatform
+ * @type {array}
+ * @const
+ */
+const RequiredScopes = []; // [`${keys.auth.public}:castplay`, `${keys.auth.public}:castjoin`];
+/**
+ * @type {object}
+ * @const
+ */
 const Events = {
     RegisterDevice: "RegisterDevice",
     DeviceListUpdate: "DevicesListUpdateEvent",
@@ -25,77 +23,138 @@ const Events = {
     DevicePlayEvent: "DevicePlayEvent",
     DevicePauseEvent: "DevicePauseEvent"
 };
-// const OAuthProvider = "https://kabeers-auth-server.herokuapp.com/auth/oauth/v2";
-// const OAuthProviderFrontend = "http://localhost:3002/auth/oauth/v2";
-
-/*
-			const decoded = await jwt.verify(token, keys.KabeerAuthPlatform_Public_RSA_Key, {
-				algorithms: "RS256"
-			});
-
+/**
+ * @description determine if an array contains one or more items from another array.
+ * @param {array} haystack - the array to search.
+ * @param {array} arr - the array providing items to check for in the haystack.
+ * @return {boolean} true|false if haystack contains at least one item from arr.
  */
+// const CheckScopes = (haystack, arr) => arr.some(v => haystack.includes(v));
+const CheckScopes = (haystack, arr) => arr.every(v => haystack.includes(v));
+/**
+ * @type {object}
+ * @const
+ */
+const Rooms = {};
+/**
+ * @name RegisterDevice
+ * @description:
+ * Verifies AccessToken and IdToken
+ * then assign user to an existing room or create a new room.
+ * then Broadcast's Events.DeviceListUpdateEvent
+ *
+ * RoomId is equal to user's id ( One Room Per Account )
+ * Cast between device's logged-in to one account
+ *
+ * @param {object} socket - Socket Object.
+ * @param {object} config - Config Object.
+ * @param {string} config.token - Access Token.
+ * @param {string} config.id_token - ID Token Token.
+ * @param {string} config.deviceId - Client Device Id.
 
-const AppState = [];
-const RegisterDevice = async (socket, {token, user, deviceId}) => {
-    /*
-    Storage mai Socket id say save kar raha hu
-    individual Socket kay liay data
-     */
-    if (!deviceId || !user || !token) return;
-    const roomId = user.user_id;
-    const room = AppState.find(room => room.user.user_id === roomId);
-    const roomStateIndex = AppState.findIndex(room => room.user.user_id === roomId);
-    // const room = storage.findOne(roomId);
-    if (roomStateIndex > -1) {
-        // console.log("if", room, roomStateIndex, roomId)
-        AppState[roomStateIndex] = {
+ * @return {null}
+ */
+const RegisterDevice = async (socket, {token, deviceId, id_token}) => {
+    if (!deviceId || !id_token || !token) return socket.disconnect(true, 'Parameter\'s Missing');
+    try {
+        const decoded = await jwt.verify(token, keys.KabeerAuthPlatform_Public_RSA_Key, {algorithms: "RS256"});
+        if (!CheckScopes(decoded.scope.split("|"), RequiredScopes)) return socket.disconnect(true, 'Invalid ACCESS_TOKEN scope');
+
+        const user = await jwt.verify(id_token, keys.KabeerAuthPlatform_Public_RSA_Key, {algorithms: "RS256"});
+        if (decoded.type !== "access_token") return socket.disconnect(true, 'Invalid ACCESS_TOKEN');
+        if (user.type !== "id_token") return socket.disconnect(true, 'Invalid ID_TOKEN');
+        if (decoded.sub !== user.user_id) return socket.disconnect(true, 'Token\'s provided don\'t match');
+
+        const roomId = decoded.sub;
+        const room = Rooms[roomId];
+        if (!room) {
+            Rooms[roomId] = ({
+                user: user,
+                tokens: new Set([token]),
+                devices: new Set([deviceId]),
+            });
+        } else Rooms[roomId] = ({
             user: user,
             tokens: new Set([...room.tokens, token]),
             devices: new Set([...room.devices, deviceId]),
-            sockets: new Set([...room.sockets, socket.id])
-        };
-    } else {
-        // console.log("Else", room, roomStateIndex, roomId)
-        AppState.push({
-            user: user,
-            tokens: new Set([token]),
-            devices: new Set([deviceId]),
-            sockets: new Set([socket.id])
         });
+        await socket.join(roomId);
+        socket.deviceId = deviceId;
+        socket.roomId = roomId;
+        // await socket.emit(Events.DeviceListUpdate, [...Rooms[roomId].devices]);
+        await socket.broadcast.to(roomId).emit(Events.DeviceListUpdate, [...Rooms[roomId].devices]);
+        // await socket.broadcast.to(roomId).emit(Events.DeviceListUpdate, [...new Set([...Rooms[roomId].devices, deviceId])]);
+        console.log(`User Socket.id: ${socket.id} and Device.id: ${deviceId} Connected to room ${roomId}`);
+    } catch (e) {
+        console.log("An Exception Occurred: ", e);
     }
-    await socket.join(roomId);
-    socket.deviceId = deviceId;
-    socket.roomId = roomId;
-    await socket.broadcast.to(roomId).emit(Events.DeviceListUpdate, [...new Set([...AppState.find(room => room.user.user_id === roomId).devices, deviceId])]);
-
-    console.log(AppState);
-    console.log(`User Socket.id: ${socket.id} and Device.id: ${deviceId} Connected to room ${roomId}`);
 };
-const PlayOnDevice = async (socket, {playState, remoteId}) => {
-    const data = AppState.find(room => room.devices.has(socket.deviceId) && room.devices.has(remoteId));
-    if (!data) return;
-    const roomId = data.user.user_id;
-    socket.broadcast.to(roomId).emit(Events.DevicePlayEvent, ({
+/**
+ * @name RemotePlayHandler
+
+ * @description:
+ * Finds if room where this device and remote device are available
+ * than broadcast DevicePlayEvent if found
+
+ * @param {object} socket - Socket Object.
+ * @param {object} config - Config Object.
+ * @param {string} config.playState - kn.music.schema.PlayState.
+ * @param {string} config.remoteId - Remote Client Device Id.
+
+ * @return {null}
+ */
+const RemotePlayHandler = async (socket, {playState, remoteId}) => {
+    const room = Rooms[socket.roomId];
+    if (!room) return socket.disconnect(true, 'Room not found');
+    if (!room.devices.has(socket.deviceId)) return socket.disconnect(true, 'Un-Authorized');
+    if (!room.devices.has(remoteId)) return socket.disconnect(true, 'Remote device not found');
+
+    await socket.broadcast.to(socket.roomId).emit(Events.DevicePlayEvent, ({
         playState: playState,
         deviceId: socket.deviceId,
         remoteId: remoteId
     }));
-    console.log(`User Socket.Id: ${socket.id} and Device.id: ${socket.deviceId} Played in room ${roomId}`);
+    console.log(`User Socket.Id: ${socket.id} and Device.id: ${socket.deviceId} Played in room ${socket.roomId}`);
 };
-io.sockets.on("connection", socket => {
-    socket.on(Events.RegisterDevice, data => RegisterDevice(socket, data));
-    socket.on(Events.DevicePlayEvent, data => PlayOnDevice(socket, data));
-    socket.on("disconnect", async () => {
-        console.log(AppState)
-        const room = AppState.find(room => room.devices.has(socket.deviceId));
-        if (!room) return console.log("No Room");
-        if (room.devices.size) {
-            console.log(room);
-            return AppState.filter(room => room.user.user_id !== room.user.user_id); // Empty Session
-        }
-        await socket.broadcast.to(room.user.user_id).emit(Events.DeviceListUpdate, [...new Set([...room.devices])]);
-        console.log(AppState);
-    });
+/**
+ * @name DeviceDisconnectHandler
+
+ * @description:
+ * Handle device disconnections
+ * Remove device from room or delete the room if empty
+
+ * @param {object} socket - Socket Object.
+ * @param {object|undefined} config - Config Object.
+
+ * @return {null}
+ */
+const DeviceDisconnectHandler = async (socket, config) => {
+    const room = Rooms[socket.roomId];
+    if (!room) return socket.disconnect(true, 'Room not found');
+    if (!room.devices.has(socket.deviceId)) return socket.disconnect(true, 'Un-Authorized');
+    if (room.devices.size) return delete Rooms[socket.roomId]; // Empty Session
+    await socket.broadcast.to(socket.roomId).emit(Events.DeviceListUpdate, [...new Set([...room.devices].filter(a => a !== socket.deviceId))]);
+}
+
+const io = require("socket.io")(httpServer, {
+    serveClient: true,
+
+    cors: {
+        origin: process.env.CLIENT_ORIGIN,
+        methods: ["GET", "POST"],
+        credentials: true
+    },
+    allowEIO3: true,
 });
-//https://www.npmjs.com/package/engine.io
-httpServer.listen(process.env.PORT || 3240);
+
+io["sockets"].on("connection", socket => {
+    socket.on(Events.RegisterDevice, data => RegisterDevice(socket, data));
+    socket.on(Events.DevicePlayEvent, data => RemotePlayHandler(socket, data));
+    socket.on("disconnect", data => DeviceDisconnectHandler(socket, data));
+});
+
+try {
+    httpServer.listen(parseInt(process.env.PORT) || 3240, () => console.log("Cast Server Started on: ", process.env.PORT || 3240));
+} catch (e) {
+    console.log("Error Starting the Server: ", e);
+}

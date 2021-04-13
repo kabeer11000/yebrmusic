@@ -16,7 +16,7 @@ const endPoints = {
     getProxyfiedURI: (id) => `${hostName}/api/song?id=${id}`,
     getSuggestion: (q) => "https://suggestqueries.google.com/complete/search?",
     getSuggestionFake: (q) => `${proxy}/http://clients1.google.com/complete/search?hl=en&output=toolbar&q=${q}`,
-    searchYoutube: (key, q) => `${hostName}/api/search?q=${q}`,
+    searchYoutube: (q) => `${hostName}/api/search?q=${q}`,
     searchYoutubeFake: (key, q) => `${hostName}/files/yt-fake/sample-response-master/yt-api/search-result.json`,
     proxyURI: (url) => `${proxy}/${url}`,
     saveWatchHistory: `${hostName}/api/history/save`,

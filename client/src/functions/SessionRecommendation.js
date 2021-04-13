@@ -1,9 +1,9 @@
-import {storageIndex} from "./Helper/storageIndex";
+import {storageIndex} from "./Helper/StorageIndex";
 import Log, {DebugLog} from "./Log";
 import {get, set, update} from "idb-keyval";
 import {comLinkWorker} from "./Worker/worker-export";
-import endPoints from "../api/endpoints/endpoints";
-import {initAuth} from "./auth";
+import endPoints from "../api/EndPoints/EndPoints";
+import {initAuth} from "./Auth";
 
 class _SessionRecommendation {
     constructor() {

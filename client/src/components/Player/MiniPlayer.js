@@ -123,7 +123,7 @@ const MiniPlayer = () => {
                                             <Typography variant="body2" color="textSecondary"
                                                         style={{textDecoration: "none"}}
                                                         component={Link}
-                                                        to={`/artist?id=${Song.snippet.channelId}`}
+                                                        to={`/artist/${Song.snippet.channelId}`}
                                                         className={"text-truncate"}>
                                                 {/*{playState.videoElement.snippet.channelTitle}*/}
                                                 {/*{playState.videoElement.snippet.description ? playState.videoElement.snippet.description.slice(0, 70) + " ..." : ""}*/}

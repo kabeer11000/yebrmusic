@@ -1,6 +1,6 @@
 import React from 'react';
 import './TrendingArtists.css';
-import {initAuth} from "../../functions/auth";
+import {initAuth} from "../../functions/Auth";
 import {Container, IconButton} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Grow from "@material-ui/core/Grow";
@@ -8,14 +8,14 @@ import Typography from "@material-ui/core/Typography";
 import SongCard2 from "../SongCard2/SongCard2";
 import Grid from "@material-ui/core/Grid";
 import {isTvContext, PlayContext} from "../../Contexts";
-import {getSong} from "../../functions/songs";
-import endPoints from "../../api/endpoints/endpoints";
+import {getSong} from "../../functions/SongsUtility";
+import endPoints from "../../api/EndPoints/EndPoints";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
 import SongCard from "../SongCard/SongCard";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
 import {get, set} from "idb-keyval";
-import {storageIndex} from "../../functions/Helper/storageIndex";
+import {storageIndex} from "../../functions/Helper/StorageIndex";
 
 
 // Trending PL-DfNcB3lim9L-rrvhrR3AoFB9Sa-KoxW
@@ -63,7 +63,7 @@ const TrendingArtists = () => {
                     <Grow in={true}>
                         <Typography variant={"h5"} className={"mb-3 mt-2 pl-3 text-left text-truncate"}>
                             {artist.title} {artist.accounts[0] && <IconButton component={Link}
-                                                                              to={`/artist?id=${artist.accounts[0].url.split("/").pop()}`}><Avatar
+                                                                              to={`/artist/${artist.accounts[0].url.split("/").pop()}`}><Avatar
                             src={artist.accounts[0].image}/></IconButton>}
                         </Typography>
                     </Grow>

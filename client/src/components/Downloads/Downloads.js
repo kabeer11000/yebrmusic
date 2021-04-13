@@ -2,7 +2,7 @@ import React from "react";
 import "./Downloads.css";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import List from "@material-ui/core/List";
-import {deleteDownloadedSong, downloadsToPlaylist} from "../../functions/songs";
+import {deleteDownloadedSong, downloadsToPlaylist} from "../../functions/SongsUtility";
 import DownloadListItem from "./DownloadListItem";
 import Container from "@material-ui/core/Container";
 import {Avatar} from "@material-ui/core";
