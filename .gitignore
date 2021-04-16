@@ -3,7 +3,6 @@
 #.idea/inspectionProfiles/
 #client/src/components/ArtistComponent/BB.js
 .idea/inspectionProfiles/
-client/src/components/ArtistComponent/BB.js
 backend/node_modules/
 cast-server/node_modules/
 proxy-server/node_modules/

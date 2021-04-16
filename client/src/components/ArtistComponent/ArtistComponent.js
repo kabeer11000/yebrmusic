@@ -50,7 +50,8 @@ const ArtistComponent = ({history}) => {
                     const token = await initAuth();
                     const response = await comLinkWorker.fetch(endPoints.getArtistInfo(id), {
                         headers: {Authorization: `Bearer ${token}`},
-                    })
+                    });
+                    if (!Object.entries(response).length) return setError(!error);
                     setState(response);
                     setLoaded(response.items.slice(0, loadedLength));
                     setLoadedLength(loadedLength + 4);
@@ -84,7 +85,7 @@ const ArtistComponent = ({history}) => {
     const tv = useContext(isTvContext);
     const {PlaySong} = React.useContext(PlayContext);
     return <div>
-        {state ? <React.Fragment>
+        {state && state.author ? <React.Fragment>
             <Card><CardActionArea>
                 <img src={state.author.bestAvatar.url} style={{
                     height: "15rem",

@@ -1,6 +1,10 @@
 module.exports = {
     db: {
-        url: process.env.MONGO_URI_DEV
+        url: process.env.NODE_ENV === "production" ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV
+    },
+    app: {
+        app_public: process.env.APP_PUBLIC,
+        app_secret: process.env.APP_SECRET,
     },
     auth: {
         public: process.env.AUTH_PUBLIC,
@@ -8,21 +12,7 @@ module.exports = {
     },
     internalCommunication: {
         rsa: {
-            private: `-----BEGIN RSA PRIVATE KEY-----
-MIICXAIBAAKBgQDLijg/VW0FVBY5adSW4Jv1oCf6breemnVoXc9Q7if7OBt16zxp
-MUS0IW5HewrjvhqNgkk2xOARlIYfu6MZTuwsknV0kQgLu/ma6FcB82atAQIkRHKB
-5DnQh3oOq34Dlub9caSi3OSKi/2cQyZ08Q9N4pX9jZV0RNMvmkoUSw7IzQIDAQAB
-AoGAcxuE+dRO5m+Kbge60WTO7pcXZNqOf2Sst0wuPX+iHsG5TfOt43OYfiJV4pjk
-LK3LCHJBA3dNnMOZIoMUFvD6QKxDf5RNC1DQg9YfLXz87dKas7PiyDVYE015IG87
-242V1nEFvfHoRgRGwXRtrHiKKgpGWhLJwEOGYrnSg50zWuECQQDwDKTtGUhhUjCc
-rTffqbiZBaWwAIY2Z1+X5ldMglNGJ735oW8wWwj+No5vjWvc8dbipbPT4y+t6Znk
-ys6RYx7lAkEA2RCII4uGEWCJT6tW2cqDyANNg6aNh5iKd8MyXULh3UN6drvBIo7o
-cioQJWX8QCFJk0P+UaexVXn4ZaKLUR37yQJBAK1pdPuTeCZWKagFuodpJGHnInqy
-5kIHC5fAXvB2dZIIw8TCSoC0QxribqNHltRWINY6vl4jkR4h03rkx7Vf1cECQFMk
-uPDcjaL0VkQ0/hR4NNgVI8jMsCODM27CTvVYHAnTwgHe0xC4qqKoJ/0bPm8WEQee
-oLiIQi3ahWHwy+prULkCQC98MGxxyY4Cvji8vYpw9hJrGy4Y3X1rL8ha2R2W2J2C
-tPn8T6zT2NeiAbnVCVns2OR+rWdtJVz7jyb9UR4V9OU=
------END RSA PRIVATE KEY-----`,
+            // private: process.env.INTERNAL_AUTH_PRIVATE.toString().replace("\\n", "\n"),
             public: `-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLijg/VW0FVBY5adSW4Jv1oCf6
 breemnVoXc9Q7if7OBt16zxpMUS0IW5HewrjvhqNgkk2xOARlIYfu6MZTuwsknV0
@@ -38,21 +28,5 @@ AlQhYjnK9vB69dw9TOG+DyjSuFUnpedEv0YfbGIC3dGqc5YHfqZPDy4U5Jj+H5/g
 FzSdiI7AIauD5OLDCqBy6nyMC23GesMPibgaiEylvryreGmkfANEJSCtceVTjIHn
 /MEgvdBd6oZAEkv0XQIDAQAB
 -----END PUBLIC KEY-----`,
-    KabeerAuthPlatform_Public_RSA_Key_PRIVATE: `-----BEGIN PRIVATE KEY-----
-MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKoLxA4DKA+SSzSH
-uJFWDsU01V8CVCFiOcr28Hr13D1M4b4PKNK4VSel50S/Rh9sYgLd0apzlgd+pk8P
-LhTkmP4fn+AXNJ2IjsAhq4Pk4sMKoHLqfIwLbcZ6ww+JuBqITKW+vKt4aaR8A0Ql
-IK1x5VOMgef8wSC90F3qhkASS/RdAgMBAAECgYBKK7umiQXuVNds4E5HRoxGxJbV
-TES6Ewg2WaPnXlpkeqZ0qlQaJcEu/BR2TiAeEL5nla2gda5ZMosELRDimBuK9obC
-zC3dopSAXHln/CTybdONO6MGt2Wv5OvhgDf9vRMT/4jvGXh3ktmSEDyVeyySHT+y
-wRGBlMMgLVULLii0WQJBAN6bdAKVcdp/Tn1jbOhjnjEvmURSUjwug0N+Aek5wrEY
-gGGIbl48IRiYOOscPeVMM5t6esSAotu1cT7EhxKE0g8CQQDDjdu6fQQqIK8Ddkcd
-6PTJoC3a9r8wH5WndyVpYudwvwj83v7E0YgWTTbONL5uSuDqMFEur2hscT8XtmX9
-Sg7TAkBCiYqqfwrx+V13ozFZYPVW1FhmkIieDnUTxmVB1g74qk8tV/9NUYG+/Tj+
-JYnmsNk4Hur1M1H6hAheb5XEFklHAkA8lOMAeCBlKLDvYqIPiw7is8Pg9NYwA2jq
-c4fciS5oCFaxeCf3M250ckFLSp3AL2RUSNmtm9u+1KqWHwSjnmDPAkAhevsDjB7z
-p8FzsWaYwJb8m36ulmdmmIFNDObQTxDROWCUiqZWiIAiEPM2s7GU5mfjNqHnW2vF
-BhRGs/005zYk
------END PRIVATE KEY-----`
 };
 

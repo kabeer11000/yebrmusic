@@ -124,7 +124,7 @@ const DrawerComponent = ({children}) => {
 						<List className={classes.root}>
 							<ListItem>
 								<ListItemAvatar>
-									<Avatar src={userInfo ? userInfo["account_image"] : ""}
+									<Avatar src={userInfo ? userInfo["picture"] : ""}
 											alt={userInfo ? userInfo.username : ""}/>
 								</ListItemAvatar>
 								<ListItemText className={"text-truncate"} primary={userInfo ? userInfo.username : ""}
@@ -173,12 +173,11 @@ const DrawerComponent = ({children}) => {
 					<List className={classes.root}>
 						<ListItem>
 							<ListItemAvatar>
-								<Avatar src={userInfo ? userInfo["account_image"] : ""}
+								<Avatar src={userInfo ? userInfo["picture"] : ""}
 										alt={userInfo ? userInfo.username : ""}/>
 							</ListItemAvatar>
-							<ListItemText className={"text-truncate"}>
-								{userInfo ? userInfo.username : ""}
-							</ListItemText>
+							<ListItemText className={"text-truncate"} primary={userInfo ? userInfo.username : ""}
+										  secondary={userInfo ? userInfo.email : ""}/>
 						</ListItem>
 					</List>
 					<div className={"classes.toolbar"}/>

@@ -3,7 +3,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
@@ -32,13 +31,10 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
                         onClick={onClick}
                         secondary={
                             <React.Fragment>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    className={`${classes.inline} text-truncate`}
-                                    color="textPrimary">
+                                <div
+                                    className={`text-truncate`}>
                                     {song.videoElement.snippet.channelTitle}
-                                </Typography>
+                                </div>
                                 {
                                     song.tags && song.tags.length ? <div className={"cardSlider Slider"}>
                                         {song.tags.map((v, i) => <Chip className={"mx-1"} key={i}

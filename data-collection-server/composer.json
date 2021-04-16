@@ -3,7 +3,8 @@
     "firebase/php-jwt": "^5.2",
     "ext-json": "*",
     "ext-mysqli": "*",
-    "bramus/router": "~1.5"
+    "bramus/router": "~1.5",
+    "vlucas/phpdotenv": "^5.3"
   },
   "name": "Kabeers Music Data-Collection API",
   "description": ""

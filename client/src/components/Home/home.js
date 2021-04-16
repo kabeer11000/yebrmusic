@@ -98,10 +98,10 @@ const ErrorComponent = (error) => (
 
     </div>
 );
-const getTopArtistFromAPI = (e) => comlinkWorker.fetch(endPoints.getTopArtistFeed(), {
+const getTopArtistFromAPI = (e) => comlinkWorker.fetch(endPoints.Recommendations.topArtist, {
     headers: ({Authorization: `Bearer ${e}`})
 });
-const getSearchFeedFromAPI = (e) => comlinkWorker.fetch(endPoints.getSearchFeed(), {
+const getSearchFeedFromAPI = (e) => comlinkWorker.fetch(endPoints.Recommendations.topSearched, {
     headers: ({Authorization: `Bearer ${e}`})
 });
 

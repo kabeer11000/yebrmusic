@@ -12,25 +12,11 @@ const limiter = rateLimit({
 });
 const keys = require("./keys/keys");
 const app = express();
-// const http = require("http").createServer(app);
-// const io = require("socket.io")(http);
-// io.on("connection", function (socket) {
-// 	console.log("A user is connected");
-// });
-// const http = require("http").Server(app);
-// app.io = require("socket.io")(http);
 
-const backendRouter = require("./routes/Backend");
-const authRouter = require("./routes/Auth");
-// const ProxyRouter = require("./routes/Proxy");
-const songsRouter = require("./routes/SongsAPI");
-const recomRouter = require("./routes/RecomAPI/simpleRecom");
-// const castEventRouter = require("./routes/RecomAPI/SessionMaintain");
-// const clientComSocket = require("./routes/RecomAPI/ClientComSocket")(app.io);
-
-// view engine setup
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "jade");
+const coreScraper = require("./routes/core-scraper-routes");
+const authRouter = require("./routes/auth-routes");
+const songsRouter = require("./routes/api-routes");
+const recommendationRouter = require("./routes/recommendation-routes");
 
 //app.use('/api/', limiter);
 app.use(cors());
@@ -50,28 +36,17 @@ app.use(session({
     })
 }));
 app.set("json spaces", 2);
-app.use(express.static("public"));
+
 app.use("/api", songsRouter);
 app.use("/auth", authRouter);
-app.use("/backend", backendRouter);
-app.use("/recom", recomRouter);
-app.use("/feed", require("./routes/Feed"));
-// app.use("/cast", castEventRouter);
-// app.use("/tests", require("./controllers/recom/exp/download-top-playlist"));
-// app.use("/socket/com", clientComSocket);
+app.use("/recommendation", recommendationRouter);
+/**
+ * @deprecated
+ */
+app.use("/backend", coreScraper);
 
 
-/*
-app.use((err, req, res, next) => {
-  log.error(err);
-  log.error(err.stack);
-  return res.status(err.statusCode || 500).send(err.message)
-});
-//*/
-// catch 404 and forward to error handler
 app.use((req, res) => res.json("404 - Route Not Found"));
-
-// error handler
 app.use((err, req, res) => res.status(500).json(err.message));
 
 module.exports = app;

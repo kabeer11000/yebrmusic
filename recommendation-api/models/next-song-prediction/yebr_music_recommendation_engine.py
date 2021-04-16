@@ -48,7 +48,7 @@ import datetime
 
 corpus = pd.read_json("http://localhost/api/details/get-indexed-songs") # "./dataset/indexed-songs.json"
 user_watch_history = pd.read_json("http://localhost/api/history/get-history") # "./dataset/training-get-history.json"
-user_search_history = pd.read_json("http://localhost:9000/recom/history/search") # "./dataset/training-search.json"
+user_search_history = pd.read_json("http://localhost:9000/recommendation/history/search") # "./dataset/training-search.json"
 
 corpus.head()
 

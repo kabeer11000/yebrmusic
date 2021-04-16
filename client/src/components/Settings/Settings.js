@@ -14,7 +14,7 @@ import {storageIndex} from "../../functions/Helper/StorageIndex";
 import {useDialog} from "muibox";
 import TextField from "@material-ui/core/TextField";
 import AppBar from "@material-ui/core/AppBar";
-import {Toolbar, Typography} from "@material-ui/core";
+import {Toolbar} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {ThemeContext} from "../../Contexts";
 import {Device} from "../../functions/Device";
@@ -45,7 +45,7 @@ const Settings = () => {
                             width: "4rem",
                             height: "4rem"
                         }} alt={userInfo.username}
-                                            src={JSON.stringify(userInfo.account_image)}/> : null}
+                                            src={userInfo.picture}/> : null}
                     </IconButton>
                 </div>
                 {/*<CustomAppBar title={"Settings"}/>*/}
@@ -71,8 +71,8 @@ const Settings = () => {
                 </AppBar>
                 <div className={"text-center"}>
                     <ListItemText id="switch-list-label-wifi"
-                                  primary={<Typography
-                                      variant={"caption"}>{userInfo ? userInfo.username : ""}</Typography>}/>
+                                  primary={userInfo ? userInfo.username : ""}
+                                  secondary={userInfo ? userInfo.email : ""}/>
                 </div>
             </List>
             <Container maxWidth={"md"}>

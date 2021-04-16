@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @param $text
+ * @return false|string
+ */
 function Jsonify($text)
 {
     header('Content-Type: application/json');
@@ -7,15 +11,26 @@ function Jsonify($text)
     return json_encode($text, JSON_PRETTY_PRINT);
 }
 
+/**
+ * Class DatabaseClient
+ */
 class DatabaseClient
 {
     public $client = null;
 
+    /**
+     * DatabaseClient constructor.
+     * @param $client
+     */
     function __construct($client)
     {
         $this->client = $client;
     }
 
+    /**
+     * @param $details
+     * @param $user_id
+     */
     function insertSearch($details, $user_id)
     {
         $entry_hash = md5(uniqid());
@@ -26,6 +41,10 @@ class DatabaseClient
         $this->client->query($query);
     }
 
+    /**
+     * @param $user_id
+     * @return array
+     */
     function getSearches($user_id)
     {
         $results = $this->client->query("SELECT * FROM `search-queries` WHERE `user_id` = '$user_id'");
@@ -42,6 +61,10 @@ class DatabaseClient
         return $a;
     }
 
+    /**
+     * @param $session
+     * @return mixed
+     */
     function insertSession($session)
     {
         $session_encoded = $session;
@@ -53,6 +76,10 @@ class DatabaseClient
         return $this->client->query($query);
     }
 
+    /**
+     * @param $id
+     * @return null
+     */
     function getSong($id)
     {
         $query = "SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$id' LIMIT 1;";
@@ -61,6 +88,11 @@ class DatabaseClient
         else return null;
     }
 
+    /**
+     * @param $user_id
+     * @param $limit
+     * @return mixed
+     */
     function getHistory($user_id, $limit)
     {
 
@@ -71,6 +103,10 @@ class DatabaseClient
         return $results->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * @param $song
+     * @return string
+     */
     function indexSong($song)
     {
         try {
@@ -94,6 +130,11 @@ class DatabaseClient
         }
     }
 
+    /**
+     * @param $song
+     * @return Exception
+     * @deprecated
+     */
     function _indexSong($song)
     {
         try {
@@ -111,6 +152,12 @@ class DatabaseClient
         }
     }
 
+    /**
+     * @param $user_id
+     * @param $video_id
+     * @param $post
+     * @param $average
+     */
     function insertRating($user_id, $video_id, $post, $average)
     {
         try {
@@ -121,31 +168,5 @@ class DatabaseClient
         } catch (Exception $e) {
             echo "Error";
         }
-    }
-}
-
-
-class Song
-{
-    private $song;
-    private $title;
-    private $id;
-    private $channel_id;
-    private $user_id;
-    private $database_client;
-
-    function __construct($user_id, $song, $client)
-    {
-        $this->user_id = $user_id;
-        $this->database_client = $client;
-        $this->song = $song;
-        $this->title = $song["snippet"]["title"];
-        $this->channel_id = $song["channelId"];
-        $this->id = $song["id"];
-    }
-
-    function save()
-    {
-        return $this->database_client->insertSong($this->user_id, $this->song);
     }
 }

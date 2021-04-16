@@ -28,7 +28,6 @@ export const Events = {
 
 // const accessToken = JSON.parse(cookies.getCookie(S.cookies.Tokens))["access_token"];
 const Tokens = comLinkWorker.JSON.parse(Cookies.getCookie(storageIndex.cookies.Tokens));
-const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoicmVmcmVzaF90b2tlbiIsImFwcF9uYW1lIjoiS2FiZWVycyBNdXNpYyBBcHAiLCJhcHBfaWQiOiJTNTY1ZHM2ODg3ZGY2NDZrNVk0ZjU2SU9pRFd4UlhTODQwbG5ubUQiLCJzY29wZSI6Im9wZW5pZHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpnZXRTb25nfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2OnNlYXJjaHxzNTY0ZDY4YTM0ZENuOU91VU5UWlJmdWFDbndjNjpmZWVkfHM1NjRkNjhhMzRkQ245T3VVTlRaUmZ1YUNud2M2Omhpc3RvcnkucmVhZHdyaXRlIiwianRpIjoiODZmOTVkMWYtMzI0OS00NDM4LWFjZDctMjM2YTBlNTQ4MWJkIiwiaWF0IjoxNjEwNjg3NjMyLCJleHAiOjE2MTE1NTE2MzJ9.pjCUryvehhrUzPeb9htAuFZEV7c85lfKXRl5CpBdiMmNfY-isqhwQq8wnqw06DuJpHIFcDlYOrkJUxQHJ-dcIhlIml0oA6d_xJ_ZrcxetRvquZJeI0wSvhFgE1s2j_cVZw40vjgMlvma9dewouVGyAPwW0cizz4mtn1aS6dO_zI";
 const castEnabled = true;
 const deviceId = localStorage.getItem(storageIndex.deviceEtag);
 
@@ -54,7 +53,7 @@ const SendPauseCast = async (id) => socket.emit(Events.DevicePauseEvent, {
 	remoteDeviceId: id,
 });
 const PeerRequestAccept = async (id) => socket.emit(Events.DeviceConnectAcceptEvent, {
-	token: accessToken,
+	token: (await Tokens)['access_token'],
 	remoteDeviceId: id
 });
 export const Cast = {

@@ -6,6 +6,9 @@ require('./database.php');
 require("./kabeersnetwork/Storage.php");
 require('./keys.php');
 require('./misc.php');
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 global $SQL_CLIENT;
 
 $storage = new Storage();
@@ -23,19 +26,12 @@ $rating_weights = array(
 function IndexSong()
 {
     $_POST = json_decode(file_get_contents('php://input'), true);
-
-//    echo Jsonify($_POST);
     global $database;
     global $KEYS;
     try {
-//        $_POST = json_decode(file_get_contents('php://input'), true);
-//        $token = $_POST["token"];
-//        if (strcmp($token, $KEYS["rsa"]["csrf_id"])) {
-//        $song = json_decode($_POST['song'], true);
-//        file_put_contents('./log.json', 'Jsonify($song)');
-//        echo Jsonify($_POST['song']['id']);
-        echo Jsonify($database->indexSong($_POST['song']));
-//        } else echo Jsonify("Invalid Token");
+        if ($_POST['token'] == $KEYS["rsa"]["csrf_id"]) {
+            echo Jsonify($database->indexSong($_POST['song']));
+        } else echo Jsonify("Invalid Token");
     } catch (Exception $e) {
         echo Jsonify("Failed to Decode Token");
     }
@@ -43,6 +39,7 @@ function IndexSong()
 
 function getAllIndexedSongs()
 {
+//    if (!$_ENV['PROD']) {
     global $database;
     $query = "SELECT * FROM `indexed_songs`";
     $results = $database->client->query($query);
@@ -51,9 +48,7 @@ function getAllIndexedSongs()
     foreach ($results as $r) {
         if (!is_null($r)) {
             $song = json_decode($r['yt_video_json'], true);
-            if (!is_null($song)) {
-                array_push($songs, array("song" => $song, "song_id" => $song['id']));
-            }
+            if (!is_null($song)) array_push($songs, array("song" => $song, "song_id" => $song['id']));
         }
     }
     echo Jsonify($songs);
@@ -101,11 +96,10 @@ function getHistory()
         $song = json_decode($database->getSong($history[$i]['video_id'])['yt_video_json'], true);
         if ($song) array_push($listened_songs, array("user_id" => $history[$i]['user_id'], "rating" => $history[$i]['average_rating'], "song" => $song, "song_id" => $song['id']));
     }
-//    echo Jsonify($history);
     echo Jsonify($listened_songs);
 }
 
-//$songs = json_decode(file_get_contents("./dataset.json"), true);
+//$songs = json_decode(file_get_contents("./tests/dataset.json"), true);
 //for ($i = 0; $i < sizeof($songs); $i ++) {
 //    echo Jsonify($songs[$i]['id']);
 //    echo $database->indexSong($songs[$i]);
@@ -134,7 +128,6 @@ function updateRating()
         global $KEYS;
         $decoded = JWT::decode($_GET["token"], $KEYS["rsa"]["csrf_id"], array('HS256'));
         $_POST = json_decode(file_get_contents('php://input'), true);
-//        echo Jsonify($_POST);
         if (in_array("__kn.music.data-collection.update-rating", explode("|", $decoded->scope))) {
             foreach (array_keys($_POST) as $key) $rating += floatval($_POST[$key]) * $rating_weights[$key];
             $database->insertRating($decoded->sub, $_GET["video_id"], $_POST, $rating);
@@ -178,27 +171,21 @@ function getSongStreams()
     $decoded = JWT::decode($_GET["token"], $KEYS["rsa"]["csrf_id"], array('HS256'));
     if (in_array("__kn.music.data-collection.get-rating-details", explode("|", $decoded->scope))) {
         $_POST = json_decode(file_get_contents('php://input'), true);
-//        echo $_POST["id"];
         $video_id = $_POST["id"];
-        $entry_hash = md5($decoded->sub . $_POST["id"]);
+//        $entry_hash = md5($decoded->sub . $_POST["id"]);
         $response = $database->client->query("SELECT * FROM `watch-user-ratings` WHERE `user_id` = '$decoded->sub' AND `video_id` = '$video_id' LIMIT 1");
-//        if (!$response) echo Jsonify(array("times_streamed" => 0));
-//        else {
-//            echo Jsonify($response);
         $streamed = json_decode($response->fetch_assoc()["detail_json"], true);
-//            $yt_video_id = $_POST["id"];
-//        echo Jsonify($streamed);
-//            if (!$database->client->query("SELECT * FROM `indexed_songs` WHERE `yt_video_id` = '$yt_video_id' LIMIT 1;")->fetch_row)
         if (is_null($streamed)) echo Jsonify(array("times_streamed" => 1));
         else echo Jsonify(array("times_streamed" => $streamed['times_streamed']));
     }
-//    }
 }
 
 function getTestToken()
 {
-    echo JWT::encode(array(
-        "scope" => '__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song'
-    ), "Vy0ShK6HqSwpONfMC1GtlQTFdZf0dnmSkqTCs0rNWpVtFB9hBsE8MUisUoUyYHOWH8WcuIHpZHcaVDqO");
+    if (!$_ENV['PROD']) {
+        echo JWT::encode(array(
+            "scope" => '__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song'
+        ), $_ENV['CSRF_KEY']);
+    }
 }
 

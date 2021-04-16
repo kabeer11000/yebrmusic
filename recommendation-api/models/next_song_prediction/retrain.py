@@ -1,9 +1,9 @@
-from tensorflow import keras
-import numpy as np
-import pandas as pd
-from tensorflow import reduce_sum, ragged, function, math, nn, reduce_mean
-import os
 import datetime
+import os
+
+import pandas as pd
+from tensorflow import keras
+from tensorflow import reduce_sum, ragged, function, math, nn, reduce_mean
 
 
 class MaskedEmbeddingsAggregatorLayer(keras.layers.Layer):
@@ -56,7 +56,7 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
 
     user_watch_history = pd.read_json(
         "http://localhost/api/history/get-history")  # "./dataset/training-get-history.json"
-    user_search_history = pd.read_json("http://localhost:9000/recom/history/search")  # "./dataset/training-search.json"
+    # user_search_history = pd.read_json("http://localhost:9000/recommendation/history/search")  # "./dataset/training-search.json"
 
     """## The Model
     - Model Config
@@ -74,7 +74,7 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
     Handle Search Queries and Watch History - Encoded Indices of Songs
     """
 
-    search_queries = keras.Input(shape=(None,), name='search_query')
+    search_queries = keras.layers.Input(shape=(None,), name='search_query')
     watch_history = keras.layers.Input(shape=(None,), name='watch_history')
 
     user_watch_history.head()
@@ -189,7 +189,7 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
      """
 
     user_watched_group = user_watch_history.groupby(['user_id_encoded'])['song_id_encoded'].apply(list).reset_index()
-    user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
+    # user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
     user_watched_group['past_predicted'] = user_watched_group['song_id_encoded'].apply(lambda x: (x[-1]))
 
     print("Not Adding Search Features Currently")

@@ -6,7 +6,7 @@
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
     <meta content="#2B2B2B" name="theme-color"/>
     <meta
-            content="Kabeers Music Free Unlimited Songs, Podcasts and Culture by Kabeers Network"
+            content="Kabeer's Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network"
             name="description"
     />
     <link href="%PUBLIC_URL%/assets/icons/AppleMusicIcon.png" rel="apple-touch-icon"/>
@@ -89,10 +89,10 @@
                 },
                 config: {
                     hosts: {
-                        api: "http://localhost:9000",
-                        "data-collection-server": `http://localhost:80`,
-                        "cast-server": `http://localhost:3240`,
-                        proxy: "http://localhost:8080"
+                        api: "https://backend-yebrmusic.kabeersnetwork.tk" || "http://localhost:9000",
+                        "data-collection-server": "http://collect-yebrmusic.kabeercloud.tk" || `http://localhost:80`,
+                        "cast-server": "https://cast-yebrmusic.kabeercloud.tk" || `http://localhost:3240`,
+                        proxy: "https://proxy-yebrmusic.kabeersnetwork.tk" || "http://localhost:8080"
                     },
                     recom: {
                         last_session_carry_recom_length: 5
@@ -107,7 +107,7 @@
     </script>
 </head>
 <body>
-<noscript>You need to enable JavaScript to run this app.</noscript>
+<noscript>You need to enable JavaScript to run Kabeer's Music.</noscript>
 <div id="root"></div>
 <!--
   This HTML file is a template.

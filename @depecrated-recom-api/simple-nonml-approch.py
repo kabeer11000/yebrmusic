@@ -41,12 +41,12 @@ cache = Cache(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 endpoints = {
-    "getSong": "http://localhost:9000/recom/video/",
-    "searchSongs": "http://localhost:9000/recom/search/",
-    "getPlaylist": "http://localhost:9000/recom/playlist/",
-    "getPlaylists": "http://localhost:9000/recom/concat/playlist/",
-    "getHistory": "http://localhost:9000/recom/history?len=",
-    "getSongWithSchema": "http://localhost:9000/recom/schema/video/"
+    "getSong": "http://localhost:9000/recommendation/video/",
+    "searchSongs": "http://localhost:9000/recommendation/search/",
+    "getPlaylist": "http://localhost:9000/recommendation/playlist/",
+    "getPlaylists": "http://localhost:9000/recommendation/concat/playlist/",
+    "getHistory": "http://localhost:9000/recommendation/history?len=",
+    "getSongWithSchema": "http://localhost:9000/recommendation/schema/video/"
 }
 playLists = {
     "bollywoodHitList": "RDCLAK5uy_n9Fbdw7e6ap-98_A-8JYBmPv64v-Uaq1g",

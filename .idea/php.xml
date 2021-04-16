@@ -5,6 +5,12 @@
       <path value="$PROJECT_DIR$/data-collection-server/vendor/firebase/php-jwt" />
       <path value="$PROJECT_DIR$/data-collection-server/vendor/composer" />
       <path value="$PROJECT_DIR$/data-collection-server/vendor/bramus/router" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/data-collection-server/vendor/vlucas/phpdotenv" />
     </include_path>
   </component>
   <component name="PhpUnit">

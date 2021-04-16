@@ -4,11 +4,12 @@ import HomeComponent from "./components/Home/home";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import CustomBottomNavigation from "./components/CustomBottomNavigation/CustomBottomNavigation.lazy";
 import Downloads from "./components/Downloads/Downloads.lazy";
-import Player from "./components/Player/Player.lazy";
+import MobilePlayer from "./components/Player/Moblie/Player.lazy";
+import DesktopPlayer from "./components/Player/Desktop/Player.lazy";
+import MiniPlayer from "./components/Player/MiniPlayer/MiniPlayer.lazy";
 import CustomAppBar from "./components/CustomAppBar/CustomAppBar.lazy";
 import SearchComponent from "./components/SearchComponent/SearchComponent.lazy";
 import DrawerComponent from "./components/Drawer/Drawer.lazy";
-import MiniPlayer from "./components/Player/MiniPlayer.lazy";
 import SearchResultComponent from "./components/SearchComponent/SearchResultComponent.lazy";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Settings from "./components/Settings/Settings.lazy";
@@ -34,9 +35,7 @@ import {
 import Discover from "./components/Discover/Discover.lazy";
 import {SnackbarProvider} from "notistack";
 import TrendingArtists from "./components/TrendingArtists/TrendingArtists.lazy";
-import DesktopPlayer from "./components/Player/DesktopPlayer";
 import CastDialog from "./components/CastingDialog/CastingDialog";
-//import {Cast} from "./functions/Cast/NewNewNewCast";
 
 const App = () => {
     const tv = React.useContext(isTvContext);
@@ -65,7 +64,7 @@ const App = () => {
                                                     <CastProvider>
                                                         <CastDialogProvider>
                                                             <RatingProvider>
-                                                                {tv ? <DesktopPlayer/> : <Player/>}
+                                                                {tv ? <DesktopPlayer/> : <MobilePlayer/>}
                                                                 <MiniPlayer/>
                                                                 <CastDialog/>
                                                             </RatingProvider>
@@ -119,6 +118,27 @@ const App = () => {
                         </BottomNavigationProvider>
                     </FocusRoot>
                 </DialogProvider>
+                {/**
+                 i don't know how to make a 404 route
+                 **/}
+                {/*<Route path="*" exact>*/}
+                {/*    <div className={"errorPage text-center"}*/}
+                {/*         style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>*/}
+                {/*        <img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}*/}
+                {/*             alt={"Kabeers Music Logo"}/>*/}
+                {/*        <br/>*/}
+                {/*        <div>*/}
+                {/*            <ListItemText primary={"404 - Page Not Found"}*/}
+                {/*                          secondary={"Don’t worry, we’ll help you get where you need to go. Try searching again,"}/>*/}
+                {/*        </div>*/}
+                {/*        <div className={"mt-2"}>*/}
+                {/*            <Button component={Link} to={"/home"}>Home</Button>*/}
+                {/*            <Button component={Link} to={"/discover"}>Discover</Button>*/}
+                {/*            <Button component={Link} to={"/downloads"}>Downloads</Button>*/}
+                {/*            <Button component={Link} to={"/artists"}>Artists</Button>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</Route>*/}
             </ThemeProvider>
         </Router>
     );

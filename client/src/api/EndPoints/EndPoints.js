@@ -50,8 +50,10 @@ const endPoints = {
         }
     },
     Recommendations: {
+        topSearched: `${hostName}/recommendation/feed/top-searched`,
+        topArtist: `${hostName}/recommendation/feed/top-artist`,
         deprecated: {
-            getRecommendations: `${hostName}/recom/backend/discover/deprecated/knn`
+            getRecommendations: `${hostName}/recommendation/feed/discover/deprecated/knn`
         }
     }
 };

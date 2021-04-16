@@ -1,0 +1,67 @@
+.ExpandedPlayButtonContainer button {
+    /*background-color: #68C398;*/
+    color: rgb(255, 255, 255);
+    border-color: white;
+}
+
+.Player .ImageCircle .image {
+    border: #68C398 solid 1rem;
+}
+
+.KabeersMiniPlayerContainer {
+    width: 100%;
+}
+
+
+@media only screen and (min-width: 768px) {
+    .KabeersMiniPlayerContainer {
+        width: 35% !important;
+    }
+
+    .smallOnDesktop {
+        width: 25% !important;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .KabeersMiniPlayerContainer {
+        width: 30% !important;
+    }
+
+    .smallOnDesktop {
+        width: 20% !important;
+    }
+}
+
+.PlayerDialog {
+    backdrop-filter: blur(10px);
+}
+
+.cardSlider {
+    padding: 1rem;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.cardSlider::-webkit-scrollbar {
+    display: none
+}
+
+div.Slider {
+    overflow: auto;
+    white-space: nowrap;
+}
+
+div.Slider .ImageSliderIMG {
+    display: inline-block;
+}
+
+.ComingNext::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar space */
+    background: transparent; /* Optional: just make scrollbar invisible */
+}
+
+/* Optional: show position indicator in red */
+.ComingNext::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}

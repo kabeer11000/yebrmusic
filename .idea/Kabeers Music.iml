@@ -7,6 +7,12 @@
       <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/bramus/router" />
       <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/firebase/php-jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/graham-campbell/result-type" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/phpoption/phpoption" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/data-collection-server/vendor/vlucas/phpdotenv" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

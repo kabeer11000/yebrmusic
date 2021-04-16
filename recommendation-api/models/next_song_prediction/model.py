@@ -47,7 +47,7 @@ def GenerateCandidates(model_path, indexed_songs_file_name):
     corpus = pd.read_pickle(indexed_songs_file_name)
     user_watch_history = pd.read_json(
         "http://localhost/api/history/get-history")  # "./dataset/training-get-history.json"
-    user_search_history = pd.read_json("http://localhost:9000/recom/history/search")  # "./dataset/training-search.json"
+    # user_search_history = pd.read_json("http://localhost:9000/recommendation/history/search")  # "./dataset/training-search.json"
 
     song_ids = corpus["song_id"].unique().tolist()
     song_2_index = {x: i for i, x in enumerate(song_ids)}
@@ -61,7 +61,7 @@ def GenerateCandidates(model_path, indexed_songs_file_name):
     user_watch_history['song_id_encoded'] = user_watch_history['song_id'].map(song_2_index)
 
     user_watched_group = user_watch_history.groupby(['user_id_encoded'])['song_id_encoded'].apply(list).reset_index()
-    user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
+    # user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
     user_watched_group['past_predicted'] = user_watched_group['song_id_encoded'].apply(lambda x: (x[-1]))
 
     # filepath = "../../model-snapshots/next-song-prediction/model.h5"

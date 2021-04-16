@@ -224,10 +224,10 @@ export const PlayProvider = React.memo(({children}) => {
         const id = new URLSearchParams(window.location.search).get("play");
         if (!id) return;
         const song = getSongDetails(id);
-        if (song) PlaySong({
+        if (song) song.then(a => PlaySong({
             useProxy: true,
-            song: song,
-        });
+            song: a,
+        }));
     }, []);
     const PlaySong = async ({song, playList, componentState, useProxy, others = {}, ...options}) => {
         if (!song) return;

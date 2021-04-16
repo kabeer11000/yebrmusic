@@ -106,7 +106,7 @@ const CustomAppBar = () => {
                         </IconButton>
                         <Divider orientation={"vertical"} className={classes.divider}/>
                         <IconButton className={classes.iconButton}>
-                            <Avatar src={userInfo ? userInfo.account_image : ""}
+                            <Avatar src={userInfo ? userInfo.picture : ""}
                                     style={{width: "1.7rem", height: "1.7rem"}}/>
                         </IconButton>
                         {/*<Divider className={classes.divider} orientation="vertical" />*/}

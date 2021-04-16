@@ -6,13 +6,13 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 endpoints = {
-    "candidates": "http://localhost:9000/recom/backend/get-candidates?user_id=",
-    "getSong": "http://localhost:9000/recom/video/",
-    "searchSongs": "http://localhost:9000/recom/search/",
-    "getPlaylist": "http://localhost:9000/recom/playlist/",
-    "getPlaylists": "http://localhost:9000/recom/concat/playlist/",
-    "getHistory": "http://localhost:9000/recom/history?len=",
-    "getSongWithSchema": "http://localhost:9000/recom/schema/video/"
+    "candidates": "http://localhost:9000/recommendation/backend/get-candidates?user_id=",
+    "getSong": "http://localhost:9000/recommendation/video/",
+    "searchSongs": "http://localhost:9000/recommendation/search/",
+    "getPlaylist": "http://localhost:9000/recommendation/playlist/",
+    "getPlaylists": "http://localhost:9000/recommendation/concat/playlist/",
+    "getHistory": "http://localhost:9000/recommendation/history?len=",
+    "getSongWithSchema": "http://localhost:9000/recommendation/schema/video/"
 }
 
 

@@ -8,6 +8,12 @@ $KEYS = array(
         "name" => "music"
     ),
     "database_prod" => array(
+        "password" => "5xnVJ%1U]Q@w4V(e",
+        "username" => "id16616078_admin",
+        "host" => "localhost",
+        "name" => "id16616078_music"
+    ),
+    "database_prod_1" => array(
         "password" => "Bu6459G_HkvTVEc",
         "username" => "epiz_25782889",
         "host" => "sql113.epizy.com",
