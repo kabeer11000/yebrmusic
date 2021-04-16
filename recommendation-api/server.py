@@ -4,6 +4,7 @@ from models.next_song_prediction import model as NP_Model
 from models.next_song_prediction import retrain
 from models.knn_classifier import model as KNN_MODEL
 import pandas as pd
+from os import environ
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
