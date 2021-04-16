@@ -19,7 +19,9 @@ const OAuthRedirect = async (req, res) => {
         callback: encodeURIComponent(`${config.SELF_URL}/auth/callback`)
     };
     const state = uuid.v4();
-    res.cookie(storageIndex.cookies.OAuthState, state);
+    res.cookie(storageIndex.cookies.OAuthState, state, {
+        domain: config.FRONTEND_COOKIE_DOMAIN
+    });
     res.redirect(`${config.K_AUTH_FRONTEND}/auth/oauth/v2/authorize?client_id=${info.clientId}&scope=${info.scopes}&redirect_uri=${info.callback}&response_type=code&prompt=chooser&offline_access=true&nonce=${uuid.v4()}&state=${state}`);
 };
 /**
@@ -33,7 +35,7 @@ const OAuthCallbackHandler = async (req, res) => {
     if (!req.query.code || !req.cookies[storageIndex.cookies.OAuthState]) return res.status(302).end();
     // req.session.b = "req.session";
     //For Some Reason state cannot be verified
-    if (req.query.state !== req.cookies[storageIndex.cookies.OAuthState]) return res.status(400).json(req.session);
+    if (req.query.state !== req.cookies[storageIndex.cookies.OAuthState]) return res.status(400).json("Invalid State");
 
     try {
         const response = await axios({
@@ -50,23 +52,23 @@ const OAuthCallbackHandler = async (req, res) => {
             })
         }).then(r => r.data);
         res.cookie(storageIndex.cookies.OAuthState, null, {
-            domain: config.FRONTEND_COOKIE_DOMAIN,
             maxAge: 0
         });
         const {id_token, access_token} = response;
         const userinfo = await jwt.verify(id_token, keys.KabeerAuthPlatform_Public_RSA_Key);
-        const decoded = await jwt.verify(access_token, keys.KabeerAuthPlatform_Public_RSA_Key);
+        // const decoded = await jwt.verify(access_token, keys.KabeerAuthPlatform_Public_RSA_Key);
 
         res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            maxAge: decoded.exp
+            // maxAge: decoded.exp
         });
         res.cookie(storageIndex.cookies.Tokens, JSON.stringify(response), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            maxAge: decoded.exp
+            // maxAge: decoded.exp
         });
         res.redirect(config.FRONTEND_URL || "/");
     } catch (e) {
+        console.log(e)
         return res.status(400).json(e.message);
     }
 };

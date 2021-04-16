@@ -1,6 +1,6 @@
 module.exports = {
     db: {
-        url: process.env.MONGO_URI_DEV
+        url: process.env.NODE_ENV === "production" ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV
     },
     app: {
         app_public: process.env.APP_PUBLIC,
