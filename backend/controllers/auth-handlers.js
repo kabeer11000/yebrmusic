@@ -99,11 +99,15 @@ const RefreshToken = async (req, res) => {
             })
         });
         const userinfo = await jwt.verify(response.data["id_token"], keys.KabeerAuthPlatform_Public_RSA_Key);
-        res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo));
+        res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
+            domain: config.FRONTEND_COOKIE_DOMAIN,
+        });
         res.cookie(storageIndex.cookies.Tokens, JSON.stringify({
             ...response.data,
             "refresh_token": refreshToken
-        }));
+        }), {
+            domain: config.FRONTEND_COOKIE_DOMAIN,
+        });
         res.json({
             expire: "1h",
             exp: response.data["expires_in"],

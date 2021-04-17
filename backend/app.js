@@ -10,7 +10,7 @@ const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 10 minutes 20 request
     max: 100 // limit each IP to 100 requests per windowMs TODO Default 10
 });
-const keys = require("./keys/keys");
+const keys = require("./keys");
 const app = express();
 
 const coreScraper = require("./routes/core-scraper-routes");

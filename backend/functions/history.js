@@ -1,4 +1,4 @@
-const keys = require("../keys/keys");
+const keys = require("../keys");
 const scraper = require("../functions/scraper");
 const MongoClient = require("mongodb").MongoClient.connect(keys.db.url, {
     useNewUrlParser: true,
