@@ -15,7 +15,7 @@ const endPoints = {
     //getVideoFake: (key, id) => `https://cdn.jsdelivr.net/gh/kabeer11000/sample-response@master/yt-api/video-.json`,
     getProxyfiedURI: (id) => `${hostName}/api/song?id=${id}`,
     getSuggestion: (q) => "https://suggestqueries.google.com/complete/search?",
-    getSuggestionFake: (q) => `${proxy}/http://clients1.google.com/complete/search?hl=en&output=toolbar&q=${q}`,
+    getSuggestionFake: (q) => `${proxy}http://clients1.google.com/complete/search?hl=en&output=toolbar&q=${q}`,
     searchYoutube: (q) => `${hostName}/api/search?q=${q}`,
     searchYoutubeFake: (key, q) => `${hostName}/files/yt-fake/sample-response-master/yt-api/search-result.json`,
     proxyURI: (url) => `${proxy}${url}`,
