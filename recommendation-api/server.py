@@ -73,5 +73,8 @@ def re_train_next_song_model():
 
 
 if __name__ == "__main__":
-    if environ.get('PORT'): app.run(port=environ.get('PORT'), debug=False)
+    if environ.get('PORT'):
+        port = int(environ.get('PORT', 5000))
+        app.run(host='0.0.0.0', port=port)
+    # if environ.get('PORT'): app.run(port=environ.get('PORT'), debug=False)
     else: app.run(debug=False)
