@@ -1,7 +1,7 @@
 import React from "react";
 import "./Discover.css";
 import SongCard2 from "../SongCard2/SongCard2.lazy";
-import {Container, IconButton, ListItemSecondaryAction} from "@material-ui/core";
+import {Container, Divider, IconButton, ListItemSecondaryAction} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Grid from "@material-ui/core/Grid";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -17,6 +17,10 @@ import {Link} from "react-router-dom";
 import {OpenInNew} from "@material-ui/icons";
 import SessionRecommendation from "../../functions/SessionRecommendation";
 import {useNetwork} from "../../Hooks";
+import {FeedSection} from "../Home/home";
+import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
+import endPoints from "../../api/EndPoints/EndPoints";
+import {initAuth} from "../../functions/Auth";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -41,18 +45,14 @@ const Discover = (props) => {
     const online = useNetwork();
 
     React.useEffect(() => {
-        const b = async () => {
-            // return await comLinkWorker.fetch("http://localhost:9000/api/feed/discover" || "http://127.0.0.1:5000/feed/home/recom?for_each_history=2", {
-            //     headers: {
-            //         Authorization: `Bearer ${await initAuth()}`
-            //     }
-            // });
-            return SessionRecommendation.getRecommendations();
-        }
         const a = async () => {
             try {
                 // !await get(storageIndex.discover.saveObject) || !(Date.now() - await get(storageIndex.discover.timeObject)) / (100 * 60) > 1
                 if (online) {
+                    comlinkWorker.fetch(endPoints.API.RecentlyAdded, {
+                        headers: ({Authorization: `Bearer ${await initAuth()}`}),
+                    }).then(setLatest);
+
                     const recommendations = await SessionRecommendation.getRecommendations();
                     setState({
                         ...recommendations,
@@ -86,19 +86,28 @@ const Discover = (props) => {
     // }, [state]);
     const tv = React.useContext(isTvContext);
     const {PlaySong} = React.useContext(PlayContext);
+    const [latest, setLatest] = React.useState(null);
+
 
     return (
         <div className="Discover" style={{
             marginTop: props.embedded ? 0 : "5rem",
             marginBottom: props.embedded ? 0 : "3rem"
         }}>
-            <Container>
+            <div>
                 {
-                    props.embedded ? null : <React.Fragment>
+                    props.embedded ? null : latest ? <FeedSection response={latest}/> : null
+                }
+            </div>
+            <Divider hidden={props.embedded}/>
+            <Container className={"mt-2"}>
+                {
+                    props.embedded ? null : <div>
                         <ListItemText primary={"Discover"} secondary={"Recommended for you"}/>
                         <br/>
-                    </React.Fragment>
+                    </div>
                 }
+
                 <div className={classes.root}>
                     {
                         !tv ? <Grid container spacing={2}>

@@ -32,10 +32,14 @@ HideOnScroll.propTypes = {
 };
 const CustomBottomNavigation = () => {
 	const classes = useStyles();
-	const [value, setValue] = React.useState("home");
+	// const {location} = useHistory();
+	const [value, setValue] = React.useState("/home");
 	const tv = React.useContext(isTvContext);
 	const [loading] = React.useContext(LoadingContext);
 
+	React.useEffect(() => {
+		setValue(window.location.pathname)
+	}, [])
 	return tv ? null : (
 		<AppBar color="primary" style={{
 			position: "fixed",
@@ -49,18 +53,18 @@ const CustomBottomNavigation = () => {
 			</div>
 			<BottomNavigation value={value} onChange={(event, newValue) => setValue(newValue)} className={classes.root}>
 				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/home"} label="Home"
-										value="home" icon={<Home/>}/>
+										value="/home" icon={<Home/>}/>
 				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/discover"}
-										label="Discover" value="discover"
+										label="Discover" value="/discover"
 										icon={<Explore/>}/>
 				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/downloads"}
-										label="Downloads" value="downloads"
+										label="Downloads" value="/downloads"
 										icon={<GetApp/>}/>
 				<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/artists"}
-										label="Artists" value="artists"
+										label="Artists" value="/artists"
 										icon={<Subscriptions/>}/>
 				{/*<BottomNavigationAction style={{textDecoration: "none"}} component={Link} to={"/trending"}*/}
-				{/*						label="Trending" value="trending"*/}
+				{/*						label="Trending" value="/trending"*/}
 				{/*						icon={<TrendingUp/>}/>*/}
 			</BottomNavigation>
 		</AppBar>

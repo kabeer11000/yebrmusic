@@ -1,8 +1,8 @@
 from tensorflow import keras
 import pandas as pd
 from tensorflow import reduce_sum, ragged, function, math, reduce_mean
-# from datetime import datetime
 import time
+from os import environ
 
 
 class MaskedEmbeddingsAggregatorLayer(keras.layers.Layer):
@@ -42,94 +42,67 @@ class L2NormLayer(keras.layers.Layer):
         return mask
 
 
-def GenerateCandidates(model_path, indexed_songs_file_name):
-    # indexed_songs_file_name = '../../dataset/indexed-songs/songs.pkl'
-    corpus = pd.read_pickle(indexed_songs_file_name)
-    user_watch_history = pd.read_json(
-        "http://localhost/api/history/get-history")  # "./dataset/training-get-history.json"
-    # user_search_history = pd.read_json("http://localhost:9000/recommendation/history/search")  # "./dataset/training-search.json"
+def get_data(corpus_path):
+    corpus = pd.read_pickle(corpus_path)
+    user_watch_history = pd.read_json(environ.get("DATA_COLLECTION_HOST") + "/api/history/get-history")
 
-    song_ids = corpus["song_id"].unique().tolist()
-    song_2_index = {x: i for i, x in enumerate(song_ids)}
-    index_2_songid = {i: x for i, x in enumerate(song_ids)}
+    return corpus, user_watch_history
 
-    user_ids = user_watch_history["user_id"].unique().tolist()
-    user_2_index = {x: i for i, x in enumerate(user_ids)}
-    index_2_userid = {i: x for i, x in enumerate(user_ids)}
 
-    user_watch_history['user_id_encoded'] = user_watch_history['user_id'].map(user_2_index)
-    user_watch_history['song_id_encoded'] = user_watch_history['song_id'].map(song_2_index)
-
-    user_watched_group = user_watch_history.groupby(['user_id_encoded'])['song_id_encoded'].apply(list).reset_index()
-    # user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
-    user_watched_group['past_predicted'] = user_watched_group['song_id_encoded'].apply(lambda x: (x[-1]))
-
-    # filepath = "../../model-snapshots/next-song-prediction/model.h5"
-    model = keras.models.load_model(model_path, custom_objects={
+def get_model(model_path):
+    from os import path
+    if not path.exists(model_path):
+        raise Exception("model_path is not valid")
+    return keras.models.load_model(model_path, custom_objects={
         'L2NormLayer': L2NormLayer,
         'MaskedEmbeddingsAggregatorLayer': MaskedEmbeddingsAggregatorLayer
     })
+
+
+def generate_candidates(model_path, corpus_path):
+    corpus, watch_history = get_data(corpus_path)
+
+    """ Make Indexes for speedier revival """
+    song_ids = corpus["song_id"].unique().tolist()
+    song_2_index = {x: i for i, x in enumerate(song_ids)}
+    # index_2_songid = {i: x for i, x in enumerate(song_ids)}
+
+    user_ids = watch_history["user_id"].unique().tolist()
+    user_2_index = {x: i for i, x in enumerate(user_ids)}
+    index_2_userid = {i: x for i, x in enumerate(user_ids)}
+
+    """ Encoded Song Ids and user Ids to feed to the network """
+    watch_history['user_id'] = watch_history['user_id'].map(user_2_index)
+    watch_history['song_id'] = watch_history['song_id'].map(song_2_index)
+
+    """ Group user's watch history """
+    watches_grouped = watch_history.groupby(['user_id'])['song_id'].apply(list).reset_index()
+
+    """ Treat last watched as Past Prediction """
+    watches_grouped['past_predicted'] = watches_grouped['song_id'].apply(lambda x: (x[-1]))
+
+    model = get_model(model_path)
+
+    """ Currently Not Accounting for Search Features """
     predict = model.predict([
-        keras.preprocessing.sequence.pad_sequences(user_watched_group['song_id_encoded']),
-        keras.preprocessing.sequence.pad_sequences(user_watched_group['song_id_encoded']),
-        # Not Adding Search Features Currently
+        keras.preprocessing.sequence.pad_sequences(watches_grouped['song_id']),
+        keras.preprocessing.sequence.pad_sequences(watches_grouped['song_id'])
     ])
 
-    """### Map Softmax Results to Song Id's
-    Predictions for user at index ```0```
-    This Example only gets top 10 from n length dataset
-    """
+    """ Get Top 150 Candidates (Other 50 will be the recently added and region based candidates)"""
+    predictions = ([list((-a).argsort()[:150]) for a in predict])
+    watches_grouped['predictions'] = predictions
 
-    predictions = ([list((-a).argsort()[:200]) for a in predict])
-    user_watched_group['new_predictions'] = predictions
-    user_watched_group.head()
+    """ Get actual songs from indexes """
 
-    """### Get Actual Song Id's from Index"""
+    def get_songs_from_ids(indexes):
+        songs = []
+        for index in indexes:
+            songs.append(corpus['song'].get(index))
+        return songs
 
-    songs_predicted_encoded = user_watched_group['new_predictions'][0]
+    unix_timestamp = time.time()
 
-    response = pd.concat([user_watch_history, user_watched_group], axis=1, join="inner")
-    response = response.drop(
-        ['song_id', 'song', 'rating', 'user_id_encoded', 'song_id_encoded', 'user_id_encoded', 'song_id_encoded',
-         'past_predicted'], axis=1)
-
-    def _get_song(x):
-        # print(corpus['song_id'].loc(index_2_songid.get(x)))
-        item = corpus.loc[corpus['song_id'] == index_2_songid.get(x)]
-        return item['song'].item()
-        # return corpus[corpus['song_id'] == index_2_songid.get(x)]['song'].values[0]
-
-    response['predictions'] = response['new_predictions'].apply(lambda lst: list(map(_get_song, lst)))
-    response = response.drop(['new_predictions'], axis=1)
-
-    # r = {}
-    # for index, row in response.iterrows():
-    #     r[row['user_id']] = row['predictions']  # [i for i in row['predictions']]
-
-    # timestamp = datetime.utcnow().strftime("%s")
-    # using time module
-    # import time
-
-    # ts stores the time in seconds
-    ts = time.time()
-
-    return list(({"user_id": row['user_id'], "candidates": row['predictions'], "unix_timestamp": ts}) for index, row in response.iterrows())
-
-    # users = {}
-    # for row in songs_predicted_encoded:
-    #     users[index_2_userid.get(row['user_id_encoded'])]
-    # songs_predicted = []
-    # for i in songs_predicted_encoded:
-    #     if index_2_songid.get(i):
-    #         songs_predicted.append(index_2_songid[i])
-    #
-    # print(user_watch_history, songs_predicted)
-
-
-def _GenerateCandidates():
-    # Save To Database
-    return GenerateCandidates()
-
-
-if __name__ == '__main__':
-    print(GenerateCandidates())
+    """ Loop over values and return human readable json """
+    return list(({"unix_timestamp": unix_timestamp, "user_id": index_2_userid.get(row['user_id']),
+                  "candidates": get_songs_from_ids(row['predictions'])}) for index, row in watches_grouped.iterrows())

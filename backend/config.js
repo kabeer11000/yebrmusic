@@ -3,6 +3,6 @@ module.exports = {
     K_AUTH_URL: process.env.K_AUTH_URL,
     FRONTEND_URL: process.env.FRONTEND_URI,
     K_AUTH_FRONTEND: process.env.K_AUTH_FRONTEND,
-    FRONTEND_COOKIE_DOMAIN: ".kabeersnetwork.tk",
+    FRONTEND_COOKIE_DOMAIN: process.env.NODE_ENV === "production" ? ".kabeersnetwork.tk" : "localhost",
     K_AUTH_SCOPE: "openid|s564d68a34dCn9OuUNTZRfuaCnwc6:getSong|s564d68a34dCn9OuUNTZRfuaCnwc6:search|s564d68a34dCn9OuUNTZRfuaCnwc6:feed|s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"
 }

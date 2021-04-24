@@ -69,7 +69,6 @@ export const RatingProvider = ({children}) => {
             //     method: "post",
             //     body: JSON.stringify({id: playState.videoElement.id}),
             // });
-
             await comLinkWorker.fetch(endPoints.DataCollection.rate({
                 id: playState.videoElement.id,
                 token: window.__kn.music["data-collection"].token.access_token

@@ -25,7 +25,7 @@ Servers Check for process.env.PORT or use default ports
 ### Running Locally
 Running Servers Locally - ```user-accounts-api``` will not work as it is just a concept.
 
-```recom-api``` was a concept and is deprecated. ```recommendation-api``` is a production version of these concepts.
+```recom-api``` was a concept and is deprecated and will be deleted. ```recommendation-api``` is a production version of these concepts.
 #### Back End
 Main API server - Handles Auth, and Other App actions
 

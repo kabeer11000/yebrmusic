@@ -13,7 +13,17 @@ import {
 	SwipeableDrawer,
 	Typography
 } from "@material-ui/core";
-import {AccountCircle, Favorite, GetApp, History, Home, Settings} from "@material-ui/icons";
+import {
+	AccountCircle,
+	Explore,
+	Favorite,
+	GetApp,
+	History,
+	Home,
+	Search,
+	Settings,
+	Subscriptions
+} from "@material-ui/icons";
 import {Link} from "react-router-dom";
 import {storageIndex} from "../../functions/Helper/StorageIndex";
 import {FocusNode} from "@please/lrud";
@@ -111,6 +121,13 @@ const DrawerComponent = ({children}) => {
 	// const userData = localStorage.getItem(storageIndex.userData) ? JSON.parse(atob(localStorage.getItem(storageIndex.userData))) : {};
 
 	// const container = window !== undefined ? () => window().document.body : undefined;
+	const routes = [
+		{name: "Home", path: "/home", icon: <Home/>},
+		{name: "Explore", path: "/discover", icon: <Explore/>},
+		{name: "Downloads", path: "/downloads", icon: <GetApp/>},
+		{name: "Artists", path: "/artists", icon: <Subscriptions/>},
+		{name: "Search", path: "/search", icon: <Search/>},
+	]
 	return (
 		<div>
 			{tv ? <FocusNode className={tv ? "" : "d-none"} onFocused={() => setOpen(!open)}>
@@ -183,23 +200,12 @@ const DrawerComponent = ({children}) => {
 					<div className={"classes.toolbar"}/>
 					<Divider/>
 					<List onClick={handleDrawerToggle}>
-						<ListItem button component={Link} to={"/home"}>
-							<ListItemIcon><Home/></ListItemIcon>
-							<ListItemText primary={"Home"}/>
-						</ListItem>
-						<ListItem button component={Link} to={"/downloads"}>
-							<ListItemIcon><GetApp/></ListItemIcon>
-							<ListItemText primary={"Downloads"}/>
-						</ListItem>
-						<ListItem button component={Link} to={"/history"}>
-							<ListItemIcon><History/></ListItemIcon>
-							<ListItemText primary={"History"}/>
-						</ListItem>
-						<ListItem button component={Link} to={"/liked"}>
-							<ListItemIcon><Favorite/></ListItemIcon>
-							<ListItemText primary={"Liked"}/>
-						</ListItem>
+						{routes.map(route => <ListItem button component={Link} to={route.path}>
+							<ListItemIcon>{route.icon}</ListItemIcon>
+							<ListItemText primary={route.name}/>
+						</ListItem>)}
 						<Divider/>
+
 						<ListItem button component={Link} to={"/settings"}>
 							<ListItemIcon><Settings/></ListItemIcon>
 							<ListItemText primary={"Settings"}/>

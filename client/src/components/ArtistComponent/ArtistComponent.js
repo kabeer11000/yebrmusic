@@ -86,7 +86,8 @@ const ArtistComponent = ({history}) => {
     const {PlaySong} = React.useContext(PlayContext);
     return <div>
         {state && state.author ? <React.Fragment>
-            <Card><CardActionArea>
+            <Card
+                variant={"outlined"} elevation={0}><CardActionArea>
                 <img src={state.author.bestAvatar.url} style={{
                     height: "15rem",
                     // position: "fixed",

@@ -121,7 +121,7 @@ const SearchResultComponent = () => {
                                                     <Avatar alt={value.title} src={value.image}/>
                                                 </ListItemIcon>
                                                 <ListItemText primary={`${value.title}`}
-                                                              secondary={value.subCountLabel ? `${value.subCountLabel} Listeners` : "No Listeners"}/>
+                                                              secondary={value.subCountLabel ? `${value.subCountLabel} Listeners` : ""}/>
                                             </ListItem>
                                         ))}
                                         <Divider/>

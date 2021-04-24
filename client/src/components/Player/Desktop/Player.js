@@ -251,7 +251,9 @@ const Player = () => {
                                         <IconButton><Grade/></IconButton>
                                         <IconButton onClick={() => setNextDrawer(true)}><Toc/></IconButton>
                                         <IconButton
-                                            onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}><AccountCircle/>
+                                            hidden={!Song.channelId}
+                                            onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
+                                            <AccountCircle/>
                                         </IconButton>
                                     </div>
                                     <Container maxWidth={"md"}>

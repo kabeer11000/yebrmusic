@@ -25,7 +25,11 @@ const ArtistsSlider = () => {
         headers: {Authorization: `Bearer ${await initAuth()}`},
     }).then(setState);
     React.useEffect(() => {
-        loadArtists();
+        try {
+            loadArtists();
+        } catch (e) {
+
+        }
     }, []);
     return (
         <Paper variant={"outlined"} className={"mb-3"} hidden={!state}>
@@ -53,14 +57,14 @@ const ArtistsSlider = () => {
         </Paper>
     )
 }
-const FeedSection = ({response}) => {
+export const FeedSection = ({response, showTitle = true}) => {
     const {PlaySong} = React.useContext(PlayContext);
     return (
         <React.Fragment>
-            {response.items ?
+            {response && response.items.length ?
                 <React.Fragment>
                     <Grow in={true}>
-                        <Typography variant={"h5"} className={"pl-3 text-left text-truncate"}>
+                        <Typography hidden={!showTitle} variant={"h5"} className={"pl-3 text-left text-truncate"}>
                             {response.title}
                         </Typography>
                     </Grow>
@@ -121,6 +125,8 @@ const HomeComponent = () => {
         }
     }
     const init = async () => {
+        if (localStorage.getItem(storageIndex.litemode) && !JSON.parse(localStorage.getItem(storageIndex.litemode))) return await loadSections();
+
         if (!await get(storageIndex.home.saveObject)) return await loadSections();
         if (!(Date.now() - await get(storageIndex.home.timeObject)) / (100 * 60) > 1) {
             return await loadSections(); // Load From Server

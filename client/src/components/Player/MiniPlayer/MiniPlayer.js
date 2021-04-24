@@ -158,12 +158,12 @@ const MiniPlayer = () => {
                         <img
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = 'http://docs-kabeersnetwork-kview-app-sta.rf.gd/Private/uploads/5f58af5918860unnamed.jpg';
+                                e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg";
                             }}
                             src={Song.snippet.thumbnails.high.url} style={{
                             width: "4rem",
                             height: "3rem",
-                            maxWidth: "5rem!important",
+                            maxWidth: "6rem!important",
                             maxHeight: "4rem!important"
                         }}
                             alt={Song.snippet.title} className={"KabeersMiniPlayerImage"}

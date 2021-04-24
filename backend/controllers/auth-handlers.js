@@ -80,9 +80,10 @@ const OAuthCallbackHandler = async (req, res) => {
  * @constructor
  */
 const RefreshToken = async (req, res) => {
-    if (!req.cookies[storageIndex.cookies.Tokens]) return res.status(402).json("Refresh Token Does Not Exists");
-    const refreshToken = JSON.parse(req.cookies[storageIndex.cookies.Tokens]).refresh_token;
+    if (!req.cookies[storageIndex.cookies.RefreshToken]) return res.status(402).json("Refresh Token Does Not Exists");
+    const refreshToken = req.cookies[storageIndex.cookies.RefreshToken];
     const tokenPayload = JSON.parse(Buffer.from(refreshToken.split(".")[1], "base64"));
+    // return res.json(typeof tokenPayload.exp)
     if (tokenPayload.iat > tokenPayload.exp) return res.json("Refresh Token Expired");
     try {
         const response = await axios({
@@ -102,16 +103,19 @@ const RefreshToken = async (req, res) => {
         res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
         });
-        res.cookie(storageIndex.cookies.Tokens, JSON.stringify({
-            ...response.data,
-            "refresh_token": refreshToken
-        }), {
+        res.cookie(storageIndex.cookies.Tokens, JSON.stringify({...response.data, refresh_token: refreshToken}), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
+            maxAge: 7.2e+6
         });
-        res.json({
+
+        res.cookie(storageIndex.cookies.RefreshToken, refreshToken, {
+            domain: config.FRONTEND_COOKIE_DOMAIN,
+            maxAge: tokenPayload.exp
+        });
+        req.query.redirect_uri ? res.redirect(req.query.redirect_uri) : res.json({
             expire: "1h",
             exp: response.data["expires_in"],
-            access_token: response.data,
+            tokens: response.data,
         });
     } catch (e) {
         console.log(e);

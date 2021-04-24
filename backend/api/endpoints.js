@@ -35,6 +35,7 @@ module.exports = {
     },
     RecommendationServer: {
         KnnRankedCandidates: `${process.env.RECOMMENDATION_SERVER_URI}/feed/recommendations/deprecated/knn`,
-        GetAllCandidates: `${process.env.RECOMMENDATION_SERVER_URI}/next-song-prediction/get-all-predictions`
+        GetAllCandidates: `${process.env.RECOMMENDATION_SERVER_URI}/next-song-prediction/get-all-predictions`,
+        RetrainModel: `${process.env.RECOMMENDATION_SERVER_URI}/next-song-prediction/retrain-model`
     }
 };

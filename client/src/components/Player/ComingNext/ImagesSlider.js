@@ -26,7 +26,7 @@ const CommingNextImagesSlider = (props) => {
                                  className={`image mb-0 mx-3 img-fluid rounded shadow SongNextSliderSelected`}
                                  onError={(e) => {
                                      e.target.onerror = null;
-                                     e.target.src = "https://hosted-kabeersnetwork.000webhostapp.com/Private/uploads/605e036666508---5f6d7b19418f3---images.png"
+                                     e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
                                  }}
                                  style={{
                                      scrollSnapAlign: "center",
@@ -46,7 +46,7 @@ const CommingNextImagesSlider = (props) => {
                                         className={`image mb-0 mx-3 img-fluid rounded shadow ${index === playState.playList.index ? "SongNextSliderSelected" : ""}`}
                                         onError={(e) => {
                                             e.target.onerror = null;
-                                            e.target.src = "https://hosted-kabeersnetwork.000webhostapp.com/Private/uploads/605e036666508---5f6d7b19418f3---images.png"
+                                            e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
                                         }}
                                         onClick={() => index === playState.playList.index ? null : props.PlaySong(value, index)}
                                         style={{

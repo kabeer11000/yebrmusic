@@ -33,6 +33,7 @@ export const storageIndex = {
     castingTo: "castingTo", // `0MTg0YjM4ZTJmMDBlNDNiMDcwYTlm`
     castSnackbarKey: "TEMP____5UWlJmdWFDbndjNjp1c",
     darkMode: "darkMode",
+    litemode: "__kn.music.options.litemode",
     castPreventRepeat: "castPreventFakeId",
     onScreenKeyboard: "onScreenKeyboard",
     castAcceptedDevices: "castAcceptedDevices",

@@ -41,6 +41,66 @@ const getSong = async (id) => ytSearch({videoId: id})
         }
     }));
 
+const _search_ytsr = async (query, options = {}) => {
+    const ytsr = require("ytsr");
+    const results = await ytsr(query, options);
+    const filtered_results = results.items.filter(video => video.type === "video");
+    return ({
+        kind: "KabeersMusic#searchListResponse",
+        etag: uuid.v4(),
+        regionCode: "PK",
+        pageInfo: {
+            totalResults: filtered_results.length,
+        },
+        items: filtered_results.map(video => ({
+            kind: "KabeersMusic#Song",
+            etag: uuid.v4(),
+            id: video.id,
+            channelId: video.author.channelId,
+            author: {
+                badges: video.author.ownerBadges,
+                verified: video.author.verified
+            },
+            snippet: {
+                publishedAt: video.ago,
+                title: video.title,
+                description: video.description,
+                channelTitle: video.author.name || "From Kabeer's Music",
+                channelId: video.author.channelId,
+                duration: video.duration,
+                views: video.views,
+                thumbnails: {
+                    default: {
+                        url: `https://i.ytimg.com/vi/${video.id}/default.jpg`,
+                        width: 120,
+                        height: 90
+                    },
+                    medium: {
+                        url: `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
+                        width: 320,
+                        height: 180
+                    },
+                    high: {
+                        url: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+                        width: 480,
+                        height: 360
+                    }
+                }
+            }
+        })),
+        accounts: filtered_results.map(({author}) => ({
+            image: author.bestAvatar.url,
+            name: author.name,
+            thumbnail: author.bestAvatar.url,
+            title: author.name,
+            type: "channel",
+            url: author.url,
+            badges: author.ownerBadges,
+            verified: author.verified
+        })),
+        title: query
+    })
+}
 /**
  * Search Youtube
  * @param query
@@ -203,5 +263,9 @@ module.exports = {
     searchYoutube,
     getSong,
     getPlayList,
-    getArtist
+    getArtist,
+
+    experimental: {
+        _search_ytsr
+    }
 };

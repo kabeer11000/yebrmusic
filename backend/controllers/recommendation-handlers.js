@@ -10,6 +10,7 @@ const history = require("../functions/history");
 const scraper = require("../functions/scraper");
 const {ValidParams} = require("../functions/misc");
 const {getMaximum} = require("../functions/misc");
+const nodeIPLocate = require("node-iplocate");
 /**
  * But Working For Now
  * @deprecated
@@ -67,6 +68,7 @@ const KnnRankedCandidates = async (req, res) => {
  * @constructor
  */
 const GenerateCandidates = async (req, res) => {
+    if (req.query.retrain) await axios.get(endpoints.RecommendationServer.RetrainModel);
     const predictions = await axios.get(endpoints.RecommendationServer.GetAllCandidates).then(a => a.data);
     if (!predictions) return res.json(predictions);
     const db = await MongoClient;
@@ -109,9 +111,39 @@ const BasedOnLastSearches = async (req, res) => {
             algorithms: "RS256"
         });
         if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
-        const queries = await history.getSearchHistory(decoded.sub).then(a => a.map(b => b.query + " "))
-        const response = await scraper.searchYoutube(queries);
-        return res.status(200).json({...response, title: `Based on Your Last Search`});
+        const searchHistory = await history.getSearchHistory(decoded.sub).then(a => a && a.length ? [...new Set(a.map(b => b.query))].slice((a.length - 2), a.length).reverse() : []);
+        let queries = []
+        /** @attention
+         * @deprecated
+         * This will return null country in development **/
+        if (!searchHistory.length) queries = ['vevo music', 'top music'];
+        const country = (await nodeIPLocate(req.headers['x-forwarded-for'] || req.connection.remoteAddress)).country
+        if (country) queries.push(`top music in ${country}`);
+        const r = new Set();
+        for (const query of queries) {
+            /**
+             * Call SearchYoutube with return value from query expression
+             */
+            // r.add((await (query |> scraper.searchYoutube)).items);
+            console.log(query)
+            const results = (await scraper.searchYoutube(query)).items.slice(0, searchHistory.length ? 3 : 5);
+            for (const song of results) {
+                r.add(song);
+            }
+        }
+        // const response = await scraper.searchYoutube(queries.join(" "));
+        // console.log([...r][0])
+        const response = ({
+            kind: "KabeersMusic#searchListResponse",
+            etag: Math.random(),
+            regionCode: "PK",
+            title: history.length ? `Based on Your Last Searches` : `Music You might like`,
+            pageInfo: {
+                totalResults: r.size,
+            },
+            items: [...r]
+        })
+        return res.status(200).json(response);
     } catch (e) {
         return res.status(400).end();
     }
@@ -134,14 +166,26 @@ const BecauseYouListenedTo = async (req, res) => {
             user_id: decoded.sub,
             limit: 5
         });
-        const artist = getMaximum(watches.map(v => v.song.snippet.channelTitle));
-        if (artist.name) {
+        if (watches.length) {
+            const artist = getMaximum(watches.map(v => v.song.snippet.channelTitle));
+            if (artist.name) {
+                const response = await scraper.searchYoutube(`${artist.name} official music`);
+                return res.json({
+                    ...response,
+                    title: `Because You Listened to ${artist.name}`
+                });
+            } else res.end();
+        } else {
+            const watches = await history.getWatchHistory({
+                limit: 5
+            });
+            const artist = getMaximum(watches.map(v => v.song.snippet.channelTitle));
             const response = await scraper.searchYoutube(`${artist.name} official music`);
             return res.json({
                 ...response,
-                title: `Because You Listened to ${artist.name}`
+                title: `Top artist right now`
             });
-        } else res.end();
+        }
     } catch (e) {
         return res.status(400).end();
     }

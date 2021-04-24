@@ -1,9 +1,7 @@
-import datetime
-import os
-
 import pandas as pd
 from tensorflow import keras
 from tensorflow import reduce_sum, ragged, function, math, nn, reduce_mean
+from os import environ
 
 
 class MaskedEmbeddingsAggregatorLayer(keras.layers.Layer):
@@ -43,81 +41,29 @@ class L2NormLayer(keras.layers.Layer):
         return mask
 
 
-def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
-    """###  Getting Data
+def get_data(corpus_path):
+    corpus = pd.read_json(environ.get("DATA_COLLECTION_HOST") + "/api/details/get-indexed-songs")
+    """ Save Corpus """
+    corpus.to_pickle(corpus_path)
+    print("Saved Corpus at: ", corpus_path)
 
-    """
+    watch_history = pd.read_json(environ.get("DATA_COLLECTION_HOST") + "/api/history/get-history")
+    # search_history = pd.read_json("http://localhost:9000/recommendation/history/search")
 
-    corpus = pd.read_json("http://localhost/api/details/get-indexed-songs")  # "./dataset/indexed-songs.json"
+    return corpus, watch_history
 
-    # indexed_songs_file_name = '../../dataset/indexed-songs/songs.pkl'
-    corpus.to_pickle(indexed_songs_file_name)
-    print("Saving New Corpus To FileSystem")
 
-    user_watch_history = pd.read_json(
-        "http://localhost/api/history/get-history")  # "./dataset/training-get-history.json"
-    # user_search_history = pd.read_json("http://localhost:9000/recommendation/history/search")  # "./dataset/training-search.json"
-
-    """## The Model
-    - Model Config
-    """
-
+def get_model(NUM_CLASSES):
     EMBEDDING_DIMS = 16
     DENSE_UNITS = 64
     DROPOUT_PCT = 0.0
     ALPHA = 0.0
-    NUM_CLASSES = len(corpus) + 2
-
     LEARNING_RATE = 0.003
 
-    """### Model Inputs
-    Handle Search Queries and Watch History - Encoded Indices of Songs
-    """
+    """ Handle Search Queries and Watch History - Encoded Indices of Songs """
 
     search_queries = keras.layers.Input(shape=(None,), name='search_query')
     watch_history = keras.layers.Input(shape=(None,), name='watch_history')
-
-    user_watch_history.head()
-
-    """## Process Data
-    - Movie to Id Index
-    """
-
-    song_ids = corpus["song_id"].unique().tolist()
-    song_2_index = {x: i for i, x in enumerate(song_ids)}
-    index_2_songid = {i: x for i, x in enumerate(song_ids)}
-
-    user_ids = user_watch_history["user_id"].unique().tolist()
-    user_2_index = {x: i for i, x in enumerate(user_ids)}
-    index_2_userid = {i: x for i, x in enumerate(user_ids)}
-
-    user_watch_history['user_id_encoded'] = user_watch_history['user_id'].map(user_2_index)
-    user_watch_history['song_id_encoded'] = user_watch_history['song_id'].map(song_2_index)
-
-    """### Model Layers
-
-    Features Layers: Handle Textual Search Queries <br/>
-    Labels Layers: Handle Watch History
-
-    <br/>
-
-    ---
-
-    <br/>
-
-    Some Custom Layers Are Also Defined
-    - Embedding Layers
-    - Normalization Layers
-    - Masking Layer
-    - Relu and LeakyRelu Layers
-    - Softmax Activation
-
-    ### Custom Layers
-    - Masking Layer
-    - L2 Normalization Layer
-    """
-
-    """### Prebuilt Model Layers"""
 
     features_embedding_layer = keras.layers.Embedding(input_dim=NUM_CLASSES, output_dim=EMBEDDING_DIMS, mask_zero=True,
                                                       trainable=True, name='searched_embeddings')
@@ -133,9 +79,9 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
 
     dense_output = keras.layers.Dense(NUM_CLASSES, activation=nn.softmax, name='dense_output')
 
-    """### L2 Normalize Inputs
-    - Normalize - Average Inputs
-    - Concat as Single Layer
+    """ L2 Normalize Inputs
+      - Normalize - Average Inputs
+      - Concat as Single Layer
     """
 
     searched_embeddings = features_embedding_layer(search_queries)
@@ -149,10 +95,10 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
     concat_inputs = keras.layers.Concatenate(axis=1)([avg_searched, avg_watched])
 
     """### Dense Layers
-    Contains:
-    - DenseLayers
-    - BatchNormalization Layers
-    - Relu Layers
+      Contains:
+      - DenseLayers
+      - BatchNormalization Layers
+      - Relu Layers
     """
 
     dense_1_features = dense_1(concat_inputs)
@@ -178,34 +124,43 @@ def ReTrainModel(indexed_songs_file_name, model_snapshot_location):
         outputs=[outputs]
     )
 
-    logdir = os.path.join("logs", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-    tensorboard_callback = keras.callbacks.TensorBoard(logdir, histogram_freq=1)
-
     model.compile(optimizer=optimiser, loss=loss)
 
-    """## Training
+    return model
 
-     ### Encode Data to Feed to the Model
-     """
 
-    user_watched_group = user_watch_history.groupby(['user_id_encoded'])['song_id_encoded'].apply(list).reset_index()
-    # user_search_group = user_search_history.groupby(['user_id'])['query'].apply(list).reset_index()
-    user_watched_group['past_predicted'] = user_watched_group['song_id_encoded'].apply(lambda x: (x[-1]))
+def retrain_model(corpus_path, model_snapshot_location):
+    corpus, watch_history = get_data(corpus_path)
 
-    print("Not Adding Search Features Currently")
-    filepath = "../../model-snapshots/next-song-prediction/model.h5"
-    checkpoint = keras.callbacks.ModelCheckpoint(model_snapshot_location, monitor='loss', verbose=1, save_best_only=True, mode='min')
-    callbacks_list = [checkpoint, tensorboard_callback]
+    """ Make Indexes for speedier revival """
+    song_ids = corpus["song_id"].unique().tolist()
+    song_2_index = {x: i for i, x in enumerate(song_ids)}
+    # index_2_songid = {i: x for i, x in enumerate(song_ids)}
 
+    user_ids = watch_history["user_id"].unique().tolist()
+    user_2_index = {x: i for i, x in enumerate(user_ids)}
+    # index_2_userid = {i: x for i, x in enumerate(user_ids)}
+
+    """ Encoded Song Ids and user Ids to feed to the network """
+    watch_history['user_id'] = watch_history['user_id'].map(user_2_index)
+    watch_history['song_id'] = watch_history['song_id'].map(song_2_index)
+
+    """ Group user's watch history """
+    watches_grouped = watch_history.groupby(['user_id'])['song_id'].apply(list).reset_index()
+
+    """ Treat last watched as Past Prediction """
+    watches_grouped['past_predicted'] = watches_grouped['song_id'].apply(lambda x: (x[-1]))
+
+    """ Save model snapshot callback """
+    checkpoint = keras.callbacks.ModelCheckpoint(model_snapshot_location, monitor='loss', verbose=1,
+                                                 save_best_only=True, mode='min')
+    model = get_model(NUM_CLASSES=(len(corpus) + 2))
+
+    """ Not Adding Search Queries"""
     model.fit([
-        keras.preprocessing.sequence.pad_sequences(user_watched_group['song_id_encoded']),
-        keras.preprocessing.sequence.pad_sequences(user_watched_group['song_id_encoded']),
-        # Not Adding Search Features Currently
-    ], user_watched_group['past_predicted'].values, callbacks=[callbacks_list], steps_per_epoch=1, epochs=100,
+        keras.preprocessing.sequence.pad_sequences(watches_grouped['song_id']),
+        keras.preprocessing.sequence.pad_sequences(watches_grouped['song_id']),
+    ], watches_grouped['past_predicted'].values, callbacks=[checkpoint], steps_per_epoch=1, epochs=100,
         verbose=1)
 
     print("Model Retrained")
-
-
-if __name__ == '__main__':
-    ReTrainModel()

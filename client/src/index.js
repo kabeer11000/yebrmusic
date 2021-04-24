@@ -7,10 +7,7 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import {IsTvProvider} from "./Contexts";
 
-console.error = () => {
-};
-if (process.env.NODE_ENV !== "development") {
-    serviceWorker.register();
+if (!window.__kn.music.developers["debugging-enabled"]) {
     console.log = () => {
     };
 }
@@ -49,12 +46,12 @@ if (process.env.NODE_ENV !== "development") {
 // window.__kn.music.audio.setAttribute("id", "MainAudio-KabeersMusic")
 window.kmusic = {};
 if (localStorage.getItem("3d-sound") !== null) {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    window.kmusic.audioContext = new AudioContext();
-    window.kmusic.track = window.kmusic.audioContext.createMediaElementSource(window.__kn.music.audio);
+    const AudioContext = window.AudioContext || window["webkitAudioContext"];
+    window.__kn.music.audioContext = new AudioContext();
+    window.__kn.music.track = window.kmusic.audioContext.createMediaElementSource(window.__kn.music.audio);
 }
-ReactDOM.render(<IsTvProvider><App/></IsTvProvider>, document.getElementById("root"));
+ReactDOM.render(<IsTvProvider><App/></IsTvProvider>, document.querySelector("AppRenderer"));
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-// serviceWorker.register();
+serviceWorker.register();

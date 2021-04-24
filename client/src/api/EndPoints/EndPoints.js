@@ -41,13 +41,19 @@ const endPoints = {
     getSongDetail: (id) => `${hostName}/api/song/details/${id}`,
     getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`,
 
+    Auth: {
+        refreshToken: ({redirect_uri}) => `${hostName}/auth/store/tokens/refresh?redirect_uri=${redirect_uri}`
+    },
     DataCollection: {
-        saveSessionHistory: `${DataCollection}/api/history/save-session`,
+        saveSessionHistory: (token) => `${DataCollection}/api/history/save-session?token=${token}`,
         getToken: `${hostName}/auth/external/data-collection/generate`,
         rate: ({id, token}) => `${DataCollection}/api/update-rating?video_id=${id}&token=${token}`,
         details: {
             getStreams: (token) => `${DataCollection}/api/details/streams?token=${token}`,
         }
+    },
+    API: {
+        RecentlyAdded: `${hostName}/api/feed/songs/recent`
     },
     Recommendations: {
         topSearched: `${hostName}/recommendation/feed/top-searched`,

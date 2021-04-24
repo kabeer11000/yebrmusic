@@ -224,6 +224,7 @@ const Player = () => {
                             {/*}}><Grade/></IconButton>*/}
                             <IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
                             <IconButton
+                                hidden={!Song.channelId}
                                 onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
                                 <AccountCircle/>
                             </IconButton>

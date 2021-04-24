@@ -88,11 +88,14 @@
                     "debugging-enabled": true
                 },
                 config: {
+                    other: {
+                        recently_added_list_id: "PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL"
+                    },
                     hosts: {
-                        api: "https://backend-yebrmusic.kabeersnetwork.tk" || "http://localhost:9000",
-                        "data-collection-server": "https://collect-yebrmusic.kabeercloud.tk" || `http://localhost:80`,
-                        "cast-server": "https://cast-yebrmusic.kabeercloud.tk" || `http://localhost:3240`,
-                        proxy: "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/" || "http://localhost:8080/"
+                        api: "http://localhost:9000" || "https://backend-yebrmusic.kabeersnetwork.tk",
+                        "data-collection-server": `http://localhost:80` || "https://collect-yebrmusic.kabeercloud.tk",
+                        "cast-server": `http://localhost:3240` || "https://cast-yebrmusic.kabeercloud.tk",
+                        proxy: "http://localhost:8080/" || "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
                     },
                     recom: {
                         last_session_carry_recom_length: 5
@@ -104,11 +107,14 @@
                 "data-collection": {}
             }
         }
+        console.error = () => {
+        }
     </script>
 </head>
 <body>
 <noscript>You need to enable JavaScript to run Kabeer's Music.</noscript>
-<div id="root"></div>
+<AppRenderer></AppRenderer>
+<!--<div id="root"></div>-->
 <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.

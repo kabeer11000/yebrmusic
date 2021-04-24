@@ -13,7 +13,7 @@ class _SessionRecommendation {
     async _onUpdate() {
         try {
             const sessionHistory = await get(storageIndex.recommendation.sessionHistory);
-            await comLinkWorker.fetch(endPoints.DataCollection.saveSessionHistory, {
+            await comLinkWorker.fetch(endPoints.DataCollection.saveSessionHistory(window.__kn.music["data-collection"].token.access_token), {
                 method: "POST",
                 body: await comLinkWorker.JSON.stringify({
                     session: sessionHistory

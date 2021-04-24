@@ -3,7 +3,7 @@ import "./Settings.css";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Switch from "@material-ui/core/Switch";
-import {ArrowBack, Brightness4, Cast, Keyboard} from "@material-ui/icons";
+import {ArrowBack, Brightness4, Cast, DataUsage, Keyboard, Storage} from "@material-ui/icons";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -19,14 +19,14 @@ import IconButton from "@material-ui/core/IconButton";
 import {ThemeContext} from "../../Contexts";
 import {Device} from "../../functions/Device";
 import {useHistory} from "react-router-dom";
-import {get} from "idb-keyval";
-import Container from "@material-ui/core/Container";
+import {del, get} from "idb-keyval";
 
 const Settings = () => {
     const [switches, setSwitches] = React.useState({
         darkmode: localStorage.getItem(storageIndex.darkMode) === null ? false : JSON.parse(localStorage.getItem(storageIndex.darkMode)),
         keyboard: localStorage.getItem(storageIndex.onScreenKeyboard) === null ? false : JSON.parse(localStorage.getItem(storageIndex.onScreenKeyboard)),
         casting: localStorage.getItem(storageIndex.castEnabled) === null ? false : JSON.parse(localStorage.getItem(storageIndex.castEnabled)),
+        litemode: localStorage.getItem(storageIndex.litemode) === null ? false : JSON.parse(localStorage.getItem(storageIndex.litemode))
     });
     const history = useHistory();
     const dialog = useDialog();
@@ -75,89 +75,133 @@ const Settings = () => {
                                   secondary={userInfo ? userInfo.email : ""}/>
                 </div>
             </List>
-            <Container maxWidth={"md"}>
-                <List>
-                    <Divider/>
-                    <ListItem>
-                        <ListItemIcon>
-                            <Brightness4/>
-                        </ListItemIcon>
-                        <ListItemText id="switch-list-label-wifi" primary="Dark Mode"/>
-                        <ListItemSecondaryAction>
-                            <Switch
-                                edge="end"
-                                onChange={() => {
-                                    setDarkmode(!darkmode);
-                                    handleSwitch("darkmode", !switches["darkmode"]);
-                                }}
-                                checked={switches["darkmode"]}
-                                inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon>
-                            <Cast/>
-                        </ListItemIcon>
-                        <ListItemText id="switch-list-label-wifi" primary="Song Casting"/>
-                        <ListItemSecondaryAction>
-                            <Switch
-                                edge="end"
-                                onChange={(e) => {
-                                    localStorage.setItem(storageIndex.castEnabled, !switches["casting"]);
-                                    handleSwitch("casting", !switches["casting"]);
-                                }}
-                                checked={switches["casting"]}
-                                inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                        <ListItemText id="switch-list-label-bluetooth" primary="Feedback and Help"/>
-                        <ListItemSecondaryAction>
-                            <FeedbackButton/>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem button onClick={() => {
-                        const config = {
-                            title: (
-                                <List className={"p-0 m-0"}>
-                                    <ListItem className={"p-0 m-0"}>
-                                        <ListItemText className={"p-0 m-0"} primary={"Device Cast Id"}
-                                                      secondary={"This Will be used when casting to this device"}/>
-                                    </ListItem>
-                                </List>
-                            ),
-                            message: (
-                                <TextField disabled variant="filled" value={Device.getId()}/>
-                            ) || "Nothing Here!",
-                        };
-                        dialog.alert(config);
-                    }}>
-                        <ListItemText primary={"Device ID"} secondary={"Device Id When Casting"}/>
-                        <ListItemSecondaryAction>
-                            <Cast/>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon>
-                            <Keyboard/>
-                        </ListItemIcon>
-                        <ListItemText id="switch-list-label-wifi" primary="onScreen Keyboard"/>
-                        <ListItemSecondaryAction>
-                            <Switch
-                                edge="end"
-                                onChange={(e) => {
-                                    localStorage.setItem(storageIndex.onScreenKeyboard, !switches["keyboard"]);
-                                    handleSwitch("keyboard", !switches["keyboard"]);
-                                }}
-                                checked={switches["keyboard"]}
-                                inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                </List>
-            </Container>
+            <List>
+                <Divider/>
+                <ListItem>
+                    <ListItemIcon>
+                        <Brightness4/>
+                    </ListItemIcon>
+                    <ListItemText id="switch-list-label-wifi" primary="Dark Mode" secondary={"Enable Dark Theme"}/>
+                    <ListItemSecondaryAction>
+                        <Switch
+                            edge="end"
+                            onChange={() => {
+                                setDarkmode(!darkmode);
+                                handleSwitch("darkmode", !switches["darkmode"]);
+                            }}
+                            checked={switches["darkmode"]}
+                            inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                    <ListItemIcon>
+                        <Cast/>
+                    </ListItemIcon>
+                    <ListItemText id="switch-list-label-wifi" primary="Song Casting"
+                                  secondary={"Remote Play songs on connected devices"}/>
+                    <ListItemSecondaryAction>
+                        <Switch
+                            edge="end"
+                            onChange={(e) => {
+                                localStorage.setItem(storageIndex.castEnabled, !switches["casting"]);
+                                handleSwitch("casting", !switches["casting"]);
+                            }}
+                            checked={switches["casting"]}
+                            inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                    <ListItemIcon>
+                        <Keyboard/>
+                    </ListItemIcon>
+                    <ListItemText id="switch-list-label-wifi" primary="On-screen Keyboard"
+                                  secondary={"On Screen keyboard for TV devices"}/>
+                    <ListItemSecondaryAction>
+                        <Switch
+                            edge="end"
+                            onChange={(e) => {
+                                localStorage.setItem(storageIndex.onScreenKeyboard, !switches["keyboard"]);
+                                handleSwitch("keyboard", !switches["keyboard"]);
+                            }}
+                            checked={switches["keyboard"]}
+                            inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+
+                <ListItem>
+                    <ListItemIcon>
+                        <DataUsage/>
+                    </ListItemIcon>
+                    <ListItemText id="switch-list-label-wifi" primary="Lite Mode"
+                                  secondary={"Cache results to save data"}/>
+                    <ListItemSecondaryAction>
+                        <Switch
+                            edge="end"
+                            onChange={(e) => {
+                                localStorage.setItem(storageIndex.litemode, !switches["litemode"]);
+                                handleSwitch("litemode", !switches["litemode"]);
+                            }}
+                            checked={switches["litemode"]}
+                            inputProps={{"aria-labelledby": "switch-list-label-wifi"}}
+                        />
+                    </ListItemSecondaryAction>
+                </ListItem>
+
+
+                <ListItem button onClick={async () => {
+                    del(storageIndex.home.saveObject);
+                    del(storageIndex.home.timeObject);
+
+
+                    del(storageIndex.discover.saveObject);
+                    del(storageIndex.discover.timeObject);
+
+
+                    del(storageIndex.trendingArtists.saveObject);
+                    del(storageIndex.trendingArtists.timeObject);
+
+                }}>
+                    <ListItemIcon>
+                        <Storage/>
+                    </ListItemIcon>
+                    <ListItemText id="switch-list-label-wifi" primary="Clear Cache"
+                                  secondary={"Delete Cached Data"}/>
+
+                </ListItem>
+                <Divider/>
+
+                <ListItem>
+                    <ListItemText id="switch-list-label-bluetooth" primary="Feedback and Help"
+                                  secondary={"Send feedback or report a bug"}/>
+                    <ListItemSecondaryAction>
+                        <FeedbackButton/>
+                    </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem button onClick={() => {
+                    const config = {
+                        title: (
+                            <List className={"p-0 m-0"}>
+                                <ListItem className={"p-0 m-0"}>
+                                    <ListItemText className={"p-0 m-0"} primary={"Device Cast Id"}
+                                                  secondary={"This Will be used when casting to this device"}/>
+                                </ListItem>
+                            </List>
+                        ),
+                        message: (
+                            <TextField disabled variant="filled" value={Device.getId()}/>
+                        ) || "Nothing Here!",
+                    };
+                    dialog.alert(config);
+                }}>
+                    <ListItemText primary={"Device ID"} secondary={"Device Id When Casting"}/>
+                    <ListItemSecondaryAction>
+                        <Cast/>
+                    </ListItemSecondaryAction>
+                </ListItem>
+            </List>
         </div>
     );
 };
