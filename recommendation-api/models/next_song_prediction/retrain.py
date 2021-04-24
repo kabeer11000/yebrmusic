@@ -1,6 +1,5 @@
 import pandas as pd
-from tensorflow import keras
-from tensorflow import reduce_sum, ragged, function, math, nn, reduce_mean
+from tensorflow import keras, reduce_sum, ragged, function, math, nn, reduce_mean
 from os import environ
 
 

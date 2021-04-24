@@ -6,7 +6,6 @@ from flask import Flask, jsonify, request
 from models.next_song_prediction import model as np_model
 from models.next_song_prediction import retrain
 from models.knn_classifier import model as tfidf_model
-import pandas as pd
 from dotenv import load_dotenv
 
 """ Load .env File """
