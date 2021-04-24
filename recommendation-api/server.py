@@ -69,7 +69,7 @@ def re_train_next_song_model():
 
 
 if __name__ == "__main__":
-    if environ.get('PORT'):
+    if environ.get('PROD'):
         from waitress import serve
 
         port = int(environ.get('PORT', 5000))
