@@ -82,7 +82,7 @@
     -->
     <title>Kabeer's Music</title>
     <script>
-        const prod = true;
+        const production = true;
         window.__kn = {
             music: {
                 developers: {
@@ -93,10 +93,10 @@
                         recently_added_list_id: "PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL"
                     },
                     hosts: {
-                        api: !prod ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
-                        "data-collection-server": !prod ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
-                        "cast-server": !prod ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
-                        proxy: !prod ? "http://localhost:8080/" : "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" // || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
+                        api: !production ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
+                        "data-collection-server": !production ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
+                        "cast-server": !production ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
+                        proxy: !production ? "http://localhost:8080/" : "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" // || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
                     },
                     recom: {
                         last_session_carry_recom_length: 5
