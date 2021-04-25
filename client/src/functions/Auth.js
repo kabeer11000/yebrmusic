@@ -22,7 +22,6 @@ export const initAuth = async () => {
 };
 
 (async () => {
-    get(storageIndex.recommendation.sessionHistory).then(console.log)
     try {
         if (!Cookies.getCookie(storageIndex.cookies.UserData)) return window.location.href = endPoints.authRedirect;
         const stored = await get(storageIndex.cookies.UserData);
@@ -33,6 +32,10 @@ export const initAuth = async () => {
                 'Authorization': `Bearer ${await initAuth()}`
             }
         });
+        const access_token = await comLinkWorker.JSON.parse(atob((await comLinkWorker.JSON.parse(Cookies.getCookie(storageIndex.cookies.Tokens))).access_token.split(".")[1]));
+        if (access_token.iat > access_token.exp) {
+            window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
+        }
     } catch (e) {
         DebugLog(e);
     }
