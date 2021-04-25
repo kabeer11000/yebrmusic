@@ -363,7 +363,7 @@ export const ThemeProvider = React.memo(({children}) => {
         primary: {
             contrastText: darkMode ? "#757575" : "#FFFFFF",
             appBarText: "#FFFFFF",
-            main: "#E14A58",
+            main: !darkMode ? "#702020" : "#E14A58",
             light: darkMode ? "#757575" : "#FFFFFF",
             dark: darkMode ? "#303030" : "#FFFFFF",
             miniPlayer: {
@@ -378,7 +378,7 @@ export const ThemeProvider = React.memo(({children}) => {
                     thumbColorPrimary: "#FFF"
                 },
                 invertButtons: {
-                    main: "#E14A58",
+                    main: !darkMode ? "#702020" : "#E14A58",
                     invert: "#FFFFFF"
                 },
                 volumeSlider: {
@@ -387,11 +387,19 @@ export const ThemeProvider = React.memo(({children}) => {
             }
         },
         secondary: {
-            main: "#E14A58",
+            main: !darkMode ? "#702020" : "#E14A58",
             light: darkMode ? "#757575" : "#FFFFFF",
             dark: darkMode ? "#303030" : "#FFFFFF"
         },
-        background: {},
+        ...(darkMode && {
+            background: {
+                default: "#1D1D1D" || "#121212",
+                paper: "#343434" || "#282828"
+            }
+        }),
+        colors: {
+            grey: "#222327"
+        }
     };
 
     const darkTheme = createMuiTheme({

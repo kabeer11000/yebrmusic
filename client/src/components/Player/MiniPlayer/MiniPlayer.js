@@ -2,19 +2,19 @@ import {AppBar, IconButton, Typography} from "@material-ui/core";
 import {Close, OpenInNew, Pause, PlayCircleOutline} from "@material-ui/icons";
 import React from "react";
 import CustomMiniPlayerSlider from "../CustomMiniPlayerSlider";
-// import {sendPauseCast} from "../../functions/Cast/Cast";
 import Card from "@material-ui/core/Card";
 import {FocusNode} from "@please/lrud";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Link from "@material-ui/core/Link";
-import {BottomNavigationContext, isTvContext, PlayContext, PlayerContext} from "../../../Contexts";
+import {isTvContext, PlayContext, PlayerContext} from "../../../Contexts";
 import Slide from "@material-ui/core/Slide";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import List from "@material-ui/core/List";
+import {withRouter} from "react-router-dom";
 
 const styles = {
     TVPlayButton: {
@@ -24,7 +24,7 @@ const styles = {
         transform: "translate(-50%, -50%)"
     }
 };
-const MiniPlayer = () => {
+const MiniPlayer = ({history}) => {
     const {playState, setPlayState} = React.useContext(PlayContext);
     const [playerState, setPlayerState] = React.useContext(PlayerContext);
     if (!playerState.MiniPlayer) return null;
@@ -46,7 +46,6 @@ const MiniPlayer = () => {
         // if (localStorage.getItem(storageIndex.currentlyCasting)) await sendPauseCast(localStorage.getItem(storageIndex.castingTo));
     };
     const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
-    const bottomNav = React.useContext(BottomNavigationContext)[0];
     const [playing, setPlaying] = React.useState(playState.audioElement.paused);
 
     const pauseAudio = () => {
@@ -61,19 +60,8 @@ const MiniPlayer = () => {
         Dialog: true,
         MiniPlayer: false
     });
-    React.useEffect(() => {
-        // if (playState.audioElement.paused) playState.audioElement.play();
-        // console.log("Playing:", playState.videoElement.snippet.title);
-        // saveToHistory({
-        // 	videoId: playState.videoElement.id,
-        // 	title: playState.videoElement.snippet.title,
-        // 	channelTitle: playState.videoElement.snippet.channelTitle,
-        // 	tags: playState.videoElement.snippet.tags,
-        // 	thumbnail: playState.videoElement.snippet.thumbnails.high.url,
-        // 	rating: 0
-        // });
-        // if (navigator.onLine) saveHistoryToServer(playState.videoElement);
-    }, []);
+    const bottomNav = !['/settings', '/artist'].includes(history.location.pathname);
+
     return tv ?
         <Slide in={playerState.MiniPlayer} direction={"top"}>
             <AppBar
@@ -168,11 +156,11 @@ const MiniPlayer = () => {
                         }}
                             alt={Song.snippet.title} className={"KabeersMiniPlayerImage"}
                             loading={"lazy"}/>
-                        <Typography component={"span"} className={"text-truncate p-2 KabeersMiniPlayerText"}
-                                    color={"#000"} style={{
+                        <Typography component={"span"} className={"text-truncate p-2 KabeersMiniPlayerText"} style={{
                             width: "10em",
                             color: "primary.miniPlayer.text"
-                        }}>{Song.snippet.title || "Untitled"}
+                        }}>
+                            {Song.snippet.title || "Untitled"}
                         </Typography>
                     </div>
                     <div className={"float-right ml-auto"}>
@@ -189,4 +177,4 @@ const MiniPlayer = () => {
         </Slide>;
 };
 
-export default React.memo(MiniPlayer);
+export default React.memo(withRouter(MiniPlayer));

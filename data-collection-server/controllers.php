@@ -83,6 +83,9 @@ function saveSessionHistory()
     }
 }
 
+/**
+ * Get History Route Handler
+ */
 function getHistory()
 {
     global $database;

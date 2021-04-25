@@ -26,10 +26,11 @@ const KnnRankedCandidates = async (req, res) => {
             algorithms: "RS256"
         });
         const db = await MongoClient;
-        let candidates = await db.collection("watch-candidates").findOne({
+        let candidates = (await db.collection("watch-candidates").findOne({
             user_id: decoded.sub
-        });
-        if (!candidates) return res.status(400).json("Cannot Find Candidates");
+        }))['candidates'];
+        //return res.status(400).json("Cannot Find Candidates");
+        if (!candidates) candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
         // await axios.get("http://localhost:9000/recommendation/generate-candidates");
         // candidates = await db.collection("watch-candidates").findOne({
         //     user_id: decoded.sub
@@ -41,12 +42,12 @@ const KnnRankedCandidates = async (req, res) => {
             user_id: decoded.sub
         })).map(a => a.song);
         const recommendations = await axios.post(endpoints.RecommendationServer.KnnRankedCandidates, {
-            candidates: candidates['candidates'],
+            candidates: candidates,
             watches: [...watches, ...watch_history],
             user_id: decoded.sub,
             total_items: 20
         }).then(a => a.data);
-        res.json({
+        return res.json({
             "kind": "KabeersMusic#discoverListResponse",
             "etag": Math.random(),
             "regionCode": "PK",
@@ -56,7 +57,7 @@ const KnnRankedCandidates = async (req, res) => {
             "items": recommendations
         });
     } catch (e) {
-        console.log(e);
+        (e.name !== "JsonWebTokenError") && console.log(e);
         res.status(400).end();
     }
 }
@@ -68,18 +69,23 @@ const KnnRankedCandidates = async (req, res) => {
  * @constructor
  */
 const GenerateCandidates = async (req, res) => {
-    if (req.query.retrain) await axios.get(endpoints.RecommendationServer.RetrainModel);
-    const predictions = await axios.get(endpoints.RecommendationServer.GetAllCandidates).then(a => a.data);
-    if (!predictions) return res.json(predictions);
-    const db = await MongoClient;
-    const user_ids = predictions.map(a => a.user_id);
-    await db.collection("watch-candidates").deleteMany({
-        id: {
-            $in: user_ids
-        }
-    });
-    await db.collection("watch-candidates").insertMany(predictions);
-    return res.json("Saved Candidates");
+    if (req.query.token !== process.env.GENERATE_CANDIDATES_TOKEN) return res.status(400).json("Invalid Token");
+    try {
+        if (req.query["retrain"]) await axios.get(endpoints.RecommendationServer.RetrainModel);
+        const predictions = await axios.get(endpoints.RecommendationServer.GetAllCandidates).then(a => a.data);
+        if (!predictions) return res.json(predictions);
+        const db = await MongoClient;
+        const user_ids = predictions.map(a => a.user_id);
+        await db.collection("watch-candidates").deleteMany({
+            user_id: {
+                $in: user_ids
+            }
+        });
+        await db.collection("watch-candidates").insertMany(predictions);
+        return res.json("Saved Candidates");
+    } catch (e) {
+
+    }
 }
 /**
  * Development Only
@@ -111,7 +117,7 @@ const BasedOnLastSearches = async (req, res) => {
             algorithms: "RS256"
         });
         if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
-        const searchHistory = await history.getSearchHistory(decoded.sub).then(a => a && a.length ? [...new Set(a.map(b => b.query))].slice((a.length - 2), a.length).reverse() : []);
+        const searchHistory = await history.getSearchHistory(decoded.sub).then(a => a && a.length ? a.map(b => b.query).slice(a.length - 2, a.length).reverse() : []);
         let queries = []
         /** @attention
          * @deprecated
@@ -124,15 +130,12 @@ const BasedOnLastSearches = async (req, res) => {
             /**
              * Call SearchYoutube with return value from query expression
              */
-            // r.add((await (query |> scraper.searchYoutube)).items);
-            console.log(query)
+                // r.add((await (query |> scraper.searchYoutube)).items);
             const results = (await scraper.searchYoutube(query)).items.slice(0, searchHistory.length ? 3 : 5);
             for (const song of results) {
                 r.add(song);
             }
         }
-        // const response = await scraper.searchYoutube(queries.join(" "));
-        // console.log([...r][0])
         const response = ({
             kind: "KabeersMusic#searchListResponse",
             etag: Math.random(),

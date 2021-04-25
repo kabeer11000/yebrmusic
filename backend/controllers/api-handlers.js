@@ -119,6 +119,24 @@ const AllArtistsChips = async (req, res) => {
         return res.status(400).end();
     }
 };
+
+const GetRecentlyAdded = async (req, res) => {
+    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    try {
+        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+            algorithms: "RS256"
+        });
+        if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).json("Invalid Token Scope")
+        const response = await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL");
+        return res.json({
+            ...response,
+            title: "Recently Added"
+        })
+    } catch (e) {
+        (e.name !== ("JsonWebTokenError" || "TokenExpiredError")) && console.log(e);
+        return res.status(400).end();
+    }
+}
 const topArtistsRanked = async (req, res) => {
     if (!req.headers.authorization) return res.status(400).json("Bad Request");
     try {
@@ -185,5 +203,6 @@ module.exports = {
     AllArtistsChips,
     topArtistsRanked,
     getSongDetail,
-    Discover
+    Discover,
+    GetRecentlyAdded
 };

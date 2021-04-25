@@ -32,7 +32,7 @@ def _rank_candidates_with_knn():
 
     ranked = []
     response = []
-    n_items = math.floor((40 / len(watch_history)))
+    n_items = math.floor((int(request.json['total_items']) / len(watch_history)))
     for index, row in watch_history.iterrows():
         ranked.append(
             tfidf_model.get_similar(index=index, candidates=candidates, n_items=n_items)[1:])  # Leave the first one
@@ -76,4 +76,4 @@ if __name__ == "__main__":
         serve(app, host="0.0.0.0", port=int(port))
     # if environ.get('PORT'): app.run(port=environ.get('PORT'), debug=False)
     else:
-        app.run(debug=False)
+        app.run(debug=True)

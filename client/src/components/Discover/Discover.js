@@ -51,7 +51,7 @@ const Discover = (props) => {
                 if (online) {
                     comlinkWorker.fetch(endPoints.API.RecentlyAdded, {
                         headers: ({Authorization: `Bearer ${await initAuth()}`}),
-                    }).then(setLatest);
+                    }).then(setLatest).catch();
 
                     const recommendations = await SessionRecommendation.getRecommendations();
                     setState({
