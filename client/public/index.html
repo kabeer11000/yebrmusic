@@ -82,26 +82,27 @@
     -->
     <title>Kabeer's Music</title>
     <script>
+        const prod = true;
         window.__kn = {
             music: {
                 developers: {
-                    "debugging-enabled": true
+                    "debugging-enabled": false
                 },
                 config: {
                     other: {
                         recently_added_list_id: "PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL"
                     },
                     hosts: {
-                        api: "http://localhost:9000" || "https://backend-yebrmusic.kabeersnetwork.tk",
-                        "data-collection-server": `http://localhost:80` || "https://collect-yebrmusic.kabeercloud.tk",
-                        "cast-server": `http://localhost:3240` || "https://cast-yebrmusic.kabeercloud.tk",
-                        proxy: "http://localhost:8080/" || "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
+                        api: !prod ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
+                        "data-collection-server": !prod ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
+                        "cast-server": !prod ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
+                        proxy: !prod ? "http://localhost:8080/" : "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" // || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
                     },
                     recom: {
                         last_session_carry_recom_length: 5
                     }
                 },
-                version: "beta-3.4.5",
+                version: "beta-3.4.6",
                 debugger_version: "alpha-0.0.1",
                 audio: new Audio("#"),
                 "data-collection": {}
