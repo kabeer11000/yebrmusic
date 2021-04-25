@@ -104,7 +104,7 @@ const SearchComponent = (props) => {
                         {window.history ? <IconButton onClick={() => {
                             setOpen(false);
                         }} component={Link} to={"/home"} color="primary.light" visibility={false}>
-                            <ArrowBack color="#FFF"/>
+                            <ArrowBack style={{color: "#FFF"}}/>
                         </IconButton> : <></>}
                         <InputBase
                             // autoCapitalize={true}

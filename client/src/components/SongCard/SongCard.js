@@ -4,11 +4,12 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import {Typography} from "@material-ui/core";
+import {IconButton, Typography} from "@material-ui/core";
 import Grow from "@material-ui/core/Grow";
 import {FocusNode} from "@please/lrud";
 import ListItemText from "@material-ui/core/ListItemText";
 import PropTypes from 'prop-types';
+import {QueueMusic} from "@material-ui/icons";
 
 const SongCard = ({song, ...props}) => (
     <Grow in={true}>
@@ -31,6 +32,24 @@ const SongCard = ({song, ...props}) => (
                             loading={"lazy"}
                         />
                     </Card>
+
+                    <div hidden={!!!props.playlist} style={{
+                        position: 'absolute',
+                        backgroundColor: "#000000",
+                        opacity: "30%",
+                        height: "100%",
+                        width: "100%",
+                        top: 0,
+                        display: !!!props.playlist ? "none" : "block"
+                    }}/>
+                    <IconButton color={"#FFFFFF"} hidden={!!!props.playlist} style={{
+                        position: 'absolute',
+                        bottom: "0.5rem",
+                        right: "0.5rem",
+                        display: !!!props.playlist ? "none" : "block"
+                    }}>
+                        <QueueMusic style={{color: "#FFF"}}/>
+                    </IconButton>
                 </CardActionArea>
                 <CardContent className={"text-left mb-0 pb-0"} style={{
                     marginLeft: "-1rem"
@@ -48,7 +67,8 @@ const SongCard = ({song, ...props}) => (
 
 SongCard.propTypes = {
     song: PropTypes.object.isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    playlist: PropTypes.any
 };
 
 SongCard.defaultProps = {};

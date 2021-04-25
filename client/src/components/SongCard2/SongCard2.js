@@ -52,20 +52,22 @@ const SongCard2 = (props) => {
 								/>
 							</Paper>
 						</Card>
-						<div hidden={props.playlist ? false : true} style={{
+						<div hidden={!!!props.playlist} style={{
 							position: 'absolute',
 							backgroundColor: "#000000",
 							opacity: "30%",
 							height: "100%",
 							width: "100%",
-							top: 0
+							top: 0,
+							display: !!!props.playlist ? "none" : "block"
 						}}/>
-						<IconButton hidden={props.playlist ? false : true} style={{
+						<IconButton color={"#FFFFFF"} hidden={!!!props.playlist} style={{
 							position: 'absolute',
 							bottom: "0.5rem",
 							right: "0.5rem",
+							display: !!!props.playlist ? "none" : "block"
 						}}>
-							<QueueMusic/>
+							<QueueMusic style={{color: "#FFF"}}/>
 						</IconButton>
 					</CardActionArea>
 					<CardContent className={"text-left pt-0"} style={{

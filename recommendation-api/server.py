@@ -76,4 +76,4 @@ if __name__ == "__main__":
         serve(app, host="0.0.0.0", port=int(port))
     # if environ.get('PORT'): app.run(port=environ.get('PORT'), debug=False)
     else:
-        app.run(debug=True)
+        app.run(debug=False)

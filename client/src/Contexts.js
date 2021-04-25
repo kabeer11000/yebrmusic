@@ -22,7 +22,7 @@ export const CastDialogProvider = ({children}) => {
 export const isTvContext = React.createContext(false);
 export const IsTvProvider = ({children}) => {
     const isTv = useMediaQuery("(min-width:600px)");
-    console.log("isDesktop", isTv);
+    Log("isDesktop", isTv);
     return <isTvContext.Provider value={isTv}>{children}</isTvContext.Provider>;
 };
 
@@ -262,10 +262,10 @@ export const PlayProvider = React.memo(({children}) => {
             document.title = `${others && others.offline ? song.videoElement.snippet.title : song.snippet.title} - Kabeer's Music`
             await playState.audioElement.play();
             setLoading(false);
-            await SessionRecommendation.addWatch({
+            return others && others.offline ? await SessionRecommendation.addWatch({
                 song: others && others.offline ? song.videoElement : song,
                 playerState: playerState
-            });
+            }) : null;
         } catch (e) {
             DebugLog("An Error Occurred: ", e);
             setLoading(false);
@@ -363,7 +363,7 @@ export const ThemeProvider = React.memo(({children}) => {
         primary: {
             contrastText: darkMode ? "#757575" : "#FFFFFF",
             appBarText: "#FFFFFF",
-            main: !darkMode ? "#702020" : "#E14A58",
+            main: !darkMode ? "#ac1111" : "#E14A58",
             light: darkMode ? "#757575" : "#FFFFFF",
             dark: darkMode ? "#303030" : "#FFFFFF",
             miniPlayer: {
@@ -378,7 +378,7 @@ export const ThemeProvider = React.memo(({children}) => {
                     thumbColorPrimary: "#FFF"
                 },
                 invertButtons: {
-                    main: !darkMode ? "#702020" : "#E14A58",
+                    main: !darkMode ? "#ac1111" : "#E14A58",
                     invert: "#FFFFFF"
                 },
                 volumeSlider: {
@@ -387,7 +387,7 @@ export const ThemeProvider = React.memo(({children}) => {
             }
         },
         secondary: {
-            main: !darkMode ? "#702020" : "#E14A58",
+            main: !darkMode ? "#ac1111" : "#E14A58",
             light: darkMode ? "#757575" : "#FFFFFF",
             dark: darkMode ? "#303030" : "#FFFFFF"
         },

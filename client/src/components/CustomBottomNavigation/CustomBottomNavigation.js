@@ -38,7 +38,7 @@ const CustomBottomNavigation = () => {
 	const [loading] = React.useContext(LoadingContext);
 
 	React.useEffect(() => {
-		setValue(window.location.pathname)
+		setValue(window.location.pathname === "/" ? "/home" : window.location.pathname)
 	}, [])
 	return tv ? null : (
 		<AppBar color="primary" style={{
