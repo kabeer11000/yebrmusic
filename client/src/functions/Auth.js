@@ -4,6 +4,8 @@ import {get, set} from "idb-keyval";
 import {DebugLog} from "./Log";
 import {Cookies} from "./Cookies";
 import {comLinkWorker} from "./Worker/worker-export";
+// import ReactGA from "react-ga";
+
 
 export const initAuth = async () => {
     let tokens = Cookies.getCookie(storageIndex.cookies.Tokens);
@@ -34,8 +36,13 @@ export const initAuth = async () => {
         });
         const access_token = await comLinkWorker.JSON.parse(atob((await comLinkWorker.JSON.parse(Cookies.getCookie(storageIndex.cookies.Tokens))).access_token.split(".")[1]));
         if (access_token.iat > access_token.exp) {
-            window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
+            return window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
         }
+        // await ReactGA.initialize(storageIndex.GA);
+        // await ReactGA.set({
+        //     userId: (await get(storageIndex.cookies.UserData)).user_id,
+        // });
+
     } catch (e) {
         DebugLog(e);
     }

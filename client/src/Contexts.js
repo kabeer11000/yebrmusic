@@ -259,7 +259,7 @@ export const PlayProvider = React.memo(({children}) => {
                 playAudio: () => playState.audioElement.play(),
                 pauseAudio: () => playState.audioElement.pause()
             }, playState.audioElement);
-            document.title = `${others && others.offline ? song.videoElement.snippet.title : song.snippet.title} - Kabeer's Music`
+            document.title = `${others && others.offline ? song.videoElement.snippet.title : song.snippet.title} - Yebr Music`
             await playState.audioElement.play();
             setLoading(false);
             return others && others.offline ? await SessionRecommendation.addWatch({
@@ -436,9 +436,11 @@ export const ThemeProvider = React.memo(({children}) => {
     React.useEffect(() => {
         localStorage.setItem(storageIndex.darkMode, darkMode);
     }, [darkMode])
-    return <ThemeContext.Provider value={[darkMode, setDarkMode]}>
-        <MuiThemeProvider theme={darkTheme}>
-            {children}
-        </MuiThemeProvider>
-    </ThemeContext.Provider>
+    return (
+        <ThemeContext.Provider value={[darkMode, setDarkMode]}>
+            <MuiThemeProvider theme={darkTheme}>
+                {children}
+            </MuiThemeProvider>
+        </ThemeContext.Provider>
+    )
 });

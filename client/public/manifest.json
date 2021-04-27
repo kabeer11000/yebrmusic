@@ -1,24 +1,24 @@
 {
-  "short_name": "Kabeers Music",
-  "name": "Kabeers Music - Songs Podcasts and Culture",
+  "short_name": "Yebr Music",
+  "name": "Yebr Music - Songs, Podcasts and Culture",
   "icons": [
     {
-      "src": "assets/icons/AppleMusicIcon.png",
+      "src": "assets/icons/smallTvIcon.svg",
       "sizes": "64x64 32x32 24x24 16x16 109x111",
-      "type": "image/png"
+      "type": "image/svg+xml"
     },
     {
-      "src": "assets/icons/AppleMusicIcon.png",
-      "type": "image/png",
+      "src": "assets/icons/smallTvIcon.svg",
+      "type": "image/svg+xml",
       "sizes": "109x111"
     },
     {
-      "src": "assets/icons/AppleMusicIcon@2x.png",
-      "type": "image/png",
+      "src": "assets/icons/smallTvIcon.svg",
+      "type": "image/svg+xml",
       "sizes": "218x221"
     }
   ],
-  "start_url": "./home",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#E14A58",
   "background_color": "#303030"

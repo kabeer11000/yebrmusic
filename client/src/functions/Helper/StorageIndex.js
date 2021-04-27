@@ -40,6 +40,7 @@ export const storageIndex = {
     cookies: {
         UserData: "__kn.music.auth.k-auth:userdata",
         Tokens: "__kn.music.auth.k-auth:tokens",
-    }
+    },
+    GA: "G-MHLTWXY386"
 
 };

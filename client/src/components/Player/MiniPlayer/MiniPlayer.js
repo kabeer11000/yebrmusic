@@ -42,7 +42,7 @@ const MiniPlayer = ({history}) => {
             playList: null,
             videoElement: null,
         });
-        document.title = "Kabeer's Music";
+        document.title = "Yebr Music";
         // if (localStorage.getItem(storageIndex.currentlyCasting)) await sendPauseCast(localStorage.getItem(storageIndex.castingTo));
     };
     const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
