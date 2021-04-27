@@ -9,7 +9,7 @@ const Liked = () => {
 		<div className={"errorPage text-center"}
 			 style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}>
 			<img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}
-				 alt={"Kabeers Music Logo"}/>
+				 alt={"Yebr Music Logo"}/>
 			<br/>
 			<div className={"text-truncate"}>{message}</div>
 			{button}

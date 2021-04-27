@@ -70,7 +70,7 @@ const EmptyState = () => (
                  transform: "translate(-50%, -50%)"
              }}>
             <img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}
-                 alt={"Kabeers Music Logo"}/>
+                 alt={"Yebr Music Logo"}/>
             <br/>
             <div>{navigator.onLine ? "Results will appear as you type" : "Searching In Downloads"}</div>
         </div>
@@ -123,8 +123,8 @@ const SearchComponentTV = () => {
                                 autoFocus
                                 className={classes.input}
                                 value={query}
-                                placeholder="Search Kabeers Music"
-                                inputProps={{"aria-label": "search kabeers music"}}
+                                placeholder="Search Yebr"
+                                inputProps={{"aria-label": "search yebr music"}}
                                 onChange={({target}) => Search(target.value)}
                             />
                         </Paper>

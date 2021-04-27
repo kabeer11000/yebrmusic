@@ -1,6 +1,6 @@
 /*
-Kabeers Music - Proxy - Server
-(c) 2021 Kabeers Network Authors - All rights reserved (kabeersnetwork.tk)
+Yebr Music - Proxy - Server
+(c) 2021 Yebr Music Authors - All rights reserved (kabeersnetwork.tk)
 
 kabeersnetwork@gmail.com
 https://developers.kabeersnetwork.tk/#/docs/music

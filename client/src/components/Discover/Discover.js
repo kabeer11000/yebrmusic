@@ -158,7 +158,7 @@ const Discover = (props) => {
                     transform: "translate(-50%, -50%)"
                 }}>
                     <img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}
-                         alt={"Kabeers Music Logo"}/>
+                         alt={"Yebr Music Logo"}/>
 
                 </div> : null}
             </Container>
