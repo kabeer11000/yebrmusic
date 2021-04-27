@@ -6,9 +6,7 @@ require('./database.php');
 require("./kabeersnetwork/Storage.php");
 require('./keys.php');
 require('./misc.php');
-//
-//$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-//$dotenv->load();
+
 global $SQL_CLIENT;
 
 $storage = new Storage();
