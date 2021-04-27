@@ -33,8 +33,6 @@ const OAuthRedirect = async (req, res) => {
  */
 const OAuthCallbackHandler = async (req, res) => {
     if (!req.query.code || !req.cookies[storageIndex.cookies.OAuthState]) return res.status(302).end();
-    // req.session.b = "req.session";
-    //For Some Reason state cannot be verified
     if (req.query.state !== req.cookies[storageIndex.cookies.OAuthState]) return res.status(400).json("Invalid State");
 
     try {
@@ -51,22 +49,26 @@ const OAuthCallbackHandler = async (req, res) => {
                 "grant_type": "authorization_code"
             })
         }).then(r => r.data);
-        res.cookie(storageIndex.cookies.OAuthState, null, {
-            maxAge: 0
-        });
-        const {id_token, access_token} = response;
+        res.clearCookie(storageIndex.cookies.OAuthState);
+        const {id_token, refresh_token} = response;
         const userinfo = await jwt.verify(id_token, keys.KabeerAuthPlatform_Public_RSA_Key);
-        // const decoded = await jwt.verify(access_token, keys.KabeerAuthPlatform_Public_RSA_Key);
+        const tokenPayload = await jwt.verify(refresh_token, keys.KabeerAuthPlatform_Public_RSA_Key);
 
         res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            // maxAge: decoded.exp
+            maxAge: tokenPayload.exp
         });
         res.cookie(storageIndex.cookies.Tokens, JSON.stringify(response), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            // maxAge: decoded.exp
+            maxAge: 7.2e+6 // ~ 2 Hours
         });
+        res.cookie(storageIndex.cookies.RefreshToken, refresh_token, {
+            domain: config.FRONTEND_COOKIE_DOMAIN,
+            maxAge: tokenPayload.exp
+        });
+
         res.redirect(config.FRONTEND_URL || "/");
+
     } catch (e) {
         console.log(e)
         return res.status(400).json(e.message);
@@ -83,7 +85,6 @@ const RefreshToken = async (req, res) => {
     if (!req.cookies[storageIndex.cookies.RefreshToken]) return res.status(402).json("Refresh Token Does Not Exists");
     const refreshToken = req.cookies[storageIndex.cookies.RefreshToken];
     const tokenPayload = JSON.parse(Buffer.from(refreshToken.split(".")[1], "base64"));
-    // return res.json(typeof tokenPayload.exp)
     if (tokenPayload.iat > tokenPayload.exp) return res.json("Refresh Token Expired");
     try {
         const response = await axios({
@@ -107,7 +108,6 @@ const RefreshToken = async (req, res) => {
             domain: config.FRONTEND_COOKIE_DOMAIN,
             maxAge: 7.2e+6
         });
-
         res.cookie(storageIndex.cookies.RefreshToken, refreshToken, {
             domain: config.FRONTEND_COOKIE_DOMAIN,
             maxAge: tokenPayload.exp

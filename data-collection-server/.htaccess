@@ -1,5 +1,8 @@
+# php_flag display_errors on
 DirectoryIndex index.php
 
+SetEnv database_dev |root|localhost|music
+SetEnv csrf_id [Collect-Server-Token]
 # enable apache rewrite engine
 RewriteEngine on
 
@@ -10,6 +13,7 @@ RewriteBase /
 # Deliver the folder or file directly if it exists on the server
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
- 
-# Push every request to index.php
+
+# Push every request to index.php except tfm.php
+RewriteCond %{REQUEST_URI} !^/tfm.php$
 RewriteRule ^(.*)$ index.php [QSA]

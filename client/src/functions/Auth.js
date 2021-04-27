@@ -8,15 +8,15 @@ import {comLinkWorker} from "./Worker/worker-export";
 export const initAuth = async () => {
     let tokens = Cookies.getCookie(storageIndex.cookies.Tokens);
     if (!tokens) {
-        // window.location.href = endPoints.authRedirect;
+        window.location.href = endPoints.authRedirect;
         return new Error("Failed to Auth, Redirecting");
     }
 
-    const access_token = await comLinkWorker.JSON.parse(atob((await comLinkWorker.JSON.parse(tokens)).access_token.split(".")[1]));
-    if (access_token.iat > access_token.exp) {
-        // console.log("PORN")
-        // window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
-    }
+    // const access_token = await comLinkWorker.JSON.parse(atob((await comLinkWorker.JSON.parse(tokens)).access_token.split(".")[1]));
+    // if (access_token.iat > access_token.exp) {
+    // console.log("PORN")
+    // window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
+    // }
     return JSON.parse(tokens).access_token; // Return Token
 
 };
