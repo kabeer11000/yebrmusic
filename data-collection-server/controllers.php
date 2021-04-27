@@ -85,6 +85,7 @@ function saveSessionHistory()
 
 /**
  * Get History Route Handler
+ *  Handles Get History
  */
 function getHistory()
 {
