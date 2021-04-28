@@ -36,6 +36,7 @@ import Discover from "./components/Discover/Discover.lazy";
 import {SnackbarProvider} from "notistack";
 import TrendingArtists from "./components/TrendingArtists/TrendingArtists.lazy";
 import CastDialog from "./components/CastingDialog/CastingDialog";
+import {ErrorComponent} from "./InternalViews/ErrorViewer";
 
 const App = () => {
     const tv = React.useContext(isTvContext);
@@ -139,6 +140,9 @@ const App = () => {
                 {/*        </div>*/}
                 {/*    </div>*/}
                 {/*</Route>*/}
+
+                <Route path={"/internal/error/:code/view"} component={ErrorComponent}>
+                </Route>
             </ThemeProvider>
         </Router>
     );

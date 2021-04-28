@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
 
 export const useNetwork = () => {
 	const [isOnline, setNetwork] = useState(window.navigator.onLine);
@@ -36,3 +37,6 @@ export const useInterval = (handler, delay, immediate = true) => {
 		return () => clearInterval(interval)
 	}, []);
 }
+
+export const useQuery = () => new URLSearchParams(useLocation().search);
+

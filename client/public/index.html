@@ -71,6 +71,7 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link href="%PUBLIC_URL%/manifest.json" rel="manifest"/>
+    <meta content="58f835af9b4fe231d145c9dfa0e3e443" name="propeller">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -105,7 +106,11 @@
                 version: "beta-3.4.6",
                 debugger_version: "alpha-0.0.1",
                 audio: new Audio("#"),
-                "data-collection": {}
+                "data-collection": {},
+                internals: {
+                    auth_refreshing: false,
+                    auth_redirecting: false
+                }
             }
         }
         console.error = () => {

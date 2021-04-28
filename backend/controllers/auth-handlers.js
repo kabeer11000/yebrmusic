@@ -33,7 +33,7 @@ const OAuthRedirect = async (req, res) => {
  */
 const OAuthCallbackHandler = async (req, res) => {
     if (!req.query.code || !req.cookies[storageIndex.cookies.OAuthState]) return res.status(302).end();
-    if (req.query.state !== req.cookies[storageIndex.cookies.OAuthState]) return res.status(400).json("Invalid State");
+    if (req.query.state !== req.cookies[storageIndex.cookies.OAuthState]) return res.redirect(`${config.FRONTEND_URL}/internal/error/INVALID_STATE/view?redirect_to=${encodeURIComponent(`${config.SELF_URL}/auth/redirect`)}`);
 
     try {
         const response = await axios({
@@ -82,10 +82,10 @@ const OAuthCallbackHandler = async (req, res) => {
  * @constructor
  */
 const RefreshToken = async (req, res) => {
-    if (!req.cookies[storageIndex.cookies.RefreshToken]) return res.status(402).json("Refresh Token Does Not Exists");
+    if (!req.cookies[storageIndex.cookies.RefreshToken]) return res.redirect(`${config.SELF_URL}/auth/redirect`);
     const refreshToken = req.cookies[storageIndex.cookies.RefreshToken];
     const tokenPayload = JSON.parse(Buffer.from(refreshToken.split(".")[1], "base64"));
-    if (tokenPayload.iat > tokenPayload.exp) return res.json("Refresh Token Expired");
+    if (tokenPayload.iat > tokenPayload.exp) return res.redirect(`${config.SELF_URL}/auth/redirect`);
     try {
         const response = await axios({
             method: "post",
