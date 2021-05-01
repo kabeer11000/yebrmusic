@@ -45,6 +45,7 @@ export const initAuth = async () => {
                 'Authorization': `Bearer ${await initAuth()}`
             }
         });
+        if (!navigator.onLine) return;
         const tokens = Cookies.getCookie(storageIndex.cookies.Tokens);
         const refreshToken = Cookies.getCookie(storageIndex.cookies.RefreshToken)
         if (!tokens && refreshToken) {
