@@ -7,3 +7,14 @@ backend/node_modules/
 cast-server/node_modules/
 proxy-server/node_modules/
 user-accounts-api/node_modules/
+.idea/dataSources/
+data-collection-server/logs/
+data-collection-server/vendor/bramus/
+data-collection-server/vendor/composer/autoload_files.php
+recommendation-api/logs/
+recommendation-api/model-snapshots/recommendation-model_tf/assets/
+recommendation-api/models/__pycache__/
+recommendation-api/models/knn_classifier/__pycache__/
+recommendation-api/models/next_song_prediction/__pycache__/
+
+backend/dev.env

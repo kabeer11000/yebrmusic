@@ -3,7 +3,7 @@
 use Bramus\Router\Router;
 
 require_once './vendor/autoload.php';
-error_reporting(E_ALL);
+error_reporting(0);
 
 $router = new Router();
 header('Access-Control-Allow-Origin: *');

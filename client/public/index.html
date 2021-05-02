@@ -87,6 +87,7 @@
         window.__kn = {
             music: {
                 developers: {
+                    available_proxies: `https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev|https://cors.bridged.cc/|https://ancient-queen-3235.kabeer11000.workers.dev/|https://proxy-yebrmusic.kabeersnetwork.tk/`,
                     "debugging-enabled": false
                 },
                 config: {
@@ -97,7 +98,7 @@
                         api: !production ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
                         "data-collection-server": !production ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
                         "cast-server": !production ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
-                        proxy: !production ? "http://localhost:8080/" : "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev?" // || "https://cors.bridged.cc/" || "http://ancient-queen-3235.kabeer11000.workers.dev/?" || "https://proxy-yebrmusic.kabeersnetwork.tk/"
+                        proxy: !production ? "http://localhost:8080/" : "https://proxy-yebrmusic.herokuapp.com/"
                     },
                     recom: {
                         last_session_carry_recom_length: 6
