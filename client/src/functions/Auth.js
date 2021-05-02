@@ -45,7 +45,6 @@ export const initAuth = async () => {
                 'Authorization': `Bearer ${await initAuth()}`
             }
         });
-        if (!localStorage.getItem(storageIndex.deviceEtag)) localStorage.setItem(storageIndex.deviceEtag, "" + Math.random());
         if (!navigator.onLine) return;
         const tokens = Cookies.getCookie(storageIndex.cookies.Tokens);
         const refreshToken = Cookies.getCookie(storageIndex.cookies.RefreshToken)

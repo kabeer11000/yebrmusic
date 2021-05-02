@@ -29,6 +29,8 @@ export const Events = {
 // const accessToken = JSON.parse(cookies.getCookie(S.cookies.Tokens))["access_token"];
 const Tokens = comLinkWorker.JSON.parse(Cookies.getCookie(storageIndex.cookies.Tokens));
 const castEnabled = true;
+
+if (!localStorage.getItem(storageIndex.deviceEtag)) localStorage.setItem(storageIndex.deviceEtag, "" + Math.random());
 const deviceId = localStorage.getItem(storageIndex.deviceEtag);
 
 const socket = io.connect(endPoints.castServer || "localhost:9000");
