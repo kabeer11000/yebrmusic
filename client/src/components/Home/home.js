@@ -1,8 +1,7 @@
 import React from "react";
-import {isTvContext, PlayContext} from "../../Contexts";
+import {AccountContext, isTvContext, PlayContext} from "../../Contexts";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
 import endPoints from "../../api/EndPoints/EndPoints";
-import {initAuth} from "../../functions/Auth";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
 import {Link} from "react-router-dom";
@@ -17,20 +16,17 @@ import {storageIndex} from "../../functions/Helper/StorageIndex";
 import Divider from "@material-ui/core/Divider";
 import Discover from "../Discover/Discover";
 import Paper from "@material-ui/core/Paper";
+import {useNetwork} from "../../Hooks";
 
 
 const ArtistsSlider = () => {
     const [state, setState] = React.useState(null);
-    const loadArtists = async () => comlinkWorker.fetch(endPoints.getFeedArtists, {
-        headers: {Authorization: `Bearer ${await initAuth()}`},
-    }).then(setState);
+    const {token} = React.useContext(AccountContext);
     React.useEffect(() => {
-        try {
-            loadArtists();
-        } catch (e) {
-
-        }
-    }, []);
+        if (token) comlinkWorker.fetch(endPoints.getFeedArtists, {
+            headers: {Authorization: `Bearer ${token}`},
+        }).then(setState);
+    }, [token]);
     return (
         <Paper variant={"outlined"} className={"mb-3"} hidden={!state}>
             {state && state.items ?
@@ -61,7 +57,7 @@ export const FeedSection = ({response, showTitle = true}) => {
     const {PlaySong} = React.useContext(PlayContext);
     return (
         <React.Fragment>
-            {response && response.items.length ?
+            {response && response?.items.length ?
                 <React.Fragment>
                     <Grow in={true}>
                         <Typography hidden={!showTitle} variant={"h5"} className={"pl-3 text-left text-truncate"}>
@@ -102,35 +98,33 @@ const ErrorComponent = (error) => (
 
     </div>
 );
-const getTopArtistFromAPI = (e) => comlinkWorker.fetch(endPoints.Recommendations.topArtist, {
+const getTopArtistFromAPI = (e) => fetch(endPoints.Recommendations.topArtist, {
     headers: ({Authorization: `Bearer ${e}`})
-});
-const getSearchFeedFromAPI = (e) => comlinkWorker.fetch(endPoints.Recommendations.topSearched, {
+}).then(a => a.status === 200 ? a.json() : null);
+const getSearchFeedFromAPI = (e) => fetch(endPoints.Recommendations.topSearched, {
     headers: ({Authorization: `Bearer ${e}`})
-});
+}).then(a => a.status === 200 ? a.json() : null);
 
 const HomeComponent = () => {
     const tv = React.useContext(isTvContext);
     const [state, setState] = React.useState([]);
     const [error, setError] = React.useState(false);
+    const {token} = React.useContext(AccountContext);
+    const online = useNetwork();
 
-    const loadSections = async () => {
+    const loadSections = async (t) => {
         try {
-            const token = await initAuth();
-            getTopArtistFromAPI(token).then(response => setState(state => [...state, response]));
-            getSearchFeedFromAPI(token).then(response => setState(state => [...state, response]));
+            getTopArtistFromAPI(t).then(response => setState(state => [...state, response]));
+            getSearchFeedFromAPI(t).then(response => setState(state => [...state, response]));
         } catch (e) {
             setError(!error);
             console.log(e);
         }
     }
     const init = async () => {
-        if (localStorage.getItem(storageIndex.litemode) && !JSON.parse(localStorage.getItem(storageIndex.litemode))) return await loadSections();
-
-        if (!await get(storageIndex.home.saveObject)) return await loadSections();
-        if (!(Date.now() - await get(storageIndex.home.timeObject)) / (100 * 60) > 1) {
-            return await loadSections(); // Load From Server
-        } else {
+        if (localStorage.getItem(storageIndex.litemode) && !JSON.parse(localStorage.getItem(storageIndex.litemode))) return await loadSections(token);
+        if (!await get(storageIndex.home.saveObject) || !(Date.now() - await get(storageIndex.home.timeObject)) / (100 * 60) > 1) return await loadSections(token);
+        else {
             const homeObject = await get(storageIndex.home.saveObject);
             return setState(homeObject); // SetState From IndexedDB
         }
@@ -161,7 +155,7 @@ const HomeComponent = () => {
 
             <div className={"mb-3"}>
                 {!error ?
-                    <React.Fragment>
+                    <div hidden={!online || error}>
                         <Divider/>
                         <React.Fragment>
                             <Grow in={true}>
@@ -171,11 +165,11 @@ const HomeComponent = () => {
                             </Grow>
                             <Discover embedded={true} items={8}/>
                         </React.Fragment>
-                    </React.Fragment> : null
+                    </div> : null
                 }
             </div>
-
             <ErrorComponent error={error}/>
+            <ErrorComponent error={!online}/>
         </div>
     )
 }

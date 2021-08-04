@@ -25,10 +25,8 @@ import {
 	Subscriptions
 } from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import {storageIndex} from "../../functions/Helper/StorageIndex";
 import {FocusNode} from "@please/lrud";
-import {DrawerContext, isTvContext} from "../../Contexts";
-import {get} from "idb-keyval";
+import {AccountContext, DrawerContext, isTvContext} from "../../Contexts";
 
 const drawerWidth = 340;
 const useStyles = makeStyles((theme) => ({
@@ -113,10 +111,7 @@ const DrawerComponent = ({children}) => {
 	const [open, setOpen] = React.useContext(DrawerContext);
 	const tv = React.useContext(isTvContext);
 	const handleDrawerToggle = () => setOpen(!open);
-	const [userInfo, setUserInfo] = React.useState(null);
-	React.useEffect(() => {
-		get(storageIndex.cookies.UserData).then(setUserInfo);
-	}, []);
+	const {account} = React.useContext(AccountContext);
 
 	// const userData = localStorage.getItem(storageIndex.userData) ? JSON.parse(atob(localStorage.getItem(storageIndex.userData))) : {};
 
@@ -141,11 +136,11 @@ const DrawerComponent = ({children}) => {
 						<List className={classes.root}>
 							<ListItem>
 								<ListItemAvatar>
-									<Avatar src={userInfo ? userInfo["picture"] : ""}
-											alt={userInfo ? userInfo.username : ""}/>
+									<Avatar src={account ? account["account_image"] : ""}
+											alt={account ? account.username : ""}/>
 								</ListItemAvatar>
-								<ListItemText className={"text-truncate"} primary={userInfo ? userInfo.username : ""}
-											  secondary={userInfo ? userInfo.email : ""}/>
+								<ListItemText className={"text-truncate"} primary={account ? account.username : ""}
+											  secondary={account ? account.email : ""}/>
 							</ListItem>
 						</List>
 						<div className={"classes.toolbar"}/>
@@ -190,11 +185,11 @@ const DrawerComponent = ({children}) => {
 					<List className={classes.root}>
 						<ListItem>
 							<ListItemAvatar>
-								<Avatar src={userInfo ? userInfo["picture"] : ""}
-										alt={userInfo ? userInfo.username : ""}/>
+								<Avatar src={account ? account["picture"] : ""}
+										alt={account ? account.username : ""}/>
 							</ListItemAvatar>
-							<ListItemText className={"text-truncate"} primary={userInfo ? userInfo.username : ""}
-										  secondary={userInfo ? userInfo.email : ""}/>
+							<ListItemText className={"text-truncate"} primary={account ? account.username : ""}
+										  secondary={account ? account.email : ""}/>
 						</ListItem>
 					</List>
 					<div className={"classes.toolbar"}/>

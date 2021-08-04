@@ -65,6 +65,7 @@ const SearchComponent = (props) => {
         </div>
     );
     const classes = useStyles();
+    // const {token} = React.useContext(AccountContext);
     const [query, setQuery] = React.useContext(SearchContext);
     const ListItems = () => {
         if (!queryArray) return;

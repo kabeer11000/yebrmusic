@@ -3,7 +3,6 @@ import Log, {DebugLog} from "./Log";
 import {get, set, update} from "idb-keyval";
 import {comLinkWorker} from "./Worker/worker-export";
 import endPoints from "../api/EndPoints/EndPoints";
-import {initAuth} from "./Auth";
 
 class _SessionRecommendation {
     constructor() {
@@ -84,13 +83,13 @@ class _SessionRecommendation {
         await this._onUpdate();
     }
 
-    async getRecommendations() {
+    async getRecommendations(token) {
         const history = await get(storageIndex.recommendation.sessionHistory);
         return await comLinkWorker.fetch(endPoints.Recommendations.deprecated.getRecommendations, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${await initAuth()}`
+                Authorization: `Bearer ${token}`
             },
             body: await comLinkWorker.JSON.stringify({
                 watches: history.watches.map(a => a.song),

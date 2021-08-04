@@ -5,10 +5,7 @@ const scraper = require("../functions/scraper");
 const keys = require("../keys");
 const uuid = require("uuid");
 const {IndexSongOnRequest} = require("../functions/misc");
-const MongoClient = require("mongodb").MongoClient.connect(keys.db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(r => r.db("music"));
+const MongoClient = require("../MongoClient");
 
 /**
  * Currently Not Working
@@ -27,16 +24,16 @@ const ValidParams = {
  * @returns {Promise<*>}
  */
 const getSong = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:getSong", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:getSong", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
         const song = await ytdl.getInfo(req.query.id).then(info => ytdl.filterFormats(info.formats, "audioonly"));
         res.set("Cache-Control", "public, max-age=20000"); //6hrs approx
         res.json(song[1].url);
-        IndexSongOnRequest(req.query.id);
+        await IndexSongOnRequest(req.query.id);
         // console.log(await scraper.getSong(req.query.id))
         // await history.listeningHistory(decoded, req.query.id);
     } catch (e) {
@@ -51,12 +48,12 @@ const getSong = async (req, res) => {
  * @returns {Promise<*>}
  */
 const getSongDetail = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
         res.json(await scraper.getSong(req.params.id));
     } catch (e) {
         console.log(e);
@@ -70,15 +67,15 @@ const getSongDetail = async (req, res) => {
  * @returns {Promise<*>}
  */
 const searchSong = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
         await history.saveSearch({
             query: req.query.q,
-            user_id: decoded.sub
+            user_id: req.__kn.session.user.user_id
         });
         res.json(await scraper.searchYoutube(req.query.q));
     } catch (e) {
@@ -94,21 +91,19 @@ const searchSong = async (req, res) => {
  * @returns {Promise<*>}
  */
 const AllArtistsChips = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
         const watches = await history.getWatchHistory({
-            user_id: decoded.sub,
+            user_id: req.__kn.session.user.user_id,
             limit: 5
         });
-        const Artists = new Set(watches.map(a => {
-            return ({
-                name: a.song.snippet.channelTitle, id: a.song.snippet.channelId
-            })
-        }));
+        const Artists = new Set(watches.map(a => ({
+            name: a.song.snippet.channelTitle, id: a.song.snippet.channelId
+        })));
         if (!Artists?.size) return res.status(404).json({message: "Nothing Found"});
         res.status(200).json({
             kind: "KabeersMusic#Artists",
@@ -121,32 +116,32 @@ const AllArtistsChips = async (req, res) => {
 };
 
 const GetRecentlyAdded = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).json("Invalid Token Scope")
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).json("Invalid Token Scope")
         const response = await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL");
         return res.json({
             ...response,
             title: "Recently Added"
-        })
+        });
     } catch (e) {
         (e.name !== ("JsonWebTokenError" || "TokenExpiredError")) && console.log(e);
         return res.status(400).end();
     }
-}
+};
 const topArtistsRanked = async (req, res) => {
-    if (!req.headers.authorization) return res.status(400).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(400).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
         // const db = await MongoClient;
-        if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
         const watches = await history.getWatchHistory({
-            user_id: decoded.sub,
+            user_id: req.__kn.session.user.user_id,
         });
         // const watches = await db.collection("history").find({
         //     user_id: "SD6YoQaxbvSMrXkHuXWQM9kjgcJuYN4aCQNbc8jA" || decoded.sub,
@@ -175,13 +170,13 @@ const topArtistsRanked = async (req, res) => {
 };
 const Discover = async (req, res) => {
     const db = await MongoClient;
-    if (!req.headers.authorization) return res.status(400).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(400).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
         const candidates = await db.collection("watch-candidates").findOne({
-            user_id: decoded.sub
+            user_id: req.__kn.session.user.user_id
         });
         res.json({
             "kind": "KabeersMusic#discoverListResponse",

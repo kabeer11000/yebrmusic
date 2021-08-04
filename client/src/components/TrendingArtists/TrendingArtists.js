@@ -1,13 +1,12 @@
 import React from 'react';
 import './TrendingArtists.css';
-import {initAuth} from "../../functions/Auth";
 import {Container, IconButton} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Grow from "@material-ui/core/Grow";
 import Typography from "@material-ui/core/Typography";
 import SongCard2 from "../SongCard2/SongCard2";
 import Grid from "@material-ui/core/Grid";
-import {isTvContext, PlayContext} from "../../Contexts";
+import {AccountContext, isTvContext, PlayContext} from "../../Contexts";
 import {getSong} from "../../functions/SongsUtility";
 import endPoints from "../../api/EndPoints/EndPoints";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
@@ -23,9 +22,10 @@ const TrendingArtists = () => {
     const [state, setState] = React.useState(null);
     const [error, setError] = React.useState(false);
 
+    const {token} = React.useContext(AccountContext);
     React.useEffect(() => {
         const b = async () => comlinkWorker.fetch(endPoints.getTrendingArtistsRanked, {
-            headers: {"Authorization": `Bearer ${await initAuth()}`}
+            headers: {"Authorization": `Bearer ${token}`}
         });
         const a = async () => {
             try {

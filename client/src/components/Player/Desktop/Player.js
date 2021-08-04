@@ -1,13 +1,12 @@
 import Dialog from "@material-ui/core/Dialog";
 import React from "react";
-import {CastContext, CastDialogContext, PlayContext, PlayerContext, ThemeContext} from "../../../Contexts";
+import {PlayContext, PlayerContext, ThemeContext} from "../../../Contexts";
 import AppBar from "@material-ui/core/AppBar";
 import {Avatar, CircularProgress, Container, Drawer, IconButton, Typography} from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import {
     AccountCircle,
     ArrowBack,
-    Cast as CastIcon,
     Done,
     Forward10,
     GetApp,
@@ -30,7 +29,6 @@ import CustomVolumeSlider from "../CustomVolumeSlider";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import CustomSlider from "../CustomSlider";
 import Replay10Icon from "@material-ui/icons/Replay10";
-import Button from "@material-ui/core/Button";
 import ComingNext from "../ComingNext/ComingNext";
 import Grow from "@material-ui/core/Grow";
 import {deleteDownloadedSong, DownloadSong, isOfflineAvailable} from "../../../functions/SongsUtility";
@@ -60,10 +58,10 @@ const Player = () => {
     const {playState, SkipSong} = React.useContext(PlayContext);
     const [playing, setPlaying] = React.useState(!playState.audioElement.paused);
     const [nextDrawer, setNextDrawer] = React.useState(false);
-    const Cast = React.useContext(CastContext);
+    // const Cast = React.useContext(CastContext);
     const [downloadButton, setDownloadButton] = React.useState(<div/>);
     const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
-    const [castDialog, setCastDialog] = React.useContext(CastDialogContext);
+    // const [castDialog, setCastDialog] = React.useContext(CastDialogContext);
     const {enqueueSnackbar} = useSnackbar();
     const dialog = useDialog();
     const history = useHistory();
@@ -231,14 +229,14 @@ const Player = () => {
                                 <Container maxWidth={"md"}>
                                     <div className={"px-4 w-100 d-inline-flex smallOnDesktop"}
                                          style={{justifyContent: "space-around"}}>
-                                        <div hidden={true}>
-                                            <Button onClick={() => Cast.peers.ConnectToPeer("5ffac4f7a9ba60")}>ConnectToPeer
-                                                (Incognito)</Button>
-                                            <Button onClick={() => Cast.peers.PeerRequestAccept("600149b285a1cc")}>AcceptPeer
-                                                (Base)</Button>
-                                        </div>
-                                        <IconButton onClick={() => setCastDialog(!castDialog)}>{
-                                            <CastIcon/>}</IconButton>
+                                        {/*<div hidden={true}>*/}
+                                        {/*    <Button onClick={() => Cast.peers.ConnectToPeer("5ffac4f7a9ba60")}>ConnectToPeer*/}
+                                        {/*        (Incognito)</Button>*/}
+                                        {/*    <Button onClick={() => Cast.peers.PeerRequestAccept("600149b285a1cc")}>AcceptPeer*/}
+                                        {/*        (Base)</Button>*/}
+                                        {/*</div>*/}
+                                        {/*<IconButton onClick={() => setCastDialog(!castDialog)}>{*/}
+                                        {/*    <CastIcon/>}</IconButton>*/}
                                         {playState.audioElement.loop ? (<IconButton onClick={() => {
                                             setLooping(false);
                                             playState.audioElement.loop = false;

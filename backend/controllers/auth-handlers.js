@@ -5,6 +5,133 @@ const uuid = require("uuid");
 const keys = require("../keys");
 const config = require("../config");
 const {serialize} = require("../functions/misc");
+const MongoClient = require("../MongoClient");
+
+const getSavedAccounts = async (req) => {
+    if (req.cookies[storageIndex.cookies.AccountsCookie]) {
+        const decoded = await jwt.verify(req.cookies[storageIndex.cookies.AccountsCookie], keys.KabeerAuthPlatform_Public_RSA_Key);
+        return decoded.accounts;
+    }
+    return [];
+};
+const GetAPIKeyWithoutAccount = async (req, res) => {
+    const token = await require("crypto").randomBytes(15).toString('hex');
+    res.cookie(storageIndex.cookies.SignedOutId, token, {
+        secure: true,
+        expiresIn: 2147483647,
+    });
+    res.cookie(storageIndex.cookies.SignedOutId, token, {
+        secure: true,
+        expiresIn: 2147483647,
+    });
+
+};
+const GetAPIKey = async (req, res) => {
+    const accounts = await getSavedAccounts(req);
+    const account = accounts ? accounts[parseInt(req.headers.authuser)] : null;
+    if (!account || !account.session_token || !account.user_id) return res.status(400).json("Accounts Not Found");
+    const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
+    if (!deviceId) return res.status(400).end();
+    const sessionResponse = (await axios({
+        method: "post",
+        url: `http://localhost:3001/internals/service-login/user/sessions/verify`,
+        headers: {"Content-Type": "application/json"},
+        data: JSON.stringify({
+            app_id: keys.app.app_public,
+            app_secret: keys.app.app_secret,
+            device_id: deviceId,
+            session_token: account.session_token,
+            user_id: account.user_id
+        })
+    })).data;
+    if (sessionResponse.status !== "SESSION_VERIFIED") return res.status(400).json({
+        status: "INVALID_SESSION",
+        proxy_status: sessionResponse.status,
+    });
+    const db = await MongoClient;
+    const apiSession = await db.collection("auth-api-sessions").findOne({
+        user_id: account.user_id,
+    });
+    if (apiSession) return res.cookie(storageIndex.cookies.APIToken, apiSession.token, {
+        secure: true,
+    }) && res.status(200).json({
+        serviceLoginToken: apiSession.token,
+        context: {
+            secure: true,
+            key: storageIndex.cookies.APIToken,
+            // d: deviceId,
+        }
+    });
+    const token = await require("crypto").randomBytes(15).toString('hex');
+    await db.collection("auth-api-sessions").insertOne({
+        user_id: account.user_id,
+        token,
+    });
+    return res.cookie(storageIndex.cookies.APIToken, token, {
+        secure: true,
+    }) && res.status(200).json({
+        serviceLoginToken: token,
+        context: {
+            secure: true,
+            key: storageIndex.cookies.APIToken,
+            // d: deviceId,
+        }
+    });
+}
+/*
+const ServiceLogin = async (req, res) => {
+    try {
+        const accounts = await getSavedAccounts(req);
+        const account = accounts ? accounts[parseInt(req.headers.authuser)] : null;
+        if (!account || !account.session_token || !account.user_id) return res.status(400).json("Accounts Not Found");
+        const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
+        if (!deviceId) return res.status(400).end();
+        const {access_token} = (await axios({
+            method: "post",
+            url: `${config.K_AUTH_URL}/internals/service-login/token`,
+            headers: {"Content-Type": "application/json"},
+            data: JSON.stringify({
+                app_id: keys.app.app_public,
+                app_secret: keys.app.app_secret,
+                device_id: deviceId,
+                session_token: account.session_token,
+                user_id: account.user_id
+            })
+        })).data;
+        res.cookie(storageIndex.cookies.AccessToken, access_token, {
+            // maxAge: 5.4e+6,
+            // secure: config.SECURE_COOKIES,
+            domain: config.FRONTEND_COOKIE_DOMAIN
+        });
+        return res.json({
+            access_token: access_token
+        });
+    } catch (e) {
+        res.status(400).json(e.message)
+    }
+};
+*/
+/**
+ * Kabeer's IDP ServiceLogin
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ * @constructor
+ */
+const _ServiceLogin = async (req, res) => {
+    await axios({
+        method: "post",
+        url: `${config.K_AUTH_URL}/internals/service-login/token`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: serialize({
+            "app_id": keys.app.app_public,
+            "app_secret": keys.app.app_secret,
+            // ""
+        })
+    })
+}
 /**
  * Kabeer's IDP OAuth Redirect
  * @param req
@@ -22,12 +149,13 @@ const OAuthRedirect = async (req, res) => {
     res.cookie(storageIndex.cookies.OAuthState, state, {
         domain: config.FRONTEND_COOKIE_DOMAIN
     });
-    res.redirect(`${config.K_AUTH_FRONTEND}/auth/oauth/v2/authorize?client_id=${info.clientId}&scope=${info.scopes}&redirect_uri=${info.callback}&response_type=code&prompt=chooser&offline_access=true&nonce=${uuid.v4()}&state=${state}`);
+    res.redirect(`${config.K_AUTH_FRONTEND}/auth/oauth/v2/authorize?client_id=${info.clientId}&service_login=true&scope=&redirect_uri=${info.callback}&response_type=code&prompt=chooser&offline_access=true&nonce=${uuid.v4()}&state=${state}`);
 };
 /**
  * Kabeer's IDP OAuth Handler
  * @param req
  * @param res
+ * @deprecated
  * @returns {Promise<*>}
  * @constructor
  */
@@ -56,7 +184,7 @@ const OAuthCallbackHandler = async (req, res) => {
 
         res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            maxAge: tokenPayload.exp
+            maxAge: 7.2e+6 //tokenPayload.exp
         });
         res.cookie(storageIndex.cookies.Tokens, JSON.stringify(response), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
@@ -64,7 +192,7 @@ const OAuthCallbackHandler = async (req, res) => {
         });
         res.cookie(storageIndex.cookies.RefreshToken, refresh_token, {
             domain: config.FRONTEND_COOKIE_DOMAIN,
-            maxAge: tokenPayload.exp
+            maxAge: 7.2e+6 //tokenPayload.exp
         });
 
         res.redirect(config.FRONTEND_URL || "/");
@@ -76,6 +204,7 @@ const OAuthCallbackHandler = async (req, res) => {
 };
 /**
  * Refresh Kabeer IDP Token
+ * @deprecated
  * @param req
  * @param res
  * @returns {Promise<*>}
@@ -180,5 +309,7 @@ module.exports = {
     OAuthRedirect,
     RefreshToken,
     GetDataServerKey,
-    GetUserInfo
+    GetUserInfo,
+    GetAPIKey,
+    // ServiceLogin,
 };

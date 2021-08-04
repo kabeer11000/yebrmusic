@@ -11,12 +11,10 @@ import HideOnScroll from "../HideOnScroll/HideOnScroll";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import {DrawerContext, isTvContext, LoadingContext} from "../../Contexts";
+import {AccountChooserContext, AccountContext, DrawerContext, isTvContext, LoadingContext} from "../../Contexts";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import {Divider} from "@material-ui/core";
-import {get} from "idb-keyval";
-import {storageIndex} from "../../functions/Helper/StorageIndex";
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -47,10 +45,8 @@ const CustomAppBar = () => {
     const classes = useStyles();
     const [loading] = React.useContext(LoadingContext);
     const history = useHistory();
-    const [userInfo, setUserInfo] = React.useState(null);
-    React.useEffect(() => {
-        get(storageIndex.cookies.UserData).then(setUserInfo);
-    }, []);
+    const {account: userInfo} = React.useContext(AccountContext);
+    const [open, setOpen] = React.useContext(AccountChooserContext).dialog;
 
     return tv ?
         (
@@ -105,8 +101,8 @@ const CustomAppBar = () => {
                             <Search/>
                         </IconButton>
                         <Divider orientation={"vertical"} className={classes.divider}/>
-                        <IconButton className={classes.iconButton}>
-                            <Avatar src={userInfo ? userInfo.picture : ""}
+                        <IconButton onClick={() => setOpen(!open)} className={classes.iconButton}>
+                            <Avatar src={userInfo ? userInfo.account_image : ""}
                                     style={{width: "1.7rem", height: "1.7rem"}}/>
                         </IconButton>
                         {/*<Divider className={classes.divider} orientation="vertical" />*/}

@@ -4,7 +4,6 @@ import {AppBar, Avatar, CircularProgress, Drawer, IconButton, Toolbar, Typograph
 import {
     AccountCircle,
     ArrowBack,
-    Cast as CastIcon,
     Done,
     Forward10,
     GetApp,
@@ -32,8 +31,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {useHistory} from "react-router-dom";
 import ImagesSlider from ".././ComingNext/ImagesSlider";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import {CastContext, CastDialogContext, PlayContext, PlayerContext} from "../../../Contexts";
-import Button from "@material-ui/core/Button";
+import {PlayContext, PlayerContext} from "../../../Contexts";
 import Container from "@material-ui/core/Container";
 
 const LoopingButton = ({playState, setLooping}) => {
@@ -63,7 +61,7 @@ const Player = () => {
     const {enqueueSnackbar} = useSnackbar();
     const [PlayList, setPlayList] = React.useState(false);
     const [AutoPlayButton, SetAutoPlayButton] = React.useState(playState.autoPlay);
-    const [castDialogOpen, setCastDialogOpen] = React.useContext(CastDialogContext);
+    // const [castDialogOpen, setCastDialogOpen] = React.useContext(CastDialogContext);
     const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
 
     const handleClose = () => setPlayerState({
@@ -111,7 +109,7 @@ const Player = () => {
         playState.audioElement.pause();
         setPlaying(true);
     };
-    const Cast = React.useContext(CastContext);
+    // const Cast = React.useContext(CastContext);
 
     React.useEffect(() => {
         isOfflineAvailable(Song.id).then(v => setDownloadButton(v ?
@@ -205,13 +203,13 @@ const Player = () => {
                         <br/>
                         <div className={"px-4 w-100 d-inline-flex smallOnDesktop"}
                              style={{justifyContent: "space-around"}}>
-                            <div hidden={true}>
-                                <Button onClick={() => Cast.peers.ConnectToPeer("5ffac4f7a9ba60")}>ConnectToPeer
-                                    (Incognito)</Button>
-                                <Button onClick={() => Cast.peers.PeerRequestAccept("600149b285a1cc")}>AcceptPeer
-                                    (Base)</Button>
-                            </div>
-                            <IconButton onClick={() => setCastDialogOpen(!castDialogOpen)}>{<CastIcon/>}</IconButton>
+                            {/*<div hidden={true}>*/}
+                            {/*    <Button onClick={() => Cast.peers.ConnectToPeer("5ffac4f7a9ba60")}>ConnectToPeer*/}
+                            {/*        (Incognito)</Button>*/}
+                            {/*    <Button onClick={() => Cast.peers.PeerRequestAccept("600149b285a1cc")}>AcceptPeer*/}
+                            {/*        (Base)</Button>*/}
+                            {/*</div>*/}
+                            {/*<IconButton onClick={() => setCastDialogOpen(!castDialogOpen)}>{<CastIcon/>}</IconButton>*/}
                             {playState.audioElement.loop ? (<IconButton onClick={() => {
                                 setLooping(false);
                                 playState.audioElement.loop = false;

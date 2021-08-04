@@ -2,15 +2,19 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 // const logger = require("morgan");
 const cors = require("cors");
+const DDOS = require("ddos");
 // const rateLimit = require("express-rate-limit");
 // const session = require("express-session");
 // const MongoStore = require("connect-mongo")(session);
-const config = require("./config")
+const config = require("./config");
+
+const APIAuthVerifier = require("./functions/api-header-verifier");
 // const limiter = rateLimit({
 //     windowMs: 1 * 60 * 1000, // 10 minutes 20 request
 //     max: 100 // limit each IP to 100 requests per windowMs TODO Default 10
 // });
 // const keys = require("./keys");
+const ddos = new DDOS({burst: 10, limit: 15})
 const app = express();
 // https://export.kabeercloud.tk/u/v/6085bd1a3622aBb%20ki%20vines.html
 
@@ -19,6 +23,7 @@ const authRouter = require("./routes/auth-routes");
 const songsRouter = require("./routes/api-routes");
 const recommendationRouter = require("./routes/recommendation-routes");
 
+app.use(ddos.express);
 //app.use('/api/', limiter);
 app.use(cors({
     credentials: true, optionsSuccessStatus: 200,
@@ -41,7 +46,7 @@ app.use(express.urlencoded({extended: true}));
 // }));
 app.set("json spaces", 2);
 // app.set('trust proxy', true);
-app.use("/api", songsRouter);
+app.use("/api", APIAuthVerifier, songsRouter);
 app.use("/auth", authRouter);
 app.use("/recommendation", recommendationRouter);
 /**

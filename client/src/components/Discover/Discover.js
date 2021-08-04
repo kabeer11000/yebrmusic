@@ -1,11 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import "./Discover.css";
 import SongCard2 from "../SongCard2/SongCard2.lazy";
 import {Container, Divider, IconButton, ListItemSecondaryAction} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Grid from "@material-ui/core/Grid";
 import ListItemText from "@material-ui/core/ListItemText";
-import {isTvContext, PlayContext} from "../../Contexts";
+import {AccountContext, isTvContext, PlayContext} from "../../Contexts";
 import PropTypes from "prop-types";
 import SongCard from "../SongCard/SongCard";
 import Preloader from "../Preloader/Preloader";
@@ -20,7 +20,6 @@ import {useNetwork} from "../../Hooks";
 import {FeedSection} from "../Home/home";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
 import endPoints from "../../api/EndPoints/EndPoints";
-import {initAuth} from "../../functions/Auth";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,6 +42,7 @@ const Discover = (props) => {
     const [state, setState] = React.useState(null);
     const [error, setError] = React.useState(false);
     const online = useNetwork();
+    const {token} = useContext(AccountContext);
 
     React.useEffect(() => {
         const a = async () => {
@@ -50,10 +50,10 @@ const Discover = (props) => {
                 // !await get(storageIndex.discover.saveObject) || !(Date.now() - await get(storageIndex.discover.timeObject)) / (100 * 60) > 1
                 if (online) {
                     comlinkWorker.fetch(endPoints.API.RecentlyAdded, {
-                        headers: ({Authorization: `Bearer ${await initAuth()}`}),
+                        headers: ({Authorization: `Bearer ${token}`}),
                     }).then(setLatest).catch();
 
-                    const recommendations = await SessionRecommendation.getRecommendations();
+                    const recommendations = await SessionRecommendation.getRecommendations(token);
                     setState({
                         ...recommendations,
                         items: props.embedded ? recommendations.items.slice(0, props.items || 15) : recommendations.items
@@ -141,7 +141,7 @@ const Discover = (props) => {
                 {
                     props.embedded ? <List>
                         <ListItem selected={true} button component={Link} to={"/discover"}>
-                            <ListItemText primary="Explore More" secondary={"Find More recommendations "}/>
+                            <ListItemText primary="Explore More" secondary={"Find More Recommendations"}/>
                             <ListItemSecondaryAction>
                                 <IconButton><OpenInNew/></IconButton>
                             </ListItemSecondaryAction>

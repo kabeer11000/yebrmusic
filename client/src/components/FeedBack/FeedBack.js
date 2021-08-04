@@ -18,7 +18,7 @@ const FeedbackButton = () => {
         <FeedbackDialog
             open={dialogVisible}
             onClose={() => setDialogVisible(false)}
-            onSubmit={() =>enqueueSnackbar("FeedBack Sent!, We will get back to you soon")}/>
+            onSubmit={() => enqueueSnackbar("Feedback Sent!, We will get back to you soon")}/>
     </React.Fragment>;
 };
 

@@ -2,7 +2,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import React from "react";
 import {getSong, getSongDetails} from "./functions/SongsUtility";
 import {AddMediaSession} from "./functions/Helper/MediaSession";
-import {Cast, Events} from "./functions/Cast/Cast";
+// import {Cast, Events} from "./functions/Cast/Cast";
 import endPoints from "./api/EndPoints/EndPoints";
 import {useSnackbar} from "notistack";
 import {get, set} from "idb-keyval";
@@ -11,6 +11,9 @@ import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 import {comLinkWorker} from "./functions/Worker/worker-export";
 import Log, {DebugLog} from "./functions/Log";
 import SessionRecommendation from "./functions/SessionRecommendation";
+import {GetActiveAccounts, ServiceLoginRequest} from "./functions/Auth";
+import {useNetwork} from "./Hooks";
+
 
 export const CastDialogContext = React.createContext(false);
 export const CastDialogProvider = ({children}) => {
@@ -22,9 +25,58 @@ export const CastDialogProvider = ({children}) => {
 export const isTvContext = React.createContext(false);
 export const IsTvProvider = ({children}) => {
     const isTv = useMediaQuery("(min-width:600px)");
-    Log("isDesktop", isTv);
+    Log("Desktop", isTv);
     return <isTvContext.Provider value={isTv}>{children}</isTvContext.Provider>;
 };
+/** BHAI IDHAR HI TOKEN KI VALUE BE SAVE KARDO. PHIR HAHR COMPONENT MAI CONDITIONAL LOGIC **/
+export const AccountContext = React.createContext(null);
+export const AccountProvider = React.memo(({children}) => {
+    const [account, setAccount] = React.useState(null);
+    const {sessions} = React.useContext(AccountChooserContext);
+    const [token, setToken] = React.useState(null);
+    const online = useNetwork();
+    React.useEffect(() => void new Promise(async () => {
+        if (online) {
+            const accounts = await GetActiveAccounts();
+            sessions[1](accounts);
+            const authuserParam = parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam));
+            const u = (authuserParam > accounts.active.length ? 0 : authuserParam) || 0;
+            const account = accounts.active[u];
+            setAccount(account);
+            await set(storageIndex.cookies.UserData, account);
+            await set(storageIndex.cookies.AuthUser, u);
+            const token = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)))?.serviceLoginToken || new Error("An Error Occurred, Failed to get Service Login Key");
+            setToken(token);
+            window.__kn.music.serviceLoginToken = token;
+            window.__kn.music.auth.authUser = u;
+            window.__kn.music.auth.user = u;
+        } else {
+            const account = await get(storageIndex.cookies.UserData);
+            setAccount(account);
+            sessions[1]({
+                all: [account],
+                active: [account],
+                offline: true
+            });
+            setToken(null);
+            window.__kn.music.auth.authUser = await get(storageIndex.cookies.AuthUser);
+        }
+    }), [online]);
+    return <AccountContext.Provider value={{account, setAccount, token, setToken}}>{children}</AccountContext.Provider>;
+});
+export const AccountChooserContext = React.createContext(false);
+export const AccountChooserProvider = React.memo(({children}) => {
+    const [open, setOpen] = React.useState(false);
+    const [accounts, setAccounts] = React.useState({
+        all: [],
+        active: []
+    });
+    return (
+        <AccountChooserContext.Provider value={{dialog: [open, setOpen], sessions: [accounts, setAccounts]}}>
+            {children}
+        </AccountChooserContext.Provider>
+    );
+});
 
 export const LoadingContext = React.createContext(false);
 export const LoadingProvider = React.memo(({children}) => {
@@ -295,9 +347,9 @@ export const BottomNavigationProvider = React.memo(({children}) => {
     const [a, b] = React.useState(true);
     return <BottomNavigationContext.Provider value={[a, b]}>{children}</BottomNavigationContext.Provider>;
 });
+/*
 export const CastContext = React.createContext(null);
 export const CastProvider = React.memo(({children}) => {
-    Cast.onPlayRequest = a => console.log(`Play Requested`, a, "Context");
     const {enqueueSnackbar} = useSnackbar();
     const setLoading = React.useContext(LoadingContext)[1];
     const {playState, PlaySong} = React.useContext(PlayContext);
@@ -354,6 +406,7 @@ export const CastProvider = React.memo(({children}) => {
     }, []);
     return <CastContext.Provider value={Cast}>{children}</CastContext.Provider>;
 });
+ */
 export const ThemeContext = React.createContext(null);
 export const ThemeProvider = React.memo(({children}) => {
     const [darkMode, setDarkMode] = React.useState(localStorage.getItem(storageIndex.darkMode) === null ? false : JSON.parse(localStorage.getItem(storageIndex.darkMode)));

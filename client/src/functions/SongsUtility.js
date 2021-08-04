@@ -1,6 +1,5 @@
 import {FetchBlob} from "./Blob";
 import endPoints from "../api/EndPoints/EndPoints";
-import {initAuth} from "./Auth";
 import {v4} from "uuid";
 import {comLinkWorker as WebWorker} from "./Worker/worker-export";
 
@@ -18,7 +17,7 @@ export const DownloadSong = async ({song, uri, rating}) => WebWorker.indexedDB.s
 export const deleteDownloadedSong = (videoId) => WebWorker.indexedDB.songs.delete(videoId);
 export const getBlob = (key) => WebWorker.indexedDB.songs.get(key);
 export const getSong = async (id) => {
-    const token = await initAuth();
+    const token = window.__kn.music.serviceLoginToken;
     if (!token) return new Error("No Token");
     if (!navigator.onLine) return new Error("No Connection");
     return await WebWorker.fetch(endPoints.getProxyfiedURI(id), {
@@ -28,7 +27,7 @@ export const getSong = async (id) => {
     });
 };
 export const getSongDetails = async (id) => {
-    const token = await initAuth();
+    const token = window.__kn.music.serviceLoginToken;
     if (!token) return new Error("No Token");
     if (!navigator.onLine) return new Error("No Connection");
     return await WebWorker.fetch(endPoints.getSongDetail(id), {

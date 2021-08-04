@@ -1,6 +1,3 @@
-const a = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWNjZXNzX3Rva2VuIiwiYXBwX25hbWUiOiJLYWJlZXJzIE11c2ljIEFwcCIsImFwcF9pZCI6IkFTdHJvV29ybGRfQ245T3VVTlRaUmZ1YUNud2M2IiwiZ3JhbnRfdHlwZXMiO\n" +
-    "iJBU3Ryb1dvcmxkX0NuOU91VU5UWlJmdWFDbndjNjp1c2VybmFtZXxBU3Ryb1dvcmxkX0NuOU91VU5UWlJmdWFDbndjNjplbWFpbHxBU3Ryb1dvcmxkX0NuOU91VU5UWlJmdWFDbndjNjp1c2VyX2lkIiwidXNlcl9pZCI6ImM0MDAwMzc2MTE\n" +
-    "0MTg0YjM4ZTJmMDBlNDNiMDcwYTlmZTIzOTQ1N2QiLCJpYXQiOjE2MDAwNTE4MDEsImV4cCI6MTYwMDA1OTAwMX0.5qva6pcGyKPkNzCc1LIrvJperozvZemGtVK6FKn2uU4";
 export const storageIndex = {
     userData: "bGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
     artists: {
@@ -38,10 +35,14 @@ export const storageIndex = {
     onScreenKeyboard: "onScreenKeyboard",
     castAcceptedDevices: "castAcceptedDevices",
     cookies: {
+        deviceID: "__kn.auth.user.device-id",
         UserData: "__kn.music.auth.k-auth:userdata",
+        AuthUser: "__kn.music.auth.k-auth:authUser",
         Tokens: "__kn.music.auth.k-auth:tokens",
-        RefreshToken: "__kn.music.auth.k-auth:refresh_token"
+        RefreshToken: "__kn.music.auth.k-auth:refresh_token",
+        ServiceLoginToken: "__kn.music.auth.k-auth:api_token"
     },
+    AuthUserParam: "u",
     GA: "G-MHLTWXY386"
 
 };

@@ -22,7 +22,7 @@ def get_data(candidates, watch_history):
     candidates = pd.DataFrame(candidates)
     watch_history = pd.DataFrame(watch_history)
 
-    candidates = candidates.drop(['etag'], axis=1)
+    # candidates = candidates.drop(['etag'], axis=1)
     watch_history = watch_history.dropna(axis=1)
 
     candidates = pd.concat([candidates, watch_history], ignore_index=True).drop_duplicates(subset=['id']).dropna(axis=1)

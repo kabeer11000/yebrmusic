@@ -5,10 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
-import {initAuth} from "../../functions/Auth";
 import endPoints from "../../api/EndPoints/EndPoints";
 import {Button} from "@material-ui/core";
 import {pure} from "recompose";
+import {AccountContext} from "../../Contexts";
 
 const playlistsIds = {
 	LatestSongs: "PLFgquLnL59akA2PflFpeQG9L01VFg90wS",
@@ -62,19 +62,21 @@ const PlayLists = () => {
 	const gandMayLo = (i, c) => {
 		console.log(i, c);
 	};
+	const {token} = React.useContext(AccountContext);
+
 	useEffect(() => {
-		initAuth().then(token => {
-			fetch(endPoints.getPlayListById(playlistsIds.LatestSongs), {
-				headers: new Headers({
-					"Authorization": `Bearer ${token}`
-				})
+		// initAuth().then(token => {
+		fetch(endPoints.getPlayListById(playlistsIds.LatestSongs), {
+			headers: new Headers({
+				"Authorization": `Bearer ${token}`
 			})
-				.then(v => v.json())
-				.then(playList => {
-					setPlayLists(playList.items.map((video, index) => <PlayListItem onClick={gandMayLo} video={video}
-																					index={index}/>));
-				}).catch(e => setPlayLists(errorPage()));
-		});
+		})
+			.then(v => v.json())
+			.then(playList => {
+				setPlayLists(playList.items.map((video, index) => <PlayListItem onClick={gandMayLo} video={video}
+																				index={index}/>));
+			}).catch(e => setPlayLists(errorPage()));
+		// });
 	}, []);
 	return (
 		<div className="PlayLists">

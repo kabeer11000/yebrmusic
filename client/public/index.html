@@ -81,14 +81,36 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Yebr Music</title>
+    <title>Yebr Music - Free Music, Podcasts and Culture</title>
+    <script async>
+        window.customElements.define("app-renderer", class extends HTMLElement {
+            constructor() {
+                super();
+            }
+        });
+        window.customElements.define("app-container", class extends HTMLElement {
+            constructor() {
+                super();
+            }
+        });
+    </script>
+
     <script>
-        const production = true;
+        const production = false;
         window.__kn = {
             music: {
+                auth: {
+                    authUser: null,
+                    user: null
+                },
+                serviceLoginToken: null,
+                accounts: {
+                    all: [],
+                    active: []
+                },
                 developers: {
                     available_proxies: `https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev|https://cors.bridged.cc/|https://ancient-queen-3235.kabeer11000.workers.dev/|https://proxy-yebrmusic.kabeersnetwork.tk/`,
-                    "debugging-enabled": false
+                    "debugging-enabled": true
                 },
                 config: {
                     other: {
@@ -115,12 +137,12 @@
             }
         }
         console.error = () => {
-        }
+        };
     </script>
 </head>
 <body>
 <noscript>You need to enable JavaScript to run Kabeer's Music.</noscript>
-<AppRenderer></AppRenderer>
+<app-renderer></app-renderer>
 <!--<div id="root"></div>-->
 <!--
   This HTML file is a template.
@@ -134,7 +156,7 @@
 -->
 <!--<audio hidden id="MainAudio-KabeersMusic" src="#" style="display: none!important;"></audio>-->
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>
+<!--<script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>-->
 <script>
     window.dataLayer = window.dataLayer || [];
 

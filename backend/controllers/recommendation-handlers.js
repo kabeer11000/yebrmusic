@@ -20,18 +20,20 @@ const nodeIPLocate = require("node-iplocate");
  * @constructor
  */
 const KnnRankedCandidates = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
         const db = await MongoClient;
         let candidates = (await db.collection("watch-candidates").findOne({
-            user_id: decoded.sub
-        }))['candidates'];
+            user_id: req.__kn.session.user.user_id
+        }))?.['candidates'];
         //return res.status(400).json("Cannot Find Candidates");
-        if (!candidates) candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
-        // await axios.get("http://localhost:9000/recommendation/generate-candidates");
+        if (!candidates) {
+            candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
+            await axios.get(`http://localhost:9000/recommendation/generate-candidates?token=${process.env.GENERATE_CANDIDATES_TOKEN}`);
+        }
         // candidates = await db.collection("watch-candidates").findOne({
         //     user_id: decoded.sub
         // });
@@ -39,12 +41,12 @@ const KnnRankedCandidates = async (req, res) => {
         const watches = req.body.watches || [];
         const watch_history = (await history.getWatchHistory({
             limit: 4,
-            user_id: decoded.sub
+            user_id: req.__kn.session.user.user_id
         })).map(a => a.song);
         const recommendations = await axios.post(endpoints.RecommendationServer.KnnRankedCandidates, {
             candidates: candidates,
             watches: [...watches, ...watch_history],
-            user_id: decoded.sub,
+            user_id: req.__kn.session.user.user_id,
             total_items: 20
         }).then(a => a.data);
         return res.json({
@@ -111,13 +113,13 @@ const _GetCandidatesByUser = async (req, res) => {
  * @constructor
  */
 const BasedOnLastSearches = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
-        const searchHistory = await history.getSearchHistory(decoded.sub).then(a => a && a.length ? a.map(b => b.query).slice(a.length - 2, a.length).reverse() : []);
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
+        const searchHistory = await history.getSearchHistory(req.__kn.session.user.user_id).then(a => a && a.length ? a.map(b => b.query).slice(a.length - 2, a.length).reverse() : []);
         let queries = []
         /** @attention
          * @deprecated
@@ -159,14 +161,14 @@ const BasedOnLastSearches = async (req, res) => {
  * @constructor
  */
 const BecauseYouListenedTo = async (req, res) => {
-    if (!req.headers.authorization) return res.status(402).json("Bad Request");
+    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
         const watches = await history.getWatchHistory({
-            user_id: decoded.sub,
+            user_id: req.__kn.session.user.user_id,
             limit: 5
         });
         if (watches.length) {
