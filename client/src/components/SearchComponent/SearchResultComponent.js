@@ -19,6 +19,7 @@ import SkeletonList from "../SkeletonList/SkeletonList";
 import Divider from "@material-ui/core/Divider";
 import {PlayContext, SearchContext} from "../../Contexts";
 import SessionRecommendation from "../../functions/SessionRecommendation";
+import {useNetwork} from "../../Hooks";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -68,7 +69,7 @@ const SearchResultComponent = () => {
     //     </div>
     // );
 
-
+    const online = useNetwork();
     React.useEffect(() => {
         if (!query) return history.push("/search");
         SessionRecommendation.addSearch(query);
@@ -86,7 +87,7 @@ const SearchResultComponent = () => {
             console.log(a);
         });
         return () => abortController.abort();
-    }, []);
+    }, [online]);
     return (
         <div className="SearchResultComponent">
             <Dialog fullScreen open={open}>
@@ -131,12 +132,13 @@ const SearchResultComponent = () => {
                                     <React.Fragment>
                                         {listItems.items.map((song, index) => (
                                             <ListItem button key={index} onClick={async () => {
-                                                if (song.item) {
+                                                console.log(listItems.items.map(result => result.item))
+                                                if (!online) {
                                                     // song.item.videoElement.snippet.thumbnails.high.url = URL.createObjectURL(song.item.blobs.thumbnail)
                                                     return PlaySong({
                                                         useProxy: false,
                                                         songURI: URL.createObjectURL(song.item.blobs.audio),
-                                                        song: song.item.videoElement,
+                                                        song: song.item,
                                                         others: {
                                                             offline: true
                                                         },
@@ -144,10 +146,7 @@ const SearchResultComponent = () => {
                                                             index: index,
                                                             list: ({
                                                                 ...listItems,
-                                                                items: listItems.items.map(a => ({
-                                                                    ...a.item,
-                                                                    isOffline: true
-                                                                }))
+                                                                items: listItems.items.map(result => result.item),
                                                             })
                                                         }
                                                     })
@@ -175,17 +174,17 @@ const SearchResultComponent = () => {
                                                 // 	list: listItems, index: index
                                                 // })
                                             }>
-                                                {song.item ? <React.Fragment>
+                                                {!online ? <React.Fragment>
                                                     <ListItemIcon>
                                                         <Avatar alt={song.item.videoElement.snippet.title}
-                                                                src={song.item.videoElement.snippet.thumbnails.default.url}/>
+                                                                src={song.item.videoElement.snippet.thumbnails.high.url}/>
                                                     </ListItemIcon>
                                                     <ListItemText primary={`${song.item.videoElement.snippet.title}`}
                                                                   secondary={`${song.item.videoElement.snippet.channelTitle}`}/>
                                                 </React.Fragment> : <React.Fragment>
                                                     <ListItemIcon>
                                                         <Avatar alt={song.snippet.title}
-                                                                src={song.snippet.thumbnails.default.url}/>
+                                                                src={song.snippet.thumbnails.high.url}/>
                                                     </ListItemIcon>
                                                     <ListItemText primary={`${song.snippet.title}`}
                                                                   secondary={`${song.snippet.channelTitle}`}/>

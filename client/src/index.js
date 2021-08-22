@@ -1,6 +1,7 @@
 /* eslint-disable */
+import "preact/debug";
 import React from "react";
-import ReactDOM from "react-dom";
+import {hydrate, render} from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
@@ -43,14 +44,19 @@ if (!window.__kn.music.developers["debugging-enabled"]) {
 // }
 // clearInterval(interval); // thanks @Luca D'Amico
 // window.__kn.music.audio.setAttribute("id", "MainAudio-KabeersMusic")
-window.kmusic = {};
+// window.kmusic = {};
 
 if (localStorage.getItem("3d-sound") !== null) {
     const AudioContext = window.AudioContext || window["webkitAudioContext"];
     window.__kn.music.audioContext = new AudioContext();
     window.__kn.music.track = window.kmusic.audioContext.createMediaElementSource(window.__kn.music.audio);
 }
-ReactDOM.render(<IsTvProvider><App/></IsTvProvider>, document.querySelector("app-renderer"));
+
+const rootElement = document.querySelector("app-renderer");
+if (rootElement.hasChildNodes()) hydrate(<IsTvProvider><App/></IsTvProvider>, rootElement);
+else render(<IsTvProvider><App/></IsTvProvider>, rootElement);
+
+// render(<IsTvProvider><App/></IsTvProvider>, document.querySelector("app-renderer"));
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA

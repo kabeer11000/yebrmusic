@@ -13,13 +13,14 @@ import {AccountChooserContext, AccountContext} from "../../Contexts";
 import {Cookies} from "../../functions/Cookies";
 import {storageIndex} from "../../functions/Helper/StorageIndex";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 
 export const ImageLinks = {
     KABEERS_NETWORK_LOGO: `https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@kabeersauth-assets/assets/images/consent/kabeers-network-logo.svg`
 };
 const AccountChooser = () => {
-    const {account, setAccount} = React.useContext(AccountContext);
-    const {sessions, dialog, functions} = React.useContext(AccountChooserContext);
+    const {account} = React.useContext(AccountContext);
+    const {sessions, dialog} = React.useContext(AccountChooserContext);
     const [accounts] = sessions;
     const [open, setOpen] = dialog;
 
@@ -36,10 +37,9 @@ const AccountChooser = () => {
                     borderRadius: "0.4rem 0.4rem 0 0"
                 }
             }}
-            onClose={() => setOpen(!open)}
+            onClose={() => setOpen(false)}
             ModalProps={{keepMounted: true}}
-            open={open}
-            onClick={() => setOpen(!open)}>
+            open={open}>
             <List>
                 <ListItem>
                     <ListItemAvatar>
@@ -54,8 +54,12 @@ const AccountChooser = () => {
                             <ListItem disabled={!a.signed_in || account?.user_id === a.user_id}
                                       style={{minWidth: '100%'}} button alignItems="flex-start"
                                       onClick={async () => {
+                                          setOpen(!open);
+                                          const params = new URLSearchParams(window.location.search);
+                                          params.set("u", index);
                                           Cookies.deleteCookie(storageIndex.cookies.ServiceLoginToken);
-                                          window.location.href = window.location.href + "?u=" + index
+                                          window.location.search = params.toString();
+                                          // window.location.href = window.location.href + "?u=" + index
                                           // await functions.SignIn(index);
                                       }}>
                                 <ListItemAvatar>
@@ -80,7 +84,7 @@ const AccountChooser = () => {
                 <ListItem button
                           onClick={() => window.location.href = "LOGIN" + "?prompt=password"}>
                     <ListItemAvatar><Add/></ListItemAvatar>
-                    <ListItemText primary={"Add New Account"}/>
+                    <ListItemText primary={<Typography variant={"button"}>Add New Account</Typography>}/>
                 </ListItem>
             </List>
         </Drawer>

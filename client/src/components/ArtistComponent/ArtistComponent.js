@@ -112,8 +112,8 @@ const ArtistComponent = ({history}) => {
                             <IconButton onClick={() => history.goBack()} edge="start" aria-label="close">
                                 <ArrowBack/>
                             </IconButton>
-                            <Typography variant="h6" style={{
-                                // color: "#FFF"
+                            <Typography color={"#FFFFFF"} variant="h6" style={{
+                                color: "#FFF"
                             }}>
                                 {state.author.name}
                             </Typography>

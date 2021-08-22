@@ -28,7 +28,7 @@ const ArtistsSlider = () => {
         }).then(setState);
     }, [token]);
     return (
-        <Paper variant={"outlined"} className={"mb-3"} hidden={!state}>
+        <Paper className={"mb-3"} hidden={!state}>
             {state && state.items ?
                 <div className={`cardSlider text-left Slider d-block py-2`} style={{
                     backgroundColor: "transparent",

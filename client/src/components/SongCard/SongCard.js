@@ -5,24 +5,25 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import {IconButton, Typography} from "@material-ui/core";
-import Grow from "@material-ui/core/Grow";
-import {FocusNode} from "@please/lrud";
+// import Grow from "@material-ui/core/Grow";
+// import {FocusNode} from "@please/lrud";
 import ListItemText from "@material-ui/core/ListItemText";
 import PropTypes from 'prop-types';
 import {QueueMusic} from "@material-ui/icons";
 
 const SongCard = ({song, ...props}) => (
-    <Grow in={true}>
+    <>
+        {/*<Grow in={true}>*/}
         <Card className={"SongCard"} disableRipple style={{width: "18rem", backgroundColor: "transparent"}}
               elevation={0}
               {...props}>
-            <FocusNode>
-                <CardActionArea>
-                    <Card>
-                        <CardMedia
-                            component={"img"}
-                            alt={song.snippet.title}
-                            height="140"
+            {/*<FocusNode>*/}
+            <CardActionArea>
+                <Card>
+                    <CardMedia
+                        component={"img"}
+                        alt={song.snippet.title}
+                        height="140"
                             onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = `./assets/icons/darkmode_nothingfound.svg`
@@ -32,7 +33,6 @@ const SongCard = ({song, ...props}) => (
                             loading={"lazy"}
                         />
                     </Card>
-
                     <div hidden={!!!props.playlist} style={{
                         position: 'absolute',
                         backgroundColor: "#000000",
@@ -60,9 +60,10 @@ const SongCard = ({song, ...props}) => (
                             secondary={song.snippet.channelTitle}/>
                     </Typography>
                 </CardContent>
-            </FocusNode>
+            {/*</FocusNode>*/}
         </Card>
-    </Grow>
+        {/*</Grow>*/}
+    </>
 );
 
 SongCard.propTypes = {

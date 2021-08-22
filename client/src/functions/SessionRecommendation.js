@@ -49,7 +49,7 @@ class _SessionRecommendation {
     async addWatch({song, playerState}) {
         await update(storageIndex.recommendation.sessionHistory, a => ({
             ...a,
-            watches: [...a.watches, {
+            watches: [...a.watches.slice(-10), {
                 song: song,
                 player_type: playerState.Dialog ? 1 : 0.5,
                 // watched_length: window.__kn.music.audio.currentTime,

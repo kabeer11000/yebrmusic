@@ -95,6 +95,10 @@ const MiniPlayer = ({history}) => {
                                     image={Song.snippet.thumbnails.high.url}
                                     title={Song.snippet.title}
                                     loading={"lazy"}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "./assets/icons/darkmode_nothingfound.svg" // "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg";
+                                    }}
                                     style={{height: "11rem", width: "100%"}}
                                 />
                                 <div style={{width: "100%", position: "absolute", marginTop: "-0.56rem"}}>
@@ -146,15 +150,14 @@ const MiniPlayer = ({history}) => {
                         <img
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg";
+                                e.target.src = "./assets/icons/darkmode_nothingfound.svg" // "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg";
                             }}
                             src={Song.snippet.thumbnails.high.url} style={{
                             width: "4rem",
                             height: "3rem",
                             maxWidth: "6rem!important",
                             maxHeight: "4rem!important"
-                        }}
-                            alt={Song.snippet.title} className={"KabeersMiniPlayerImage"}
+                        }} alt={Song.snippet.title} className={"KabeersMiniPlayerImage"}
                             loading={"lazy"}/>
                         <Typography component={"span"} className={"text-truncate p-2 KabeersMiniPlayerText"} style={{
                             width: "10em",

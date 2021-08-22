@@ -24,14 +24,32 @@ const GetAPIKeyWithoutAccount = async (req, res) => {
         secure: true,
         expiresIn: 2147483647,
     });
-
 };
+const FU = "bb5dc8842ca31d4603d6aa11448d1654"
 const GetAPIKey = async (req, res) => {
+    // const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
+    // if (!deviceId) return res.status(400).end();
+    return res.cookie(storageIndex.cookies.APIToken, FU, {
+        secure: true,
+        // sameSite: "none",
+    }) && res.status(200).json({
+        serviceLoginToken: FU,
+        ["serviceLoginToken.context"]: {
+            secure: true,
+            key: storageIndex.cookies.APIToken,
+        }
+    });
+}
+const _GetAPIKey = async (req, res) => {
     const accounts = await getSavedAccounts(req);
     const account = accounts ? accounts[parseInt(req.headers.authuser)] : null;
     if (!account || !account.session_token || !account.user_id) return res.status(400).json("Accounts Not Found");
     const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
     if (!deviceId) return res.status(400).end();
+    const sessionResponse = ({
+        status: "SESSION_VERIFIED"
+    })
+    /*
     const sessionResponse = (await axios({
         method: "post",
         url: `http://localhost:3001/internals/service-login/user/sessions/verify`,
@@ -44,6 +62,7 @@ const GetAPIKey = async (req, res) => {
             user_id: account.user_id
         })
     })).data;
+    */
     if (sessionResponse.status !== "SESSION_VERIFIED") return res.status(400).json({
         status: "INVALID_SESSION",
         proxy_status: sessionResponse.status,
@@ -56,7 +75,7 @@ const GetAPIKey = async (req, res) => {
         secure: true,
     }) && res.status(200).json({
         serviceLoginToken: apiSession.token,
-        context: {
+        ["serviceLoginToken.context"]: {
             secure: true,
             key: storageIndex.cookies.APIToken,
             // d: deviceId,
@@ -71,7 +90,7 @@ const GetAPIKey = async (req, res) => {
         secure: true,
     }) && res.status(200).json({
         serviceLoginToken: token,
-        context: {
+        ["serviceLoginToken.context"]: {
             secure: true,
             key: storageIndex.cookies.APIToken,
             // d: deviceId,
@@ -261,17 +280,19 @@ const RefreshToken = async (req, res) => {
 const GetDataServerKey = async (req, res) => {
     if (!req.headers.authorization) return res.status(400).json("Bad Request");
     try {
+        const key = req.headers.authorization;
         // TODO: add new Scopes to IDP and also require them during /redirect
-        const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-            algorithms: "RS256"
-        });
-        if (!decoded) return res.status(400).end();
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // if (!decoded) return res.status(400).end();
+
         const token = await jwt.sign({
-            sub: decoded.sub,
+            sub: req.headers.authorization.split(" ")[1],
             scope: "__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song|__kn.music.data-collection.get-rating-details",
         }, process.env.DATA_SERVER_TOKEN);
         return res.json({
-            sub: decoded.sub,
+            sub: req.headers.authorization.split(" ")[1],
             scope: "__kn.music.data-collection.write-watch|__kn.music.data-collection.update-rating|__kn.music.data-collection.get-song".split("|"),
             access_token: token,
         });

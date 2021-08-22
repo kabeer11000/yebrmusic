@@ -4,7 +4,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import {pure} from "recompose";
 
 const Preloader = () => (
-	<div className="Preloader text-center" style={{
+	<div className="Preloade-r text-center" style={{
 		width: "10rem",
 		height: "10rem",
 		position: "relative" || "absolute",

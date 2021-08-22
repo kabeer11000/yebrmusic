@@ -3,4 +3,5 @@
 
 .NoDownloadsIndicator {
     height: 30vh !important;
+    backdrop-filter: opacity(0.9) blur(2rem);
 }

@@ -5,19 +5,18 @@ import List from "@material-ui/core/List";
 import {deleteDownloadedSong, downloadsToPlaylist} from "../../functions/SongsUtility";
 import DownloadListItem from "./DownloadListItem";
 import Container from "@material-ui/core/Container";
-import {Avatar} from "@material-ui/core";
 import {useDialog} from "muibox";
 // import PropTypes from "prop-types";
 import Grow from "@material-ui/core/Grow";
 // import {pure} from "recompose";
-import {PlayContext} from "../../Contexts";
+import {isTvContext, PlayContext} from "../../Contexts";
 import ListItemText from "@material-ui/core/ListItemText";
 import Grid from "@material-ui/core/Grid";
-import DialogContent from "@material-ui/core/DialogContent";
-import {DebugLog} from "../../functions/Log";
 import {OfflinePin} from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
+import Strings from "../../Strings";
+import {DialogBody} from "../DeleteDownloadDialog";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,38 +35,17 @@ const Downloads = () => {
     const dialog = useDialog();
     const [songs, setSongs] = React.useState(null);
     const {PlaySong} = React.useContext(PlayContext);
+    const tv = React.useContext(isTvContext);
 
     const deleteDownload = async (data) => {
-        try {
-            dialog.confirm({
-                ok: {
-                    text: "Delete",
-                },
-                message: (
-                    <div className={"k-dialog-body-inner"}>
-                        <div className={"mb-3"}>
-                            <Grid container className={"mx-0 px-0"}>
-                                <Grid item xs={12} md={12}>
-                                    <Avatar src={data.videoElement.snippet.thumbnails.high.url} variant={"rounded"}
-                                            className={"w-100 h-auto"}/>
-                                </Grid>
-                                <Grid item xs={12} md={12}>
-                                    <DialogContent className={"mx-0 px-0"}>
-                                        <ListItemText className={"mx-0 px-0"} primary={<div>Delete from downloads</div>}
-                                                      secondary={data.videoElement.snippet.title}/>
-                                    </DialogContent>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </div>
-                ),
-            }).then(async () => {
-                await deleteDownloadedSong(data.id);
-                setSongs(await downloadsToPlaylist());
-            });
-        } catch (e) {
-            DebugLog(e);
-        }
+        dialog.confirm({
+            title: <div
+                className={"k-dialog-body-title text-truncate"}>{Strings["Utils:Downloads:DeleteDownload.Title"]}</div> || Strings["Utils:NothingHere"],
+            message: <DialogBody Song={data.videoElement}/>,
+        }).then(async () => {
+            await deleteDownloadedSong(data.id);
+            setSongs(await downloadsToPlaylist());
+        });
     };
     React.useEffect(() => {
         downloadsToPlaylist().then(setSongs);
@@ -82,19 +60,24 @@ const Downloads = () => {
                         {
                             songs && songs.items.length ? (
                                 <List className={`${classes.root} mt-0 bg-transparent`}>
-                                    {songs.items.map((song, index) => <DownloadListItem
-                                        onMouseLeave={() => deleteDownload(song)} onClick={async () => PlaySong({
-                                        useProxy: false,
-                                        songURI: URL.createObjectURL(song.blobs.audio),
-                                        song: song,
-                                        others: {
-                                            offline: true
-                                        },
-                                        playList: {
-                                            index: index,
-                                            list: songs // {...songs, items: songs.items.map(a => a.videoElement)}
-                                        }
-                                    })} className={"text-truncate"} song={song}/>)}
+                                    <Grid container spacing={tv ? 2 : 0}>
+                                        {songs.items.map((song, index) => <Grid className={"w-100"} item md={6} xl={6}>
+                                            <DownloadListItem
+                                                onMouseLeave={() => deleteDownload(song)}
+                                                onClick={async () => PlaySong({
+                                                    useProxy: false,
+                                                    songURI: URL.createObjectURL(song.blobs.audio),
+                                                    song: song,
+                                                    others: {
+                                                        offline: true
+                                                    },
+                                                    playList: {
+                                                        index: index,
+                                                        list: songs // {...songs, items: songs.items.map(a => a.videoElement)}
+                                                    }
+                                                })} className={"text-truncate"} song={song}/>
+                                        </Grid>)}
+                                    </Grid>
                                 </List>
                             ) : (
                                 <Container style={{

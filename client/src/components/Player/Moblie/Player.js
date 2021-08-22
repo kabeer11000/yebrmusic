@@ -1,9 +1,9 @@
 import React from "react";
 import "./Player.css";
-import {AppBar, Avatar, CircularProgress, Drawer, IconButton, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, CircularProgress, Drawer, IconButton, Toolbar, Typography} from "@material-ui/core";
 import {
     AccountCircle,
-    ArrowBack,
+    Close,
     Done,
     Forward10,
     GetApp,
@@ -33,6 +33,11 @@ import ImagesSlider from ".././ComingNext/ImagesSlider";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import {PlayContext, PlayerContext} from "../../../Contexts";
 import Container from "@material-ui/core/Container";
+import {DialogBody} from "../../DeleteDownloadDialog";
+import Strings from "../../../Strings";
+import styled from "@material-ui/core/styles/styled";
+import Box from "@material-ui/core/Box";
+import grey from "@material-ui/core/colors/grey";
 
 const LoopingButton = ({playState, setLooping}) => {
     const handleOnClick = async () => {
@@ -48,12 +53,26 @@ const LoopingButton = ({playState, setLooping}) => {
                     onClick={handleOnClick}><Loop/></IconButton>
     );
 }
+const drawerBleeding = 56;
 
+const StyledBox = styled(Box)(({theme}) => ({
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
+}));
+
+const Puller = styled(Box)(({theme}) => ({
+    width: 30,
+    height: 6,
+    backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
+    borderRadius: 3,
+    position: 'absolute',
+    top: 8,
+    left: 'calc(50% - 15px)',
+}));
 const Player = () => {
 
     const [playerState, setPlayerState] = React.useContext(PlayerContext)
     if (!playerState.Dialog) return null;
-    const {playState, SkipSong, AutoPlay} = React.useContext(PlayContext);
+    const {playState, setPlayState, SkipSong, AutoPlay} = React.useContext(PlayContext);
     const history = useHistory();
     const dialog = useDialog();
     const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
@@ -70,36 +89,38 @@ const Player = () => {
     });
 
     const DownloadAudio = async () => {
-        if (!navigator.onLine) return enqueueSnackbar("No Connection, Download Failed");
+        if (!navigator.onLine) return enqueueSnackbar(Strings["Utils:Downloads:Net.NoConnection:Failed"]);
         try {
             setDownloadButton(<Grow in={true}><IconButton><CircularProgress
                 color={"primary.light"} size={25}/></IconButton></Grow>);
             await DownloadSong({song: Song, uri: playState.audioElement.src, rating: 0});
             setDownloadButton(<IconButton onClick={deleteDownload}><Done/></IconButton>)
         } catch (e) {
-            enqueueSnackbar("Download Failed");
+            enqueueSnackbar(Strings["Utils:Downloads:Net.NoConnection:Failed"]);
             setDownloadButton(<Grow in={true}><IconButton onClick={DownloadAudio}><GetApp/></IconButton></Grow>);
         }
     };
 
     const deleteDownload = async () => {
-        try {
-            dialog.confirm({
-                title: <div className={"k-dialog-body-title text-truncate"}>Delete From
-                    Downloads</div> || "Nothing Here!",
-                message: <div className={"k-dialog-body-inner"}>
-                    <div className={"d-flex justify-content-center mb-3"}>
-                        <Avatar src={Song.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
-                    </div>
-                    Do You want to delete {Song.snippet.title} from downloads?
-                    <br/>
-                </div> || "Nothing Here!",
-            });
-            await deleteDownloadedSong(Song.id);
-            setDownloadButton(<IconButton onClick={DownloadAudio}><GetApp/></IconButton>);
-        } catch (e) {
-        }
+        dialog.confirm({
+            title: <div
+                className={"k-dialog-body-title text-truncate"}>{Strings["Utils:Downloads:DeleteDownload.Title"]}</div> || Strings["Utils:NothingHere"],
+            message: <DialogBody Song={Song}/>,
+        }).then(() => {
+            // if (playState.others.offline) {
+            //     const newIndex = playState.playList.list?.items.findIndex(s => s.id === Song.id) + 1;
+            //     SkipSong(playState.playList.list?.items[newIndex], newIndex, playerState, {
+            //         filter_current: true
+            //     });
+            // }
+            deleteDownloadedSong(Song.id);
+            setDownloadButton(<IconButton
+                onClick={DownloadAudio}><GetApp/></IconButton>)
+        });
+
     };
+
+    // console.log(playState.playList.list)
     const [playing, setPlaying] = React.useState(!playState.audioElement.paused);
     const playAudio = () => {
         playState.audioElement.play();
@@ -127,17 +148,35 @@ const Player = () => {
                 }}
                 PaperProps={{
                     style: {
-                        borderRadius: "1rem 1rem 0 0 "
+                        // opacity: "0.9",
+                        filter: "opacity(0.9)",
+                        // backgroundColor: "rgba(52, 52, 52, 0.5)",
+                        backdropFilter: "blur(2rem)",
+                        // maxHeight: "99vh",
+                        borderRadius: "1rem 1rem 0 0"
                     },
                     square: false
                 }}
                 open={playerState.Dialog}
                 onOpen={() => setPlayerState({...playerState, Dialog: true})}>
+                <StyledBox
+                    sx={{
+                        position: 'absolute',
+                        top: -drawerBleeding,
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                        visibility: 'visible',
+                        right: 0,
+                        left: 0,
+                    }}>
+                    <Puller/>
+                    {/*<Typography sx={{ p: 2, color: 'text.secondary' }}>51 results</Typography>*/}
+                </StyledBox>
                 {/*<div className={"w-100 text-center justify-content-center"}><DragHandle/></div><br/>*/}
                 <AppBar color={"transparent"} elevation={0} style={{position: "relative"}}>
                     <Toolbar color={"#BBBBBB"} style={{color: "#BBBBBB"}}>
                         <IconButton edge="start" onClick={handleClose} aria-label="close">
-                            <ArrowBack/>
+                            <Close/>
                         </IconButton>
                         <div style={{flex: "1 1 auto"}}/>
                         <FormControlLabel
@@ -148,19 +187,19 @@ const Player = () => {
                                 }} name="Autoplay"/>
                             }
                             labelPlacement="start"
-                            label="Autoplay"
+                            label={<Typography variant={"button"}>{"Autoplay".toUpperCase()}</Typography>}
                         />
                     </Toolbar>
                 </AppBar>
-                <div style={{backgroundColor: "primary.dark", height: "90vh", width: "100%", minHeight: "90vh"}}>
+                <div style={{backgroundColor: "primary.dark", height: "90vh", width: "100%", maxHeight: "89vh"}}>
                     <div className={" -ImageCircle thumbnail- text-center my-0 py-0"} style={{
                         marginTop: "0rem"
                     }}>
                         <ImagesSlider PlaySong={SkipSong}/>
                         <Typography variant={"h6"} component={"div"} className={"mx-4 py-0 text-truncate text-left"}>
-                            {Song.snippet.title || "Untitled"}
+                            {Song.snippet.title || Strings["Utils:Song.Untitled"]}
                             <Typography variant={"body2"} style={{opacity: "50%"}}>
-                                {Song.snippet.channelTitle || "Unavailable"}
+                                {Song.snippet.channelTitle || Strings["Utils:Song:Artist.Unavailable"]}
                             </Typography>
                         </Typography>
                         <div className={"mx-4"}><CustomSlider mobile={true}/></div>

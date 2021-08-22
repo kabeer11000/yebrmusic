@@ -15,7 +15,7 @@ export const ServiceLoginRequest = (u) => fetch("http://localhost:9000/auth/serv
     credentials: "include",
     method: "post",
     headers: {authuser: u}
-}).then(response => response.status === 200 ? response.json() : null).catch();
+}).then(response => response.status === 200 ? response.json() : null).catch(() => ({}));
 
 export const AuthOnLoad = async () => {
     if (navigator.onLine) {

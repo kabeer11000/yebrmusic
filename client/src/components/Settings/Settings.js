@@ -16,10 +16,10 @@ import TextField from "@material-ui/core/TextField";
 import AppBar from "@material-ui/core/AppBar";
 import {Toolbar} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import {ThemeContext} from "../../Contexts";
+import {AccountContext, ThemeContext} from "../../Contexts";
 import {Device} from "../../functions/Device";
 import {useHistory} from "react-router-dom";
-import {del, get} from "idb-keyval";
+import {del} from "idb-keyval";
 
 const Settings = () => {
     const [switches, setSwitches] = React.useState({
@@ -32,10 +32,11 @@ const Settings = () => {
     const dialog = useDialog();
     const handleSwitch = (key, value) => setSwitches({...switches, [key]: value});
     const [darkmode, setDarkmode] = React.useContext(ThemeContext);
-    const [userInfo, setUserInfo] = React.useState(null);
+    const {account: userInfo} = React.useContext(AccountContext);
     React.useEffect(() => {
-        get(storageIndex.cookies.UserData).then(setUserInfo);
+        if (!userInfo) window.location.href = "/LOGIN?prompt=password"
     }, []);
+
     return (
         <div className="Settings">
             <List className={"mt-5 text-left"}>

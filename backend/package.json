@@ -9,12 +9,12 @@
   "dependencies": {
     "axios": "^0.20.0",
     "connect-mongo": "^3.2.0",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "ddos": "^0.2.1",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
-    "express": "~4.16.1",
+    "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
     "express-session": "^1.17.1",
     "jsonwebtoken": "^8.5.1",
@@ -24,7 +24,7 @@
     "socket.io": "^2.3.0",
     "uuid": "^8.3.2",
     "yt-search": "^2.10.0",
-    "ytdl-core": "^4.9.0",
+    "ytdl-core": "^4.9.1",
     "ytfps": "^1.0.5",
     "ytpl": "^2.2.1",
     "ytsr": "^3.5.0"

@@ -2,7 +2,7 @@ import Dialog from "@material-ui/core/Dialog";
 import React from "react";
 import {PlayContext, PlayerContext, ThemeContext} from "../../../Contexts";
 import AppBar from "@material-ui/core/AppBar";
-import {Avatar, CircularProgress, Container, Drawer, IconButton, Typography} from "@material-ui/core";
+import {CircularProgress, Container, Drawer, IconButton, Typography} from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import {
     AccountCircle,
@@ -35,6 +35,7 @@ import {deleteDownloadedSong, DownloadSong, isOfflineAvailable} from "../../../f
 import {useSnackbar} from "notistack";
 import {useDialog} from "muibox";
 import {useHistory} from "react-router-dom";
+import {DialogBody} from "../DeleteDownloadDialog";
 
 const LoopingButton = ({playState, setLooping}) => {
     const handleOnClick = async () => {
@@ -53,7 +54,7 @@ const LoopingButton = ({playState, setLooping}) => {
 const Player = () => {
     const [playerState, setPlayerState] = React.useContext(PlayerContext);
     if (!playerState.Dialog) return <></>;
-    const [darkmode] = React.useContext(ThemeContext);
+    // const [darkmode] = React.useContext(ThemeContext);
 
     const {playState, SkipSong} = React.useContext(PlayContext);
     const [playing, setPlaying] = React.useState(!playState.audioElement.paused);
@@ -63,6 +64,7 @@ const Player = () => {
     const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
     // const [castDialog, setCastDialog] = React.useContext(CastDialogContext);
     const {enqueueSnackbar} = useSnackbar();
+    // const [, , {darkTheme}] = React.useContext(ThemeContext);
     const dialog = useDialog();
     const history = useHistory();
     const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
@@ -81,22 +83,13 @@ const Player = () => {
     };
 
     const DeleteDownload = async () => {
-        try {
-            dialog.confirm({
-                title: <div className={"k-dialog-body-title text-truncate"}>Delete From
-                    Downloads</div> || "Nothing Here!",
-                message: <div className={"k-dialog-body-inner"}>
-                    <div className={"d-flex justify-content-center mb-3"}>
-                        <Avatar src={Song.snippet.thumbnails.high.url} alt={"Song Thumbnail"}/>
-                    </div>
-                    Do You want to delete {Song.snippet.title} from downloads?
-                    <br/>
-                </div> || "Nothing Here!",
-            });
-            await deleteDownloadedSong(Song.id);
-            setDownloadButton(<IconButton onClick={DownloadAudio}><GetApp/></IconButton>);
-        } catch (e) {
-        }
+        dialog.confirm({
+            title: <div className={"k-dialog-body-title text-truncate"}>Delete From
+                Downloads</div> || "Nothing Here!",
+            message: <DialogBody Song={Song}/>,
+        }).then(() => deleteDownloadedSong(Song.id) && setDownloadButton(<IconButton
+            onClick={DownloadAudio}><GetApp/></IconButton>)).catch(() => {
+        });
     };
     const handleClose = () => setPlayerState({
         MiniPlayer: true,
@@ -107,19 +100,32 @@ const Player = () => {
         isOfflineAvailable(Song.id).then(v => setDownloadButton(v ?
             <IconButton onClick={DeleteDownload}><Done/></IconButton> :
             <IconButton onClick={DownloadAudio}><GetApp/></IconButton>));
-    }, [playState.videoElement])
+    }, [playState.videoElement]);
+    const [darkmode] = React.useContext(ThemeContext)
+    // const [,,{slider, colors}] = React.useContext(ThemeContext);
+    // const theme = createMuiTheme({
+    //     palette: {
+    //         ...colors,
+    //         slider: slider,
+    //         type: "dark"
+    //     }
+    // });
+    // const darkmode = "dark";
+    const icon = "https://www.nicepng.com/png/full/780-7800494_freetoedit-texture-background-effect-grainy-vintageeffe-monochrome.png"
     return (
+        // <ThemeProvider theme={theme}>
         <React.Fragment>
             <Dialog fullScreen={true} className={"Desktop-Player"} open={playerState.Dialog} PaperProps={{
                 style: {
-                    backgroundImage: `url(${Song.snippet.thumbnails.high.url})`,
+                    transition: "background 300ms ease-in 200ms",
+                    backgroundImage: `url("${icon}"), url(${Song.snippet.thumbnails.high.url})`,
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                 }
             }}>
                 <DialogContent style={{
-                    backdropFilter: darkmode ? 'blur(3rem) brightness(60%)' : 'blur(3rem) brightness(140%)',
+                    backdropFilter: darkmode ? 'blur(3rem) brightness(30%)' : 'blur(3rem) brightness(300%)',
                 }} className={"px-5"}>
                     <AppBar color={"transparent"} className={"bg-transparent"} position={"relative"} elevation={0}>
                         <Toolbar>
@@ -220,7 +226,10 @@ const Player = () => {
                                         </IconButton>
                                         {playState.playList && playState.playList.list.items[playState.playList.index + 1] ?
                                             <IconButton
-                                                onClick={() => SkipSong(playState.playList.list.items[playState.playList.index + 1], playState.playList.index + 1)}><SkipNext/></IconButton> :
+                                                onClick={() => SkipSong(playState.playList.list.items[playState.playList.index + 1], playState.playList.index + 1, {
+                                                    Dialog: true,
+                                                    MiniPlayer: false
+                                                })}><SkipNext/></IconButton> :
                                             <IconButton disabled={true}><SkipNext/></IconButton>}
                                     </div>
                                 </Container>
@@ -276,6 +285,7 @@ const Player = () => {
                 </DialogContent>
             </Dialog>
         </React.Fragment>
+        // </ThemeProvider>
     );
 };
 export default React.memo(Player);

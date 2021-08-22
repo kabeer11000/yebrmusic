@@ -86,8 +86,9 @@ const SearchComponent = (props) => {
 
     const Search = async (e) => {
         if (e.key === "Enter") return query ? history.push("/search/results") : null;
-        if (online) SuggestSearch(e.target.value, abortController).then(v => v && v.length ? setQueryArray(v) : setQueryArray([]));
-        else SuggestOfflineSongs(e.target.value).then(t => setQueryArray(t.map(t => ({suggestion: {attributes: {data: t.item.title}}}))));
+        if (online) await SuggestSearch(e.target.value, abortController).then(v => v && v.length ? setQueryArray(v) : setQueryArray([]));
+        else await SuggestOfflineSongs(e.target.value).then(t => setQueryArray(t.map(t => ({suggestion: {attributes: {data: t.item.videoElement.snippet.title}}}))));
+        console.log(await SuggestOfflineSongs(e.target.value))
         ListItems();
         props.history.push({
             pathname: "search",
@@ -106,7 +107,7 @@ const SearchComponent = (props) => {
                             setOpen(false);
                         }} component={Link} to={"/home"} color="primary.light" visibility={false}>
                             <ArrowBack style={{color: "#FFF"}}/>
-                        </IconButton> : <></>}
+                        </IconButton> : null}
                         <InputBase
                             // autoCapitalize={true}
                             // autoComplete={true}

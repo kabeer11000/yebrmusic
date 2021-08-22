@@ -6,5 +6,8 @@ export const Device = {
         const deviceId = Cookies.getCookie(storageIndex.cookies.deviceID);
         if (!deviceId) throw new Error("Device Id Not Found");
         return deviceId
+    },
+    fp: {
+        client: new window.ClientJS(),
     }
 }

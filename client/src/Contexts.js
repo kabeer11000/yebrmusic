@@ -14,7 +14,6 @@ import SessionRecommendation from "./functions/SessionRecommendation";
 import {GetActiveAccounts, ServiceLoginRequest} from "./functions/Auth";
 import {useNetwork} from "./Hooks";
 
-
 export const CastDialogContext = React.createContext(false);
 export const CastDialogProvider = ({children}) => {
     const [a, b] = React.useState(false);
@@ -28,6 +27,12 @@ export const IsTvProvider = ({children}) => {
     Log("Desktop", isTv);
     return <isTvContext.Provider value={isTv}>{children}</isTvContext.Provider>;
 };
+
+export class OfflineToken {
+    constructor() {
+    }
+}
+
 /** BHAI IDHAR HI TOKEN KI VALUE BE SAVE KARDO. PHIR HAHR COMPONENT MAI CONDITIONAL LOGIC **/
 export const AccountContext = React.createContext(null);
 export const AccountProvider = React.memo(({children}) => {
@@ -35,6 +40,14 @@ export const AccountProvider = React.memo(({children}) => {
     const {sessions} = React.useContext(AccountChooserContext);
     const [token, setToken] = React.useState(null);
     const online = useNetwork();
+    // const history = useHistory();
+    /*React.useEffect(() => void new Promise(async () => {
+        const {serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
+        setToken(token || new Error("An Error Occurred, Failed to get Service Login Key"));
+        window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
+        window.__kn.music["data-collection"].token = dataServerToken;
+    }), [online])*/
+
     React.useEffect(() => void new Promise(async () => {
         if (online) {
             const accounts = await GetActiveAccounts();
@@ -42,26 +55,43 @@ export const AccountProvider = React.memo(({children}) => {
             const authuserParam = parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam));
             const u = (authuserParam > accounts.active.length ? 0 : authuserParam) || 0;
             const account = accounts.active[u];
-            setAccount(account);
-            await set(storageIndex.cookies.UserData, account);
-            await set(storageIndex.cookies.AuthUser, u);
-            const token = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)))?.serviceLoginToken || new Error("An Error Occurred, Failed to get Service Login Key");
-            setToken(token);
-            window.__kn.music.serviceLoginToken = token;
-            window.__kn.music.auth.authUser = u;
-            window.__kn.music.auth.user = u;
+            if (account) {
+                setAccount(account);
+                await set(storageIndex.cookies.UserData, account);
+                await set(storageIndex.cookies.AuthUser, u);
+                const {serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)));
+                setToken(token || new Error("An Error Occurred, Failed to get Service Login Key"));
+                window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
+                window.__kn.music.auth.authUser = u;
+                window.__kn.music.auth.user = account;
+                window.__kn.music["data-collection"].token = dataServerToken;
+            } else {
+                const {serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
+                setToken(token || new Error("An Error Occurred, Failed to get Service Login Key"));
+                window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
+                window.__kn.music["data-collection"].token = dataServerToken;
+            }
+            // history.push(`/u/${u}${window.location.pathname}`)
         } else {
             const account = await get(storageIndex.cookies.UserData);
-            setAccount(account);
-            sessions[1]({
-                all: [account],
-                active: [account],
-                offline: true
-            });
-            setToken(null);
-            window.__kn.music.auth.authUser = await get(storageIndex.cookies.AuthUser);
+            if (account) {
+                setAccount(account);
+                sessions[1]({
+                    all: [account],
+                    active: [account],
+                    offline: true
+                });
+                setToken(new OfflineToken());
+                window.__kn.music.auth.authUser = await get(storageIndex.cookies.AuthUser);
+                window.__kn.music.auth.user = account;
+            } else {
+                setToken(new OfflineToken());
+                window.__kn.music.serviceLoginToken = new OfflineToken();
+                window.__kn.music["data-collection"].token = new OfflineToken();
+            }
         }
     }), [online]);
+
     return <AccountContext.Provider value={{account, setAccount, token, setToken}}>{children}</AccountContext.Provider>;
 });
 export const AccountChooserContext = React.createContext(false);
@@ -238,7 +268,7 @@ export const PlayProvider = React.memo(({children}) => {
     });
     const tv = React.useContext(isTvContext);
     const setLoading = React.useContext(LoadingContext)[1];
-    const SkipSong = async (song, index, componentState = null) => {
+    const SkipSong = async (song, index, componentState = playerState, options = {}) => {
         if (playState.others.offline) await PlaySong({
             useProxy: false,
             others: {
@@ -249,6 +279,7 @@ export const PlayProvider = React.memo(({children}) => {
             song: song,//.videoElement,
             playList: {
                 ...playState.playList,
+                // list: !options.filter_current ? playState.playList.list : {...playState.playList.list, items: playState.playList.list?.items.filter(s => s.id !== song.id)},
                 index: index
             }
         });
@@ -258,6 +289,7 @@ export const PlayProvider = React.memo(({children}) => {
             componentState,
             playList: {
                 ...playState.playList,
+                // list: !options.filter_current ? playState.playList.list : {...playState.playList.list, items: playState.playList.list?.items.filter(s => s.id !== song.id)},
                 index: index
             }
         });
@@ -454,35 +486,35 @@ export const ThemeProvider = React.memo(({children}) => {
             grey: "#222327"
         }
     };
-
+    const slider = {
+        root: {
+            color: "#6f8eff",
+            height: 3,
+            padding: "13px 0",
+        },
+        track: {
+            height: 4,
+            borderRadius: 2,
+        },
+        thumb: {
+            height: 20,
+            width: 20,
+            backgroundColor: "#000",
+            border: "1px solid currentColor",
+            marginTop: -9,
+            marginLeft: -11,
+            boxShadow: "#ebebeb 0 2px 2px",
+            "&:focus, &:hover, &$active": {
+                boxShadow: "#ccc 0 2px 3px 1px",
+            },
+            color: "#000",
+        }
+    };
     const darkTheme = createMuiTheme({
         palette: {
             type: palletType,
             ...colors,
-            Slider: {
-                root: {
-                    color: "#6f8eff",
-                    height: 3,
-                    padding: "13px 0",
-                },
-                track: {
-                    height: 4,
-                    borderRadius: 2,
-                },
-                thumb: {
-                    height: 20,
-                    width: 20,
-                    backgroundColor: "#000",
-                    border: "1px solid currentColor",
-                    marginTop: -9,
-                    marginLeft: -11,
-                    boxShadow: "#ebebeb 0 2px 2px",
-                    "&:focus, &:hover, &$active": {
-                        boxShadow: "#ccc 0 2px 3px 1px",
-                    },
-                    color: "#000",
-                }
-            }
+            Slider: slider
         }
     });
 
@@ -490,7 +522,7 @@ export const ThemeProvider = React.memo(({children}) => {
         localStorage.setItem(storageIndex.darkMode, darkMode);
     }, [darkMode])
     return (
-        <ThemeContext.Provider value={[darkMode, setDarkMode]}>
+        <ThemeContext.Provider value={[darkMode, setDarkMode, {slider, colors, darkTheme}]}>
             <MuiThemeProvider theme={darkTheme}>
                 {children}
             </MuiThemeProvider>

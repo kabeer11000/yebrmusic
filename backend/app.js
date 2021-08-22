@@ -14,7 +14,8 @@ const APIAuthVerifier = require("./functions/api-header-verifier");
 //     max: 100 // limit each IP to 100 requests per windowMs TODO Default 10
 // });
 // const keys = require("./keys");
-const ddos = new DDOS({burst: 10, limit: 15})
+// const ddos = new DDOS({burst: 10, limit: 15})
+const ddos = new DDOS({burst: 999, limit: 999})
 const app = express();
 // https://export.kabeercloud.tk/u/v/6085bd1a3622aBb%20ki%20vines.html
 

@@ -23,7 +23,7 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
             <ListItem button alignItems="flex-start" className={"mx-0 px-0"}>
                 <React.Fragment>
                     <ListItemAvatar onClick={onClick}>
-                        <Avatar alt={song.videoElement.snippet.title}
+                        <Avatar variant="rounded" alt={song.videoElement.snippet.title}
                                 src={song.videoElement.snippet.thumbnails.high.url}/>
                     </ListItemAvatar>
                     <ListItemText

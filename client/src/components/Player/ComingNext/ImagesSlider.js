@@ -6,7 +6,7 @@ import Preloader from "../../Preloader/Preloader.lazy";
 import PropTypes from "prop-types";
 import {isTvContext, LoadingContext, PlayContext} from "../../../Contexts";
 
-const CommingNextImagesSlider = (props) => {
+const ImagesSlider = (props) => {
     const {playState} = React.useContext(PlayContext);
     const tv = React.useContext(isTvContext);
     const loading = React.useContext(LoadingContext);
@@ -26,14 +26,14 @@ const CommingNextImagesSlider = (props) => {
                                  className={`image mb-0 mx-3 img-fluid rounded shadow SongNextSliderSelected`}
                                  onError={(e) => {
                                      e.target.onerror = null;
-                                     e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
+                                     e.target.src = "./assets/icons/darkmode_nothingfound.svg" // "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
                                  }}
                                  style={{
                                      scrollSnapAlign: "center",
                                      marginTop: "0",
                                      width: tv ? "17rem" : "15rem",
                                      height: tv ? "17rem" : "15rem",
-                                     border: "white solid 0.1rem"
+                                     border: "rgb(167, 27, 27) solid 0.5rem"
                                  }} alt={Song.snippet.title}/>
                         </ButtonBase>
                     </Grow>
@@ -46,7 +46,7 @@ const CommingNextImagesSlider = (props) => {
                                         className={`image mb-0 mx-3 img-fluid rounded shadow ${index === playState.playList.index ? "SongNextSliderSelected" : ""}`}
                                         onError={(e) => {
                                             e.target.onerror = null;
-                                            e.target.src = "https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
+                                            e.target.src = "./assets/icons/darkmode_nothingfound.svg" //"https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/broken_image_black_24dp.svg"
                                         }}
                                         onClick={() => index === playState.playList.index ? null : props.PlaySong(value, index)}
                                         style={{
@@ -54,7 +54,7 @@ const CommingNextImagesSlider = (props) => {
                                             marginTop: "0",
                                             width: index === playState.playList.index && tv ? "17rem" : "15rem",
                                             height: index === playState.playList.index && tv ? "17rem" : "15rem",
-                                            border: index === playState.playList.index ? "white solid 0.1rem" : null
+                                            border: index === playState.playList.index ? "rgb(167, 27, 27) solid 0.5rem" : null
                                         }}
                                         alt={playState.others.offline ? value.videoElement.snippet.title : value.snippet.title}/>
                                 </ButtonBase>
@@ -71,10 +71,10 @@ const CommingNextImagesSlider = (props) => {
     );
 };
 
-CommingNextImagesSlider.propTypes = {
+ImagesSlider.propTypes = {
     PlaySong: PropTypes.func.isRequired
 };
-CommingNextImagesSlider.defaultProps = {};
+ImagesSlider.defaultProps = {};
 
-export default React.memo(CommingNextImagesSlider);
+export default React.memo(ImagesSlider);
 

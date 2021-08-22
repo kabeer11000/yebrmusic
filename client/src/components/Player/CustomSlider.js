@@ -8,19 +8,6 @@ function toHHMMSS(seconds) {
 	date.setSeconds(seconds);
 	return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 }
-
-const __toHHMMSS = (secs) => {
-	const sec_num = parseInt(secs, 10)
-	const hours = Math.floor(sec_num / 3600)
-	const minutes = Math.floor(sec_num / 60) % 60
-	const seconds = sec_num % 60
-
-	return [hours, minutes, seconds]
-		.map(v => v < 10 ? "0" + v : v)
-		.filter((v, i) => v !== "00" || i > 0)
-		.join(":")
-}
-
 const CustomSlider = (props) => {
 	const {playState} = React.useContext(PlayContext);
 	const [scrubbing, setScrubbing] = React.useState(playState.audioElement.currentTime || 0);

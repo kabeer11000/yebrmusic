@@ -1,6 +1,6 @@
 import React from "react";
 import "./SongCard2.css";
-import Grow from "@material-ui/core/Grow";
+// import Grow from "@material-ui/core/Grow";
 import Card from "@material-ui/core/Card";
 import {FocusNode} from "@please/lrud";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -11,22 +11,21 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Paper from "@material-ui/core/Paper";
 import {QueueMusic} from "@material-ui/icons";
 
+const unEntity = (str) => str.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 const SongCard2 = (props) => {
 	const video_ = props.video.snippet;
-	const unEntity = (str) => str.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-
 	return (
-		<Grow in={true}>
-			<Card className={"SongCard"} disableRipple
-				  style={{
-					  width: "100%", backgroundColor: "transparent", /*maxWidth: "12rem"*/
-					  maxWidth: "auto",
-				  }}
-				  elevation={0}
-				  onClick={props.onPlay}>
-				<FocusNode>
-					<CardActionArea>
-						<Card className={"py-0 my-0"}>
+		// <Grow in={true}>
+		<Card className={"SongCard"} disableRipple
+			  style={{
+				  width: "100%", backgroundColor: "transparent", /*maxWidth: "12rem"*/
+				  maxWidth: "auto",
+			  }}
+			  elevation={0}
+			  onClick={props.onPlay}>
+			<FocusNode>
+				<CardActionArea>
+					<Card className={"py-0 my-0"}>
 							<Paper>
 								<CardMedia
 									component={"img"}
@@ -88,13 +87,13 @@ const SongCard2 = (props) => {
 						{/*	</span>*/}
 						{/*</Typography>*/}
 					</CardContent>
-				</FocusNode>
-			</Card>
-		</Grow>
+			</FocusNode>
+		</Card>
+		// </Grow>
 	);
 };
 SongCard2.propTypes = {};
 
 SongCard2.defaultProps = {};
 
-export default SongCard2;
+export default React.memo(SongCard2);

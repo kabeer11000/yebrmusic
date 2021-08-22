@@ -36,9 +36,8 @@ const KnnRankedCandidates = async (req, res) => {
         }
         // candidates = await db.collection("watch-candidates").findOne({
         //     user_id: decoded.sub
-        // });
-
-        const watches = req.body.watches || [];
+        // }); 
+        const watches = req.body.watches.slice(-10) || [];
         const watch_history = (await history.getWatchHistory({
             limit: 4,
             user_id: req.__kn.session.user.user_id
@@ -47,7 +46,7 @@ const KnnRankedCandidates = async (req, res) => {
             candidates: candidates,
             watches: [...watches, ...watch_history],
             user_id: req.__kn.session.user.user_id,
-            total_items: 20
+            total_items: 50
         }).then(a => a.data);
         return res.json({
             "kind": "KabeersMusic#discoverListResponse",
@@ -120,7 +119,7 @@ const BasedOnLastSearches = async (req, res) => {
         // });
         // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
         const searchHistory = await history.getSearchHistory(req.__kn.session.user.user_id).then(a => a && a.length ? a.map(b => b.query).slice(a.length - 2, a.length).reverse() : []);
-        let queries = []
+        let queries = [];
         /** @attention
          * @deprecated
          * This will return null country in development **/

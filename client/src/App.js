@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import HomeComponent from "./components/Home/home";
+import HomeComponent from "./components/Home/home.lazy";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import CustomBottomNavigation from "./components/CustomBottomNavigation/CustomBottomNavigation.lazy";
 import Downloads from "./components/Downloads/Downloads.lazy";
@@ -10,15 +10,20 @@ import MiniPlayer from "./components/Player/MiniPlayer/MiniPlayer.lazy";
 import CustomAppBar from "./components/CustomAppBar/CustomAppBar.lazy";
 import SearchComponent from "./components/SearchComponent/SearchComponent.lazy";
 import DrawerComponent from "./components/Drawer/Drawer.lazy";
+import Button from "@material-ui/core/Button";
 import SearchResultComponent from "./components/SearchComponent/SearchResultComponent.lazy";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import Slide from "@material-ui/core/Slide";
 import Settings from "./components/Settings/Settings.lazy";
 import Liked from "./components/Liked/Liked.lazy";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {DialogProvider} from "muibox";
 import ArtistComponent from "./components/ArtistComponent/ArtistComponent.lazy";
 import {FocusRoot} from "@please/lrud";
+import Strings from "./Strings"
 import SearchComponentTV from "./components/SearchComponentTV/SearchComponentTV.lazy";
+import AlertTitle from "@material-ui/lab/AlertTitle";
+import Alert from "@material-ui/lab/Alert";
 import {
     AccountChooserProvider,
     AccountContext,
@@ -27,6 +32,7 @@ import {
     DrawerProvider,
     isTvContext,
     LoadingProvider,
+    OfflineToken,
     PlayerProvider,
     PlayProvider,
     RatingProvider,
@@ -45,7 +51,29 @@ const AppRenderer = ({children}) => {
     const {token} = React.useContext(AccountContext);
     return token && !(token instanceof Error) ? (
         <app-container>{children}</app-container>) : !token && !(token instanceof Error) ?
-        <Preloader/> : null;
+        (token instanceof OfflineToken) ? <app-container>{children}</app-container> : <Preloader/> : (
+            <app-container>
+                <Slide in>
+                    <Alert severity="error" style={{
+                        height: "100vh",
+                        paddingTop: "2rem"
+                    }}>
+                        <AlertTitle>{Strings["Utils:App:Net.NoConnection:Failed.Title"]}</AlertTitle>
+                        {Strings["Utils:App:Net.NoConnection:Failed.Body[1]"]}
+                        <Button style={{
+                            marginTop: "2rem",
+                            width: "100%"
+                        }} color="inherit"
+                                onClick={() => window.location.href = Strings["SupportEmail"]}>{Strings["Utils:App:Support"]}</Button>
+                        <Button variant={"outlined"} style={{
+                            marginTop: "1rem",
+                            width: "100%"
+                        }} color="inherit"
+                                onClick={() => window.location.reload()}>{Strings["Utils:App:Retry.Text"]}</Button>
+                    </Alert>
+                </Slide>
+            </app-container>
+        );
 }
 const App = () => {
     const tv = React.useContext(isTvContext);

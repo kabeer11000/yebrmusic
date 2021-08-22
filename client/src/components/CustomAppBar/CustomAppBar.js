@@ -58,8 +58,8 @@ const CustomAppBar = () => {
                     <Toolbar style={{width: "100%", display: "inline-flex", justifyContent: "space-between"}}>
                         <div className={"d-inline-flex"}>
                             <Avatar src={"./assets/icons/smallTvIcon.svg"}/>
-                            <Typography color={"textPrimary"} className={"mt-2"}>
-                                Music
+                            <Typography color={"textPrimary"} variant={"button"} className={"mt-2"}>
+                                YEBR
                             </Typography>
                         </div>
                         <div style={{width: "100%", display: "inline-flex", justifyContent: "center"}}>
@@ -89,22 +89,23 @@ const CustomAppBar = () => {
                             {drawer ? <ArrowBack/> : <Menu/>}
                         </IconButton>
                         <InputBase
+                            readOnly
                             onClick={() => history.push("/search")}
-                            disabled
                             // component={Link} to={"/search"}
                             className={`text-truncate ${classes.input}`}
-                            placeholder="Search Kabeer's Music"
-                            inputProps={{"aria-label": "search google maps"}}
+                            placeholder="Search Yebr"
+                            inputProps={{"aria-label": "search yebr music"}}
                         />
                         <IconButton className={classes.iconButton} aria-label="search"
                                     onClick={() => history.push("/search")}>
                             <Search/>
                         </IconButton>
                         <Divider orientation={"vertical"} className={classes.divider}/>
-                        <IconButton onClick={() => setOpen(!open)} className={classes.iconButton}>
+                        {userInfo ? (<IconButton onClick={() => setOpen(!open)} className={classes.iconButton}>
                             <Avatar src={userInfo ? userInfo.account_image : ""}
                                     style={{width: "1.7rem", height: "1.7rem"}}/>
-                        </IconButton>
+                        </IconButton>) : (<Button onClick={() => window.location.href = "LOGIN" + "?prompt=password"}>Sign
+                            In</Button>)}
                         {/*<Divider className={classes.divider} orientation="vertical" />*/}
                         {/*<IconButton component={Link} to={"/settings"} color="primary" className={classes.iconButton} aria-label="directions">*/}
                         {/*	<Mic />*/}
