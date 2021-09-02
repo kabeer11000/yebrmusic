@@ -61,7 +61,7 @@ const Player = () => {
 	const [nextDrawer, setNextDrawer] = React.useState(false);
 	// const Cast = React.useContext(CastContext);
 	const [downloadButton, setDownloadButton] = React.useState(<div/>);
-	const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
+	const [, setLooping] = React.useState(playState.audioElement.loop);
 	// const [castDialog, setCastDialog] = React.useContext(CastDialogContext);
 	const {enqueueSnackbar} = useSnackbar();
 	// const [, , {darkTheme}] = React.useContext(ThemeContext);

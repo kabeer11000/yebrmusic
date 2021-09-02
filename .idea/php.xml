@@ -11,6 +11,14 @@
       <path value="$PROJECT_DIR$/data-collection-server/vendor/phpoption/phpoption" />
       <path value="$PROJECT_DIR$/data-collection-server/vendor/graham-campbell/result-type" />
       <path value="$PROJECT_DIR$/data-collection-server/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/collect/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/collect/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/collect/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/collect/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/collect/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/collect/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/collect/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/collect/vendor/composer" />
     </include_path>
   </component>
   <component name="PhpUnit">

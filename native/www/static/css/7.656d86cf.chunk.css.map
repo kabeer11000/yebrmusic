@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "sources": [
+    "webpack://src/components/ArtistComponent/ArtistComponent.css",
+    "webpack://src/components/SongCard/SongCard.css"
+  ],
+  "names": [],
+  "mappings": "AAIA,wBACI,wBAAiB,CAAjB,gBACJ,CAEA,2BACI,yBACJ,CCVA,UACI,WAAY,CACZ,iBACJ,CAEA,YACI,YAAa,CACb,aAAc,CACd,kBACJ,CAEA,+BACI,YACJ,CAEA,WACI,aAAc,CACd,kBACJ,CAEA,qBACI,oBACJ",
+  "file": "7.656d86cf.chunk.css",
+  "sourcesContent": [
+    ".ArtistComponent {\r\n\r\n}\r\n\r\n.backgroundImage:before {\r\n    filter: blur(5px);\r\n}\r\n\r\n.infinite-scroll-component {\r\n    overflow: hidden !important;\r\n}\r\n",
+    ".SongCard {\r\n    width: 15rem;\r\n    margin-right: 1rem;\r\n}\r\n\r\n.cardSlider {\r\n    padding: 1rem;\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\n.cardSlider::-webkit-scrollbar {\r\n    display: none\r\n}\r\n\r\ndiv.Slider {\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\ndiv.Slider .SongCard {\r\n    display: inline-block;\r\n}\r\n"
+  ]
+}

@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+  collect:
+    image: php:7.4-apache
+    ports:
+      - "80:84"
+    volumes:
+      - ./src:/var/www/html/
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
+  proxy:
+    build: .
+    command: npm run start
+    volumes:
+      - .:/proxy
+    ports:
+      - "7000:83"
+
+  cast:
+    build: .
+    command: npm run start
+    volumes:
+      - .:/cast
+    ports:
+      - "7000:83"
+
+  recommendations:
+    build: .
+    command: npm run start
+    volumes:
+      - .:/recommendations
+    ports:
+      - "7000:82"
+    depends_on:
+      - collect
+
+  backend:
+    build: .
+    command: npm run start
+    volumes:
+      - .:/backend
+    ports:
+      - "9000:80"
+    depends_on:
+      - mongo
+
+  web:
+    build: .
+    command: npm start
+    volumes:
+      - .:/web
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+      - collect

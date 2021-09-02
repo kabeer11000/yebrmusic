@@ -75,7 +75,7 @@ const Player = () => {
 	const {playState, setPlayState, SkipSong, AutoPlay} = React.useContext(PlayContext);
 	const history = useHistory();
 	const dialog = useDialog();
-	const [, setLooping] = React.useState(<LoopingButton setLooping={setLooping} playState={playState}/>);
+	const [, setLooping] = React.useState(playState.audioElement.loop);//(<LoopingButton setLooping={setLooping} playState={playState}/>);
 	const [downloadButton, setDownloadButton] = React.useState(<div/>);
 	const {enqueueSnackbar} = useSnackbar();
 	const [PlayList, setPlayList] = React.useState(false);

@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "sources": [
+    "webpack://src/components/Downloads/Downloads.css"
+  ],
+  "names": [],
+  "mappings": "AAGA,sBACI,qBAAuB,CACvB,8CAAwC,CAAxC,sCACJ",
+  "file": "16.9c6f5460.chunk.css",
+  "sourcesContent": [
+    ".Downloads {\r\n}\r\n\r\n.NoDownloadsIndicator {\r\n    height: 30vh !important;\r\n    backdrop-filter: opacity(0.9) blur(2rem);\r\n}\r\n"
+  ]
+}

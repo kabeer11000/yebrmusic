@@ -22,6 +22,9 @@ const endPoints = {
     saveWatchHistory: `${hostName}/api/history/save`,
     saveSearchHistory: `${hostName}/api/search/save`,
     getFeed: () => `${hostName}/api/feed`,
+    History: {
+        getHistory: `${hostName}/api/history`
+    },
     getFeedFake: () => `${hostName}/files/yt-fake/sample-response-master/yt-api/suggested-cardib.json`,
     authRedirect: `${hostName}/auth/redirect`,
     refreshToken: `${hostName}/auth/store/tokens/refresh`,
@@ -42,6 +45,10 @@ const endPoints = {
     getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`,
 
     Auth: {
+        GetServiceLoginKey: `${hostName}/auth/service-login/browse/key`,
+        GetActiveSessionAccounts: `${window.__kn.music.config.hosts.kauth_server}/auth/user/accounts/active/0`,
+        SignOutDeleteSession: `${window.__kn.music.config.hosts.kauth_server}/auth/user/accounts/remove`,
+        getAccounts: `https://accounts.kabeersnetwork.tk/auth/oauth/`,
         refreshToken: ({redirect_uri}) => `${hostName}/auth/store/tokens/refresh?redirect_uri=${redirect_uri}`
     },
     DataCollection: {

@@ -9,6 +9,8 @@ import Container from "@material-ui/core/Container";
 import {Button} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {isTvContext, LoadingContext, PlayContext} from "../../Contexts";
+import {comLinkWorker} from "../../functions/Worker/worker-export";
+import endPoints from "../../api/EndPoints/EndPoints";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +27,13 @@ const useStyles = makeStyles((theme) => ({
 
 const HistoryComponent = () => {
 	const classes = useStyles();
-	const [HistoryItems, setHistoryItems] = React.useState(<></>);
+	// const [HistoryItems, setHistoryItems] = React.useState(<></>);
+	console.log(comLinkWorker.fetch(endPoints.History.getHistory, {
+		method: "get",
+		headers: {
+			"Authorization": `Bearer ${__kn.music.serviceLoginToken}`
+		}
+	}))
 	const [state, setState] = React.useState(null);
 	const {playState, setPlayState, PlaySong} = React.useContext(PlayContext);
 	const [loading, setLoading] = React.useContext(LoadingContext);

@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "sources": [
+    "webpack://src/components/SongCard/SongCard.css"
+  ],
+  "names": [],
+  "mappings": "AAAA,UACI,WAAY,CACZ,iBACJ,CAEA,YACI,YAAa,CACb,aAAc,CACd,kBACJ,CAEA,+BACI,YACJ,CAEA,WACI,aAAc,CACd,kBACJ,CAEA,qBACI,oBACJ",
+  "file": "8.de66a579.chunk.css",
+  "sourcesContent": [
+    ".SongCard {\r\n    width: 15rem;\r\n    margin-right: 1rem;\r\n}\r\n\r\n.cardSlider {\r\n    padding: 1rem;\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\n.cardSlider::-webkit-scrollbar {\r\n    display: none\r\n}\r\n\r\ndiv.Slider {\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\ndiv.Slider .SongCard {\r\n    display: inline-block;\r\n}\r\n"
+  ]
+}

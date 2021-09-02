@@ -90,6 +90,7 @@ const IndexSongOnRequest = async (id) => {
             song: songDetails, token: process.env.DATA_SERVER_TOKEN
         }));
     } catch (e) {
+        console.re.log(e);
         console.log("An error occurred while indexing song")
     }
 }

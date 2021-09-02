@@ -86,9 +86,8 @@ const SearchComponent = (props) => {
 
 	const Search = async (e) => {
 		if (e.key === "Enter") return query ? history.push("/search/results") : null;
-		if (online) await SuggestSearch(e.target.value, abortController).then(v => v && v.length ? setQueryArray(v) : setQueryArray([]));
+		if (online) await SuggestSearch(e.target.value, abortController).then(v => v && v.length ? setQueryArray(v) : setQueryArray([])).catch(() => []);
 		else await SuggestOfflineSongs(e.target.value).then(t => setQueryArray(t.map(t => ({suggestion: {attributes: {data: t.item.videoElement.snippet.title}}}))));
-		console.log(await SuggestOfflineSongs(e.target.value));
 		ListItems();
 		props.history.push({
 			pathname: "search",
@@ -114,8 +113,8 @@ const SearchComponent = (props) => {
 							autoFocus={true}
 							onKeyUp={Search}
 							className={`${classes.input} text-light`}
-							placeholder="Search Kabeers Music"
-							inputProps={{"aria-label": "Search Kabeers Music"}}
+							placeholder="Search Yebr"
+							inputProps={{"aria-label": "Search Yebr"}}
 						/>
 					</Toolbar>
 				</AppBar>

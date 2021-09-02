@@ -5,10 +5,7 @@
     <link href="%PUBLIC_URL%/favicon.ico" rel="icon"/>
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
     <meta content="#2B2B2B" name="theme-color"/>
-    <meta
-            content="Kabeer's Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network"
-            name="description"
-    />
+    <meta content="Yebr Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network" name="description"/>
     <link href="%PUBLIC_URL%/assets/icons/AppleMusicIcon.png" rel="apple-touch-icon"/>
     <base href="/"/>
     <style>
@@ -93,12 +90,33 @@
                 super();
             }
         });
-    </script>
-
-    <script>
-        const production = false;
+        const production = true;
         window.__kn = {
             music: {
+                logger: {
+                    "console.re": {
+                        channel: 'yebrmusic',
+                        api: '//console.re/connector.js',
+                        ready: function () {
+                            if (production) return console.log("Kabeer's Network DevTools: ", "console.re stopped because of production mode.");
+                            const _this = this;
+                            return new Promise(async (resolve, reject) => {
+                                const s = document.createElement('script');
+                                s.src = _this.api;
+                                s.id = 'consolerescript';
+                                s.onload = async () => {
+                                    console.re.log("Init@", __kn.music.version, {
+                                        debugger_version: __kn.music.debugger_version,
+                                        debugging_enabled: __kn.music.developers["debugging-enabled"]
+                                    });
+                                    await resolve();
+                                }
+                                s.onerror = reject;
+                                document.getElementsByTagName('head')[0].appendChild(s);
+                            })
+                        }
+                    },
+                },
                 auth: {
                     authUser: null,
                     user: null
@@ -120,7 +138,8 @@
                         api: !production ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
                         "data-collection-server": !production ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
                         "cast-server": !production ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
-                        proxy: !production ? "http://localhost:8080/" : "https://proxy-yebrmusic.herokuapp.com/"
+                        proxy: !production ? "http://localhost:8080/" : "https://proxy-yebrmusic.herokuapp.com/",
+                        kauth_server: production ? "https://accounts.kabeersnetwork.tk" : ""
                     },
                     recom: {
                         last_session_carry_recom_length: 6
@@ -136,11 +155,12 @@
                 }
             }
         };
-        console.error = () => void null
+        document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"]));
+        console.error = () => void null;
     </script>
 </head>
 <body>
-<noscript>You need to enable JavaScript to run Kabeer's Music.</noscript>
+<noscript>You need to enable JavaScript to run this app.</noscript>
 <app-renderer></app-renderer>
 <!--<div id="root"></div>-->
 <!--
@@ -156,9 +176,10 @@
 <!--<audio hidden id="MainAudio-KabeersMusic" src="#" style="display: none!important;"></audio>-->
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>
-<script async src="https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js"></script>
 <script async src="https://unpkg.com/web-vitals/dist/polyfill.js"></script>
 <script async>
+    /** Polyfill loader JS **/
     if (!document.createElement("div").scrollIntoView) {
         const script = window.document.createElement("script");
         // Load Polyfill
@@ -174,19 +195,16 @@
         document.head.appendChild(script);
     }
 </script>
-<script>
+<script async>
     window.dataLayer = window.dataLayer || [];
 
     function gtag() {
-        dataLayer.push(arguments);
+        dataLayer.push(arguments)
     }
 
     gtag('js', new Date());
-    gtag('config', 'G-MHLTWXY386', {
-        custom_map: {}
-    });
-</script>
-<script>
+    gtag('config', 'G-MHLTWXY386', {});
+
     (async function () {
         const report_web_vitals = async ({name, delta, id}) => {
             // Assumes the global `gtag()` function exists, see:
@@ -227,7 +245,6 @@
             // console.log(await Promise.all([getCLS(), getFID(), getLCP()]))//await getLCP(), await getCLS(), await getFID());
         }
         document.head.appendChild(script);
-
     }());
 </script>
 </body>

@@ -19,7 +19,7 @@ $rating_weights = array(
     'explicit_rating' => 0.6,
     'watch_percent' => 0.3,
     'viewed_artist' => 0.2,
-    'times_streamed' => 0.5
+    'times_streamed' => 0.7
 );
 function IndexSong()
 {
@@ -121,6 +121,27 @@ function getSongRoute()
     }
 }
 
+/** Sits behind api */
+function saveWatch()
+{
+    try {
+        $rating = 0;
+        global $rating_weights;
+        global $database;
+        global $KEYS;
+//        $decoded = JWT::decode($_GET["token"], $KEYS["rsa"]["csrf_id"], array('HS256'));
+        $_POST = json_decode(file_get_contents('php://input'), true);
+//        if (in_array("__kn.music.data-collection.update-rating", explode("|", $decoded->scope))) {
+        foreach (array_keys($_POST) as $key) $rating += floatval($_POST[$key]) * $rating_weights[$key];
+        $database->insertRating($_GET['user_id'], $_GET["video_id"], $_POST, $rating);
+        http_response_code(200);
+        echo Jsonify(array());
+//        } else http_response_code(400);
+    } catch (Exception $e) {
+        http_response_code(400);
+    }
+}
+
 function updateRating()
 {
     try {
@@ -180,6 +201,12 @@ function getSongStreams()
         if (is_null($streamed)) echo Jsonify(array("times_streamed" => 1));
         else echo Jsonify(array("times_streamed" => $streamed['times_streamed']));
     }
+}
+
+function CreateWatch()
+{
+    global $database;
+//    global
 }
 
 function getTestToken()

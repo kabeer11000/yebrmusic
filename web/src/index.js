@@ -6,11 +6,33 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import {IsTvProvider} from "./Contexts";
+import {storageIndex} from "./functions/Helper/StorageIndex";
+// import "https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js";
 
 if (!window.__kn.music.developers["debugging-enabled"]) {
+    if (localStorage.getItem(storageIndex.litemode)) localStorage.setItem(storageIndex.litemode, JSON.stringify(true));
     console.log = () => {
     };
 }
+/*
+const consolere = {
+    channel: 'yebrmusic',
+    api: '//console.re/connector.js',
+    ready: function () {
+        const _this = this;
+        return new Promise(async (resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = _this.api;
+            s.id = 'consolerescript';
+            s.onload = resolve;
+            s.onerror = reject;
+            document.getElementsByTagName('head')[0].appendChild(s);
+        })
+    }
+};
+consolere.ready().then(() => console.re.log('remote log test'));
+
+ */
 // window.__kn.music.audio.crossOrigin = "anonymous";
 
 // const AudioContext = window.AudioContext || window.webkitAudioContext;

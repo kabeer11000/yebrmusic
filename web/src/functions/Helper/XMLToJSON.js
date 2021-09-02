@@ -3,7 +3,10 @@
  * Modified version from here: http://davidwalsh.name/convert-xml-json
  * @param {string} xml XML DOM tree
  */
-export default function xml2json(xml) {
+// export default async function xml2json(xml) {
+//     return await comLinkWorker.utils.XML2JSON(comlink.proxy(xml));
+// }
+export default async function xml2json(xml) {
     // Create the return object
     var obj = {};
 
@@ -36,14 +39,14 @@ export default function xml2json(xml) {
             var item = xml.childNodes.item(i);
             var nodeName = item.nodeName;
             if (typeof obj[nodeName] == "undefined") {
-                obj[nodeName] = xml2json(item);
+                obj[nodeName] = await xml2json(item);
             } else {
                 if (typeof obj[nodeName].push == "undefined") {
                     var old = obj[nodeName];
                     obj[nodeName] = [];
                     obj[nodeName].push(old);
                 }
-                obj[nodeName].push(xml2json(item));
+                obj[nodeName].push(await xml2json(item));
             }
         }
     }

@@ -6,12 +6,12 @@ import {Cookies} from "./Cookies";
 
 
 export const GetActiveAccounts = async () => {
-	const accounts = await fetch("https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/accounts.json", {
-		// credentials: "include"
+	const accounts = await fetch(endPoints.Auth.getAccounts, {
+		credentials: "include"
 	}).then(a => a.status === 200 ? a.json() : []).catch();
 	return {active: accounts.filter(account => account.signed_in), all: accounts};
 };
-export const ServiceLoginRequest = (u) => fetch("http://localhost:9000/auth/service-login/browse/key", {
+export const ServiceLoginRequest = (u) => fetch(endPoints.Auth.GetServiceLoginKey, {
 	credentials: "include",
 	method: "post",
 	headers: {authuser: u}
@@ -40,7 +40,7 @@ export const AuthOnLoad = async () => {
 // export const ActiveAccounts = new AsyncResource(GetActiveAccounts());
 // export const ServiceLoginToken = ServiceLoginRequest(parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam)) || 0);
 export const initAuth = async () => {
-	const ServiceLoginToken = Cookies.getCookie(storageIndex.cookies.ServiceLoginToken);
+	// const ServiceLoginToken = Cookies.getCookie(storageIndex.cookies.ServiceLoginToken);
 	// console.log(window.__kn.music.serviceLoginToken)
 	// let tokens = Cookies.getCookie(storageIndex.cookies.Tokens); // Tokens Cookie
 	// const refreshToken = Cookies.getCookie(storageIndex.cookies.RefreshToken); // Refresh Token cookie
@@ -48,7 +48,7 @@ export const initAuth = async () => {
 	/** if refreshing or redirecting return null **/
 	if (window.__kn.music.internals.auth_redirecting || window.__kn.music.internals.auth_refreshing) return new Error("Redirecting or Refreshing");
 
-	/** If not curently redirecting, redirect **/
+	/** If not currently redirecting, redirect **/
 	if (!window.__kn.music.serviceLoginToken && !window.__kn.music.internals.auth_redirecting) {
 		// window.__kn.music.internals.auth_redirecting = true
 		// window.location.href = endPoints.authRedirect;
@@ -71,7 +71,6 @@ export const initAuth = async () => {
 	// window.location.href = endPoints.Auth.refreshToken({redirect_uri: window.location.href});
 	// }
 	return window.__kn.music.serviceLoginToken; // Return Token
-
 };
 // (async () => AuthOnLoad())();
 // document.addEventListener("onload", AuthOnLoad);

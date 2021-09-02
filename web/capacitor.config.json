@@ -1,6 +1,6 @@
 {
-  "appId": "com.kabeers.music",
-  "appName": "Kabeers Music",
+  "appId": "com.kabeers.yebr.music",
+  "appName": "Yebr Music",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",

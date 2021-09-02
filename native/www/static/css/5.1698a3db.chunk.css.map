@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "sources": [
+    "webpack://src/components/Player/Moblie/Player.css"
+  ],
+  "names": [],
+  "mappings": "AAAA,oCAEI,UAAyB,CACzB,iBACJ,CAEA,4BACI,yBACJ,CAEA,4BACI,UACJ,CAGA,yCACI,4BACI,mBACJ,CAEA,gBACI,mBACJ,CACJ,CAEA,0CACI,4BACI,mBACJ,CAEA,gBACI,mBACJ,CACJ,CAEA,cACI,kCAA2B,CAA3B,0BACJ,CAEA,YACI,YAAa,CACb,aAAc,CACd,kBACJ,CAEA,+BACI,YACJ,CAEA,WACI,aAAc,CACd,kBACJ,CAEA,2BACI,oBACJ,CAEA,+BACI,OAAQ,CACR,sBACJ,CAGA,qCACI,cACJ",
+  "file": "5.1698a3db.chunk.css",
+  "sourcesContent": [
+    ".ExpandedPlayButtonContainer button {\r\n    /*background-color: #68C398;*/\r\n    color: rgb(255, 255, 255);\r\n    border-color: white;\r\n}\r\n\r\n.Player .ImageCircle .image {\r\n    border: #68C398 solid 1rem;\r\n}\r\n\r\n.KabeersMiniPlayerContainer {\r\n    width: 100%;\r\n}\r\n\r\n\r\n@media only screen and (min-width: 768px) {\r\n    .KabeersMiniPlayerContainer {\r\n        width: 35% !important;\r\n    }\r\n\r\n    .smallOnDesktop {\r\n        width: 25% !important;\r\n    }\r\n}\r\n\r\n@media only screen and (min-width: 1024px) {\r\n    .KabeersMiniPlayerContainer {\r\n        width: 30% !important;\r\n    }\r\n\r\n    .smallOnDesktop {\r\n        width: 20% !important;\r\n    }\r\n}\r\n\r\n.PlayerDialog {\r\n    backdrop-filter: blur(10px);\r\n}\r\n\r\n.cardSlider {\r\n    padding: 1rem;\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\n.cardSlider::-webkit-scrollbar {\r\n    display: none\r\n}\r\n\r\ndiv.Slider {\r\n    overflow: auto;\r\n    white-space: nowrap;\r\n}\r\n\r\ndiv.Slider .ImageSliderIMG {\r\n    display: inline-block;\r\n}\r\n\r\n.ComingNext::-webkit-scrollbar {\r\n    width: 0; /* Remove scrollbar space */\r\n    background: transparent; /* Optional: just make scrollbar invisible */\r\n}\r\n\r\n/* Optional: show position indicator in red */\r\n.ComingNext::-webkit-scrollbar-thumb {\r\n    background: #FF0000;\r\n}\r\n"
+  ]
+}

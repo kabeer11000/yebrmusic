@@ -20,6 +20,8 @@ import {AccountChooserContext, AccountContext, DrawerContext, isTvContext} from 
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Strings from "../../Strings";
 import Button from "@material-ui/core/Button";
+import endPoints from "../../api/EndPoints/EndPoints";
+import MuiLink from "@material-ui/core/Link";
 
 const drawerWidth = 340;
 const useStyles = makeStyles((theme) => ({
@@ -122,7 +124,7 @@ const DrawerComponent = ({children}) => {
 					onMouseOver={() => setOpen(!open)}
 					classes={{paper: classes.drawerClose}}>
 					<React.Fragment>
-						<List className={classes.root}>
+						<List className={`_text-truncate ${classes.root}`}>
 							{account ? <ListItem button onClick={() => setAccountChooser(true)}>
 									<ListItemAvatar>
 										<Avatar src={account.account_image || ""}
@@ -174,7 +176,7 @@ const DrawerComponent = ({children}) => {
 				}}
 				ModalProps={{keepMounted: true}}>
 				<React.Fragment>
-					<List className={classes.root}>
+					<List className={`_text-truncate ${classes.root}`}>
 						{account ? <ListItem button onClick={() => setAccountChooser(true) && handleDrawerToggle()}>
 							<ListItemAvatar>
 								<Avatar src={account.account_image}
@@ -183,9 +185,9 @@ const DrawerComponent = ({children}) => {
 							<ListItemText
 								primary={<div className={"text-truncate"}>{account.username || ""}</div>}
 								secondary={<div className={"text-truncate"}>{account.email || ""}</div>}/>
-							<ListItemSecondaryAction hidden={!tv}>
+							{tv && <ListItemSecondaryAction>
 								<ArrowDropDown/>
-							</ListItemSecondaryAction>
+							</ListItemSecondaryAction>}
 						</ListItem> : <ListItem><ListItemText primary="Sign In"
 															  secondary="Get personalized songs. playlists and more"/><ListItemSecondaryAction>
 							<Button>Sign In</Button>
@@ -204,7 +206,8 @@ const DrawerComponent = ({children}) => {
 							<ListItemIcon><Settings/></ListItemIcon>
 							<ListItemText primary={"Settings"}/>
 						</ListItem>
-						<ListItem button>
+						<ListItem button component={MuiLink}
+								  href={account ? `https://accounts.kabeersnetwork.tk/?u=${window.__kn.music.auth.authUser}` : endPoints.authRedirect}>
 							<ListItemIcon><AccountCircle/></ListItemIcon>
 							<ListItemText primary={"Account"}/>
 						</ListItem>

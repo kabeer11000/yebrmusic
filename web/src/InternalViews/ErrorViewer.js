@@ -8,6 +8,10 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import {AbstractFeedbackDialog} from "../components/FeedBack/FeedBack";
+import Alert from "@material-ui/lab/Alert";
+import Grid from "@material-ui/core/Grid";
+import AlertTitle from "@material-ui/lab/AlertTitle";
+import Strings from "../Strings";
 
 const code2message = (code) => {
 	switch (code) {
@@ -42,12 +46,39 @@ const AppError = () => {
 		}}>
 			<Typography variant="h5">An internal application error has occurred. retry?</Typography>
 			<br/>
-			<Button className={"mt-2"} onClick={() => setOpen(!open)}>Report Error</Button>
-			<Button className={"mt-2"} variant="contained"
+			<Button onClick={() => setOpen(!open)}>Report Error</Button>
+			<Button variant="contained"
 					onClick={() => window.location.reload()}>Retry</Button>
 		</Container>
 	</div>;
 };
+export const ConnectionError = () => (
+	<Alert severity="error" style={{
+		height: "100vh",
+		paddingTop: "2rem"
+	}}>
+		<React.Fragment>
+			<Grid container spacing={2}>
+				<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+					<AlertTitle>{Strings["Utils:App:Net.NoConnection:Failed.Title"]}</AlertTitle>
+					{Strings["Utils:App:Net.NoConnection:Failed.Body[1]"]}
+				</Grid>
+				<Grid item xl={6}>
+					<Button style={{
+						width: "100%"
+					}} color="inherit"
+							onClick={() => window.location.href = Strings["SupportEmail"]}>{Strings["Utils:App:Support"]}</Button>
+				</Grid>
+				<Grid item xl={6}>
+					<Button variant={"outlined"} style={{
+						width: "100%"
+					}} color="inherit"
+							onClick={() => window.location.reload()}>{Strings["Utils:App:Retry.Text"]}</Button>
+				</Grid>
+			</Grid>
+		</React.Fragment>
+	</Alert>
+);
 const error2details = (code) => {
 	switch (code) {
 		case "INVALID_STATE":

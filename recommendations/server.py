@@ -3,9 +3,9 @@
 Heads up - This code is really crappy i have my GCSE in 20 days gotta study i promise it will be better and with docs once they end!
 """
 from flask import Flask, jsonify, request
-from models.next_song_prediction import model as np_model
-from models.next_song_prediction import retrain
-from models.knn_classifier import model as tfidf_model
+from models.candidate_generators.next_song_prediction.v1 import model as np_model
+from models.candidate_generators.next_song_prediction.v1 import retrain
+from models.ranking.knn_classifier import model as tfidf_model
 from dotenv import load_dotenv
 
 """ Load .env File """

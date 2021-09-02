@@ -20,6 +20,7 @@ import Divider from "@material-ui/core/Divider";
 import {PlayContext, SearchContext} from "../../Contexts";
 import SessionRecommendation from "../../functions/SessionRecommendation";
 import {useNetwork} from "../../Hooks";
+import Log from "../../functions/Log";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -84,7 +85,7 @@ const SearchResultComponent = () => {
 				regionCode: "PK",
 				title: query,
 			});
-			console.log(a);
+			Log(a);
 		});
 		return () => abortController.abort();
 	}, [online]);
@@ -104,8 +105,8 @@ const SearchResultComponent = () => {
 							autoComplete={true}
 							value={query}
 							className={`${classes.input} text-light`}
-							placeholder="Search Kabeers Music"
-							inputProps={{"aria-label": "Search Kabeers Music"}}
+							placeholder="Search Yebr"
+							inputProps={{"aria-label": "Search Yebr"}}
 						/>
 					</Toolbar>
 				</AppBar>

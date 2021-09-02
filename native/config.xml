@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="kabeersnetwork.yebr.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets">
+    <name>Yebr</name>
+    <description>
+        Yebr music, podcasts, and culture
+    </description>
+    <author email="dev@cordova.apache.org" href="mailto:mail@kabeersnetwork.tk">
+        Kabeer's Network Support
+    </author>
+    <content src="index.html"/>
+    <access origin="*"/>
+    <allow-intent href="http://*/*"/>
+    <allow-intent href="https://*/*"/>
+    <allow-intent href="tel:*"/>
+    <allow-intent href="sms:*"/>
+    <allow-intent href="mailto:*"/>
+    <allow-intent href="geo:*"/>
+    <platform name="android">
+        <allow-intent href="market:*"/>
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*"/>
+        <allow-intent href="itms-apps:*"/>
+    </platform>
+</widget>

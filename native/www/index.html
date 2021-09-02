@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <link href="./favicon.ico" rel="icon"/>
+    <meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"/>
+    <meta content="#2B2B2B" name="theme-color"/>
+    <meta content="Yebr Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network" name="description"/>
+    <link href="./assets/icons/AppleMusicIcon.png" rel="apple-touch-icon"/>
+    <base href="/"/>
+    <style>.text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto
+    }
+
+    @media (min-width: 576px) {
+        .container {
+            max-width: 540px
+        }
+    }
+
+    @media (min-width: 768px) {
+        .container {
+            max-width: 720px
+        }
+    }
+
+    @media (min-width: 992px) {
+        .container {
+            max-width: 960px
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .container {
+            max-width: 1140px
+        }
+    }
+
+    .PlayerSlider span {
+        background-color: #fff !important
+    }
+
+    .Player .thumbnail {
+        position: relative;
+        width: 5rem;
+        height: 5rem;
+        border-radius: 100%;
+        overflow: hidden
+    }
+
+    .Player .thumbnail .image {
+        max-width: 100%
+    }</style>
+    <link href="./manifest.json" rel="manifest"/>
+    <meta content="58f835af9b4fe231d145c9dfa0e3e443" name="propeller">
+    <title>Yebr Music - Free Music, Podcasts and Culture</title>
+    <script async>window.customElements.define("app-renderer", class extends HTMLElement {
+        constructor() {
+            super()
+        }
+    }), window.customElements.define("app-container", class extends HTMLElement {
+        constructor() {
+            super()
+        }
+    });
+    const production = !0;
+    window.__kn = {
+        music: {
+            logger: {
+                "console.re": {
+                    channel: "yebrmusic", api: "//console.re/connector.js", ready: function () {
+                        return console.log("Kabeer's Network DevTools: ", "console.re stopped because of production mode.")
+                    }
+                }
+            },
+            auth: {authUser: null, user: null},
+            serviceLoginToken: null,
+            accounts: {all: [], active: []},
+            developers: {
+                available_proxies: "https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev|https://cors.bridged.cc/|https://ancient-queen-3235.kabeer11000.workers.dev/|https://proxy-yebrmusic.kabeersnetwork.tk/",
+                "debugging-enabled": !0
+            },
+            config: {
+                other: {recently_added_list_id: "PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL"},
+                hosts: {
+                    api: "https://backend-yebrmusic.kabeersnetwork.tk",
+                    "data-collection-server": "https://collect-yebrmusic.kabeercloud.tk",
+                    "cast-server": "https://cast-yebrmusic.kabeercloud.tk",
+                    proxy: "https://proxy-yebrmusic.herokuapp.com/",
+                    kauth_server: "https://accounts.kabeersnetwork.tk"
+                },
+                recom: {last_session_carry_recom_length: 6}
+            },
+            version: "beta-3.4.6",
+            debugger_version: "alpha-0.0.1",
+            audio: new Audio("#"),
+            "data-collection": {},
+            internals: {auth_refreshing: !1, auth_redirecting: !1}
+        }
+    }, document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"])), console.error = () => {
+    }</script>
+    <link href="./static/css/4.6293a573.chunk.css" rel="stylesheet">
+    <link href="./static/css/main.5e87197d.chunk.css" rel="stylesheet">
+</head>
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<app-renderer></app-renderer>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>
+<script src="https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js"></script>
+<script async src="https://unpkg.com/web-vitals/dist/polyfill.js"></script>
+<script async>if (!document.createElement("div").scrollIntoView) {
+    const e = window.document.createElement("script");
+    e.src = "https://cdn.jsdelivr.net/gh/kabeer11000/smoothscroll/src/smoothscroll.min.js", e.onload = () => console.log("Using `window.scrollIntoView` polyfill"), document.head.appendChild(e)
+}
+if (!fetch in window) {
+    const e = window.document.createElement("script");
+    e.src = "https://cdn.jsdelivr.net/gh/github/fetch@master/fetch.js", e.onload = () => console.log("Using `window.fetch` polyfill"), document.head.appendChild(e)
+}</script>
+<script async>function gtag() {
+    dataLayer.push(arguments)
+}
+
+window.dataLayer = window.dataLayer || [], gtag("js", new Date), gtag("config", "G-MHLTWXY386", {}), async function () {
+    const e = async ({name: e, delta: t, id: a}) => {
+        gtag("event", e, {
+            event_category: "Web Vitals",
+            event_label: a,
+            value: Math.round("CLS" === e ? 1e3 * t : t),
+            non_interaction: !0
+        })
+    }, t = document.createElement("script");
+    t.src = "https://unpkg.com/web-vitals/dist/web-vitals.iife.js", t.onload = async () => {
+        window.webVitals.getFID(e), window.webVitals.getLCP(e), window.webVitals.getCLS(e)
+    }, document.head.appendChild(t)
+}()</script>
+<script>!function (e) {
+    function t(t) {
+        for (var n, o, u = t[0], i = t[1], f = t[2], l = 0, d = []; l < u.length; l++) o = u[l], Object.prototype.hasOwnProperty.call(a, o) && a[o] && d.push(a[o][0]), a[o] = 0;
+        for (n in i) Object.prototype.hasOwnProperty.call(i, n) && (e[n] = i[n]);
+        for (s && s(t); d.length;) d.shift()();
+        return c.push.apply(c, f || []), r()
+    }
+
+    function r() {
+        for (var e, t = 0; t < c.length; t++) {
+            for (var r = c[t], n = !0, o = 1; o < r.length; o++) {
+                var i = r[o];
+                0 !== a[i] && (n = !1)
+            }
+            n && (c.splice(t--, 1), e = u(u.s = r[0]))
+        }
+        return e
+    }
+
+    var n = {}, o = {3: 0}, a = {3: 0}, c = [];
+
+    function u(t) {
+        if (n[t]) return n[t].exports;
+        var r = n[t] = {i: t, l: !1, exports: {}};
+        return e[t].call(r.exports, r, r.exports, u), r.l = !0, r.exports
+    }
+
+    u.e = function (e) {
+        var t = [];
+        o[e] ? t.push(o[e]) : 0 !== o[e] && {
+            1: 1,
+            5: 1,
+            6: 1,
+            7: 1,
+            8: 1,
+            9: 1,
+            10: 1,
+            12: 1,
+            13: 1,
+            15: 1,
+            16: 1,
+            17: 1,
+            18: 1,
+            19: 1,
+            20: 1,
+            21: 1,
+            22: 1
+        }[e] && t.push(o[e] = new Promise((function (t, r) {
+            for (var n = "static/css/" + ({}[e] || e) + "." + {
+                0: "31d6cfe0",
+                1: "31bacd25",
+                5: "1698a3db",
+                6: "6e0a0e03",
+                7: "656d86cf",
+                8: "de66a579",
+                9: "0cc9e53e",
+                10: "30c7937c",
+                11: "31d6cfe0",
+                12: "4c14f61b",
+                13: "85c70676",
+                14: "31d6cfe0",
+                15: "e8307b82",
+                16: "9c6f5460",
+                17: "c6017511",
+                18: "0eaedafd",
+                19: "403edc45",
+                20: "56348bb3",
+                21: "83afe968",
+                22: "2b369753"
+            }[e] + ".chunk.css", a = u.p + n, c = document.getElementsByTagName("link"), i = 0; i < c.length; i++) {
+                var f = (s = c[i]).getAttribute("data-href") || s.getAttribute("href");
+                if ("stylesheet" === s.rel && (f === n || f === a)) return t()
+            }
+            var l = document.getElementsByTagName("style");
+            for (i = 0; i < l.length; i++) {
+                var s;
+                if ((f = (s = l[i]).getAttribute("data-href")) === n || f === a) return t()
+            }
+            var d = document.createElement("link");
+            d.rel = "stylesheet", d.type = "text/css", d.onload = t, d.onerror = function (t) {
+                var n = t && t.target && t.target.src || a,
+                    c = new Error("Loading CSS chunk " + e + " failed.\n(" + n + ")");
+                c.code = "CSS_CHUNK_LOAD_FAILED", c.request = n, delete o[e], d.parentNode.removeChild(d), r(c)
+            }, d.href = a, document.getElementsByTagName("head")[0].appendChild(d)
+        })).then((function () {
+            o[e] = 0
+        })));
+        var r = a[e];
+        if (0 !== r) if (r) t.push(r[2]); else {
+            var n = new Promise((function (t, n) {
+                r = a[e] = [t, n]
+            }));
+            t.push(r[2] = n);
+            var c, i = document.createElement("script");
+            i.charset = "utf-8", i.timeout = 120, u.nc && i.setAttribute("nonce", u.nc), i.src = function (e) {
+                return u.p + "static/js/" + ({}[e] || e) + "." + {
+                    0: "d97125ab",
+                    1: "75266dc8",
+                    5: "875f970f",
+                    6: "09b79c2e",
+                    7: "22d5262e",
+                    8: "2ab1b1c5",
+                    9: "0f49f2ca",
+                    10: "bccb42a9",
+                    11: "9aea27f6",
+                    12: "b76fbe58",
+                    13: "6766311e",
+                    14: "3e610902",
+                    15: "4cef5a33",
+                    16: "b6fb9d6a",
+                    17: "6a741698",
+                    18: "96942a09",
+                    19: "8922703d",
+                    20: "9385d13e",
+                    21: "005020c6",
+                    22: "19ec9845"
+                }[e] + ".chunk.js"
+            }(e);
+            var f = new Error;
+            c = function (t) {
+                i.onerror = i.onload = null, clearTimeout(l);
+                var r = a[e];
+                if (0 !== r) {
+                    if (r) {
+                        var n = t && ("load" === t.type ? "missing" : t.type), o = t && t.target && t.target.src;
+                        f.message = "Loading chunk " + e + " failed.\n(" + n + ": " + o + ")", f.name = "ChunkLoadError", f.type = n, f.request = o, r[1](f)
+                    }
+                    a[e] = void 0
+                }
+            };
+            var l = setTimeout((function () {
+                c({type: "timeout", target: i})
+            }), 12e4);
+            i.onerror = i.onload = c, document.head.appendChild(i)
+        }
+        return Promise.all(t)
+    }, u.m = e, u.c = n, u.d = function (e, t, r) {
+        u.o(e, t) || Object.defineProperty(e, t, {enumerable: !0, get: r})
+    }, u.r = function (e) {
+        "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, {value: "Module"}), Object.defineProperty(e, "__esModule", {value: !0})
+    }, u.t = function (e, t) {
+        if (1 & t && (e = u(e)), 8 & t) return e;
+        if (4 & t && "object" == typeof e && e && e.__esModule) return e;
+        var r = Object.create(null);
+        if (u.r(r), Object.defineProperty(r, "default", {
+            enumerable: !0,
+            value: e
+        }), 2 & t && "string" != typeof e) for (var n in e) u.d(r, n, function (t) {
+            return e[t]
+        }.bind(null, n));
+        return r
+    }, u.n = function (e) {
+        var t = e && e.__esModule ? function () {
+            return e.default
+        } : function () {
+            return e
+        };
+        return u.d(t, "a", t), t
+    }, u.o = function (e, t) {
+        return Object.prototype.hasOwnProperty.call(e, t)
+    }, u.p = "./", u.oe = function (e) {
+        throw console.error(e), e
+    };
+    var i = this.webpackJsonpclient = this.webpackJsonpclient || [], f = i.push.bind(i);
+    i.push = t, i = i.slice();
+    for (var l = 0; l < i.length; l++) t(i[l]);
+    var s = f;
+    r()
+}([])</script>
+<script src="./static/js/4.e9cd5a91.chunk.js"></script>
+<script src="./static/js/main.f79dd6c8.chunk.js"></script>
+</body>
+</html>

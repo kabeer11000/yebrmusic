@@ -12,6 +12,7 @@ import {CastContext, CastDialogContext, PlayContext} from "../../Contexts";
 import {DialogContentText, IconButton, Toolbar} from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";
 import {useSnackbar} from "notistack";
+import Log from "../../functions/Log";
 
 
 const CastDialog = ({}) => {
@@ -35,7 +36,7 @@ const _CastDialog = ({onCancel, onSelect, open}) => {
 	const [devices, setDevices] = React.useState([]);
 	const Cast = React.useContext(CastContext);
 	const UpdateDevices = () => Cast.info.getPeerDevices().then(d => {
-		console.log(d);
+		Log(d);
 		return d;
 	}).then(setDevices);
 	React.useEffect(() => {

@@ -1,5 +1,5 @@
 # Yebr Music ![Yebr Music Logo](.github/assets/icon.svg)
-Code has been split into Microservices Directories
+Welcome to the Yebr Music codebase. Code has been split into Microservices Directories
 for running them simultaneously on different Ports
 will be adding docker files afterwards to start everything with just a ```docker-compose up``` command
 

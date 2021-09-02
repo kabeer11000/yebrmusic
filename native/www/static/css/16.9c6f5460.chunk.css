@@ -1,0 +1,7 @@
+.NoDownloadsIndicator {
+    height: 30vh !important;
+    -webkit-backdrop-filter: opacity(.9) blur(2rem);
+    backdrop-filter: opacity(.9) blur(2rem)
+}
+
+/*# sourceMappingURL=16.9c6f5460.chunk.css.map */

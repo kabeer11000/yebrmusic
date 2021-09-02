@@ -59,15 +59,15 @@ export const AccountProvider = React.memo(({children}) => {
 				setAccount(account);
 				await set(storageIndex.cookies.UserData, account);
 				await set(storageIndex.cookies.AuthUser, u);
-				const {serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)));
-				setToken(token || new Error("An Error Occurred, Failed to get Service Login Key"));
+				const {public_grant, serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)));
+				setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
 				window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
 				window.__kn.music.auth.authUser = u;
 				window.__kn.music.auth.user = account;
 				window.__kn.music["data-collection"].token = dataServerToken;
 			} else {
-				const {serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
-				setToken(token || new Error("An Error Occurred, Failed to get Service Login Key"));
+				const {public_grant, serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
+				setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
 				window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
 				window.__kn.music["data-collection"].token = dataServerToken;
 			}
@@ -212,6 +212,10 @@ export const RatingProvider = ({children}) => {
 	//
 	//     return () => clearInterval(interval)
 	// }, [playerState.videoElement]);
+	// const [timer, setTimer] = React.useState(0);
+	// React.useEffect(() => {
+	// 	setInterval(() => setTimer(timer + 1 ), 5000);
+	// }, []);
 	// React.useEffect(() => {
 	//     if (playState.videoElement) {
 	//         const timer = setInterval(async () => {
@@ -229,23 +233,25 @@ export const RatingProvider = ({children}) => {
 	//         }
 	//     }
 	// }, [playState.videoElement]);
-
-	React.useEffect(() => {
-		if (playState.videoElement && window.__kn.music["data-collection"].token?.access_token) comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
-			method: "post",
-			body: JSON.stringify({id: playState.videoElement.id}),
-		}).then(async response => {
-			await UpdateState({
-				is_casting: rating.is_casting,
-				explicit_rating: rating.explicit_rating,
-				viewed_artist: rating.viewed_artist
-			});
-			setRating(rating => ({
-				...rating,
-				times_streamed: response.times_streamed + 1,
-			}));
-		});
-	}, [playState.videoElement]);
+	// React.useEffect(() => console.log(timer), [timer]);
+	/*
+        React.useEffect(() => {
+            if (playState.videoElement && window.__kn.music["data-collection"].token?.access_token) comLinkWorker.fetch(endPoints.DataCollection.details.getStreams(window.__kn.music["data-collection"].token.access_token), {
+                method: "post",
+                body: JSON.stringify({id: playState.videoElement.id}),
+            }).then(async response => {
+                await UpdateState({
+                    is_casting: rating.is_casting,
+                    explicit_rating: rating.explicit_rating,
+                    viewed_artist: rating.viewed_artist
+                });
+                setRating({
+                    ...rating,
+                    times_streamed: response.times_streamed + 1,
+                });
+            });
+        }, [timer]); // playState.videoElement
+    */
 	return <RatingContext.Provider value={{rating, setRating, UpdateState}}>{children}</RatingContext.Provider>;
 };
 export const PlayContext = React.createContext({
@@ -269,6 +275,10 @@ export const PlayProvider = React.memo(({children}) => {
 	const tv = React.useContext(isTvContext);
 	const setLoading = React.useContext(LoadingContext)[1];
 	const SkipSong = async (song, index, componentState = playerState, options = {}) => {
+		/** Unload Song Blob URL of previous audio **/
+		if (playState.others.offline) URL.revokeObjectURL(playState.audioElement.src);
+		// if (playState.others.offline) URL.revokeObjectURL(playState.playList.list[playState.playList.index]?.videoElement.snippet.thumbnails.high.url);
+		/** If Offline Proceed calling play with offline prop. and creating song_url source from blob **/
 		if (playState.others.offline) await PlaySong({
 			useProxy: false,
 			others: {
@@ -283,6 +293,7 @@ export const PlayProvider = React.memo(({children}) => {
 				index: index
 			}
 		});
+		/** Else call the `PlaySong` without the songUri prop and let it fetch song source from the server **/
 		else await PlaySong({
 			useProxy: true,
 			song: song,
@@ -303,7 +314,6 @@ export const PlayProvider = React.memo(({children}) => {
 	};
 	//TODO 3D Audio Feature
 	React.useEffect(() => {
-		get(storageIndex.recommendation.sessionHistory).then(console.log);
 		const id = new URLSearchParams(window.location.search).get("play");
 		if (!id) return;
 		const song = getSongDetails(id);
@@ -317,6 +327,7 @@ export const PlayProvider = React.memo(({children}) => {
 		try {
 			setLoading(true);
 			await playState.audioElement.pause();
+			if (playState.others.offline) URL.revokeObjectURL(playState.audioElement.src);
 			if (useProxy) {
 				const songURI = await getSong(song.id);
 				playState.audioElement.src = endPoints.proxyURI(songURI);

@@ -33,7 +33,7 @@ const getSong = async (req, res) => {
         res.json(song[1].url);
         await IndexSongOnRequest(req.query.id);
         // console.log(await scraper.getSong(req.query.id))
-        // await history.listeningHistory(decoded, req.query.id);
+        // if (req.__kn.session.user) await history.listeningHistory(decoded, req.query.id);
     } catch (e) {
         console.log(e);
         return res.status(400).json(e.message);
@@ -71,7 +71,7 @@ const searchSong = async (req, res) => {
         //     algorithms: "RS256"
         // });
         // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:search", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
-        await history.saveSearch({
+        if (req.__kn.session.user) await history.saveSearch({
             query: req.query.q,
             user_id: req.__kn.session.user.user_id
         });
@@ -81,7 +81,12 @@ const searchSong = async (req, res) => {
         return res.status(400).end();
     }
 };
-
+const GetHistory = async (req, res) => {
+    res.json(await history.getWatchHistory({
+        // user_id: req.__kn.session.user.user_id,
+        // limit: 5
+    }))
+}
 /**
  * Home Page Get Top Artists Slider
  * @param req
@@ -95,10 +100,10 @@ const AllArtistsChips = async (req, res) => {
         //     algorithms: "RS256"
         // });
         // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
-        const watches = await history.getWatchHistory({
+        const watches = (req.__kn.session.user) ? await history.getWatchHistory({
             user_id: req.__kn.session.user.user_id,
             limit: 5
-        });
+        }) : await history.getWatchHistory({}) || [];
         const Artists = new Set(watches.map(a => ({
             name: a.song.snippet.channelTitle, id: a.song.snippet.channelId
         })));
@@ -197,5 +202,6 @@ module.exports = {
     topArtistsRanked,
     getSongDetail,
     Discover,
-    GetRecentlyAdded
+    GetRecentlyAdded,
+    GetHistory
 };

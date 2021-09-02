@@ -59,9 +59,6 @@ const PlayLists = () => {
 			{button}
 		</div>
 	);
-	const gandMayLo = (i, c) => {
-		console.log(i, c);
-	};
 	const {token} = React.useContext(AccountContext);
 
 	useEffect(() => {

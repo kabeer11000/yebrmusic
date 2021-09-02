@@ -1,0 +1,31 @@
+{
+  "version": 3,
+  "sources": [
+    "components/Liked/Liked.js"
+  ],
+  "names": [
+    "Liked",
+    "className",
+    "message",
+    "onclick",
+    "button",
+    "onClick",
+    "style",
+    "position",
+    "top",
+    "left",
+    "transform",
+    "src",
+    "width",
+    "height",
+    "alt",
+    "errorPage",
+    "defaultProps"
+  ],
+  "mappings": "yHAAA,oCAKMA,EAAQ,WAYb,OACC,+BAAKC,UAAU,SAZE,eAACC,EAAD,uDAAW,yBAA0BC,EAArC,uCAA8CC,EAA9C,uDAAuD,wBAAC,IAAD,CACxEC,QAASF,GAD+D,SAAvD,OAEjB,+BAAKF,UAAW,wBACdK,MAAO,CAACC,SAAU,WAAYC,IAAK,MAAOC,KAAM,MAAOC,UAAW,0BACnE,+BAAKC,IAAK,2CAA4CL,MAAO,CAACM,MAAO,OAAQC,OAAQ,QACnFC,IAAK,oBACP,mCACA,+BAAKb,UAAW,iBAAkBC,GACjCE,GAKAW,CAAU,+BAA+B,cACvC,oDAONf,EAAMgB,aAAe,GAENhB",
+  "file": "static/js/21.005020c6.chunk.js",
+  "sourcesContent": [
+    "import React from \"react\";\n\nimport \"./Liked.css\";\nimport {Button} from \"@material-ui/core\";\n\nconst Liked = () => {\n\tconst errorPage = (message = \"No Internet Connection\", onclick, button = <Button\n\t\tonClick={onclick}>Retry</Button>) => (\n\t\t<div className={\"errorPage text-center\"}\n\t\t\t style={{position: \"absolute\", top: \"50%\", left: \"50%\", transform: \"translate(-50%, -50%)\"}}>\n\t\t\t<img src={\"./assets/icons/darkmode_nothingfound.svg\"} style={{width: \"8rem\", height: \"auto\"}}\n\t\t\t\t alt={\"Yebr Music Logo\"}/>\n\t\t\t<br/>\n\t\t\t<div className={\"text-truncate\"}>{message}</div>\n\t\t\t{button}\n\t\t</div>\n\t);\n\treturn (\n\t\t<div className=\"Liked\">\n\t\t\t{errorPage(\"Feature Not Implemented Yet\", () => {\n\t\t\t}, <></>)}\n\t\t</div>\n\t);\n};\n\nLiked.propTypes = {};\n\nLiked.defaultProps = {};\n\nexport default Liked;\n"
+  ],
+  "sourceRoot": ""
+}

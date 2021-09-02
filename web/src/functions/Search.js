@@ -1,20 +1,20 @@
 import endPoints from "../api/EndPoints/EndPoints";
 import xml2json from "./Helper/XMLToJSON";
-import {initAuth} from "./Auth";
+import {comLinkWorker} from "./Worker/worker-export";
 
-export const SuggestSearch = async (q, abortController = new AbortController()) => {
-	const response = await fetch(endPoints.getSuggestionFake(q), {signal: abortController.signal}).then(r => r.text());
-	const xmlDoc = xml2json(new DOMParser().parseFromString(response, "text/xml"));
-	return xmlDoc.toplevel ? xmlDoc.toplevel.CompleteSuggestion : [];
+export const SuggestSearch = async (q, ...args) => {
+    const response = await comLinkWorker.fetchText(endPoints.getSuggestionFake(q)); //.then(r => r.text());
+    const xmlDoc = await xml2json(new DOMParser().parseFromString(response.toString(), "text/xml"));
+    return xmlDoc.toplevel ? (xmlDoc.toplevel).CompleteSuggestion : [];
 };
 
-export const SearchYoutube = async (q, abortController = new AbortController()) => {
-	return initAuth()
-		.then(token => fetch(endPoints.searchYoutube(q), {
-			headers: new Headers({
-				"Content-Type": "application/x-www-form-urlencoded",
-				"Authorization": `Bearer ${token}`
-			}),
-			signal: abortController.signal
-		}).then(r => r.json())).catch(e => e);
+export const SearchYoutube = async (q, ...args) => {
+    const token = window.__kn.music.serviceLoginToken;
+    return await comLinkWorker.fetch(endPoints.searchYoutube(q), {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Bearer ${token}`
+        },
+        // signal: abortController.signal
+    });
 };

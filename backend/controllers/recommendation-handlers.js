@@ -26,26 +26,26 @@ const KnnRankedCandidates = async (req, res) => {
         //     algorithms: "RS256"
         // });
         const db = await MongoClient;
-        let candidates = (await db.collection("watch-candidates").findOne({
+        const candidates = req.__kn.session.user ? (await db.collection("watch-candidates").findOne({
             user_id: req.__kn.session.user.user_id
-        }))?.['candidates'];
+        }))?.['candidates'] : (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
         //return res.status(400).json("Cannot Find Candidates");
-        if (!candidates) {
-            candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
-            await axios.get(`http://localhost:9000/recommendation/generate-candidates?token=${process.env.GENERATE_CANDIDATES_TOKEN}`);
-        }
+        // if (!candidates) {
+        //     candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
+        //     await axios.get(`http://localhost:9000/recommendation/generate-candidates?token=${process.env.GENERATE_CANDIDATES_TOKEN}`);
+        // }
         // candidates = await db.collection("watch-candidates").findOne({
         //     user_id: decoded.sub
-        // }); 
-        const watches = req.body.watches.slice(-10) || [];
-        const watch_history = (await history.getWatchHistory({
+        // });
+        const session_watches = req.body.watches.slice(-10) || [];
+        const watch_history = req.__kn.session.user ? (await history.getWatchHistory({
             limit: 4,
             user_id: req.__kn.session.user.user_id
-        })).map(a => a.song);
+        })).map(a => a.song) : candidates.slice(-10);
         const recommendations = await axios.post(endpoints.RecommendationServer.KnnRankedCandidates, {
             candidates: candidates,
-            watches: [...watches, ...watch_history],
-            user_id: req.__kn.session.user.user_id,
+            watches: [...session_watches, ...watch_history],
+            // user_id: req.__kn.session.user.user_id,
             total_items: 50
         }).then(a => a.data);
         return res.json({
@@ -118,7 +118,8 @@ const BasedOnLastSearches = async (req, res) => {
         //     algorithms: "RS256"
         // });
         // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
-        const searchHistory = await history.getSearchHistory(req.__kn.session.user.user_id).then(a => a && a.length ? a.map(b => b.query).slice(a.length - 2, a.length).reverse() : []);
+        const searchHistoryRaw = ((req.__kn.session.user) ? (await history.getSearchHistory(req.__kn.session.user.user_id)) : []);
+        const searchHistory = searchHistoryRaw && searchHistoryRaw.length ? searchHistoryRaw.map(b => b.query).slice(searchHistoryRaw.length - 2, searchHistoryRaw.length).reverse() : []
         let queries = [];
         /** @attention
          * @deprecated
@@ -149,6 +150,7 @@ const BasedOnLastSearches = async (req, res) => {
         })
         return res.status(200).json(response);
     } catch (e) {
+        console.log(e)
         return res.status(400).end();
     }
 };
@@ -160,38 +162,20 @@ const BasedOnLastSearches = async (req, res) => {
  * @constructor
  */
 const BecauseYouListenedTo = async (req, res) => {
-    // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
-        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
-        //     algorithms: "RS256"
-        // });
-        // if (!decoded.scope.split("|").includes("s564d68a34dCn9OuUNTZRfuaCnwc6:feed")) return res.status(400).end();
-        const watches = await history.getWatchHistory({
-            user_id: req.__kn.session.user.user_id,
-            limit: 5
-        });
-        if (watches.length) {
-            const artist = getMaximum(watches.map(v => v.song.snippet.channelTitle));
-            if (artist.name) {
-                const response = await scraper.searchYoutube(`${artist.name} official music`);
-                return res.json({
-                    ...response,
-                    title: `Because You Listened to ${artist.name}`
-                });
-            } else res.end();
-        } else {
-            const watches = await history.getWatchHistory({
+        const watches = (req.__kn.session.user) ? {
+            u_history: true, watches: (await history.getWatchHistory({
+                user_id: req.__kn.session.user.user_id,
                 limit: 5
-            });
-            const artist = getMaximum(watches.map(v => v.song.snippet.channelTitle));
-            const response = await scraper.searchYoutube(`${artist.name} official music`);
-            return res.json({
-                ...response,
-                title: `Top artist right now`
-            });
-        }
+            }))
+        } : {u_history: false, watches: (await history.getWatchHistory({})).slice(-5)};
+        const artist = getMaximum(watches.watches.map(v => v.song.snippet.channelTitle));
+        const response = await scraper.searchYoutube(`${artist.name} official music`);
+        response.title = watches.u_history ? `Because You Listened to ${artist.name}` : `Top Artist Right Now`;
+        return res.json(response);
     } catch (e) {
-        return res.status(400).end();
+        console.log(e);
+        return res.status(400).end(e.message);
     }
 }
 module.exports = {
