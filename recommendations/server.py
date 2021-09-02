@@ -67,6 +67,10 @@ def re_train_next_song_model():
         res.headers.add("Access-Control-Allow-Origin", "*")
         return res, 500
 
+# from server import app
+
+# if __name__ == "__main__":
+#     app.run()
 
 if __name__ == "__main__":
     if environ.get('PROD'):

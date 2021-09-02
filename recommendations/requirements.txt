@@ -2,7 +2,7 @@ flask==1.1.2
 numpy==1.19.2
 pandas==1.2.4
 requests
-tensorflow-cpu==2.4.1
+tensorflow==2.6.0
 scikit-learn==0.24.1
 python-dotenv
 gunicorn==20.1.0
