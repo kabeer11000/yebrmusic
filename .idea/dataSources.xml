@@ -10,5 +10,11 @@
         <property name="serverTimezone" value="UTC" />
       </driver-properties>
     </data-source>
+    <data-source source="LOCAL" name="MongoDB - @127.0.0.1" uuid="94693ac2-b48b-4dbb-86ad-2b1c54d48e41">
+      <driver-ref>mongo</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://127.0.0.1:27017/?readPreference=primary&amp;appname=MongoDB%20Compass%20Community&amp;ssl=false</jdbc-url>
+    </data-source>
   </component>
 </project>

@@ -1,3 +1,4 @@
+// git clone https://gerrit.googlesource.com/gitiles
 /**
  * @deprecated
  * @param r
@@ -36,7 +37,6 @@ const generateRandomHeadline = (name) => {
     const templates = [`Because You Listened to ${name}`, "Based on Last Searches", `${name}`];
     return templates[Math.floor(Math.random() * (+templates.length - +0)) + +0];
 };
-
 /**
  *
  * @param arr
@@ -48,8 +48,6 @@ const pickRandom = (arr, count) => {
     const _arr = [...arr];
     return [...Array(count)].map(() => _arr.splice(Math.floor(Math.random() * _arr.length), 1)[0]);
 };
-
-// Array.prototype.last = () => this[this.length - 1];
 /**
  *
  * @param object
@@ -60,7 +58,6 @@ function serialize(object) {
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
         .join("&");
 }
-
 /**
  *
  * @param e
@@ -90,10 +87,10 @@ const IndexSongOnRequest = async (id) => {
             song: songDetails, token: process.env.DATA_SERVER_TOKEN
         }));
     } catch (e) {
-        console.re.log(e);
+        console.log(e);
         console.log("An error occurred while indexing song")
     }
-}
+};
 /**
  *
  * @type {{check: (function(*, *, *): *), respond: (function(*): *)}}

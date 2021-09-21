@@ -16,17 +16,17 @@ const SongCard2 = (props) => {
 	const video_ = props.video.snippet;
 	return (
 		// <Grow in={true}>
-		<Card className={"SongCard"} disableRipple
-			  style={{
-				  width: "100%", backgroundColor: "transparent", /*maxWidth: "12rem"*/
-				  maxWidth: "auto",
-			  }}
-			  elevation={0}
-			  onClick={props.onPlay}>
-			<FocusNode>
-				<CardActionArea>
-					<Card className={"py-0 my-0"}>
-						<Paper>
+		<Card className={"SongCard p-0"} disableRipple
+              style={{
+                  width: "100%", backgroundColor: "transparent", /*maxWidth: "12rem"*/
+                  maxWidth: "auto",
+              }}
+              elevation={0}
+              onClick={props.onPlay}>
+            <FocusNode>
+                <CardActionArea>
+                    <Card className={"py-0 my-0"}>
+                        <Paper>
 							<CardMedia
 								component={"img"}
 								alt={video_.title}

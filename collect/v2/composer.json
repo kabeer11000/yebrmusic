@@ -1,0 +1,13 @@
+{
+  "name": "yebr/collect-v2",
+  "description": "Version 2 redesign of Yebr Collect Server",
+  "type": "Project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "kabeer11000",
+      "email": "52799968+kabeer11000@users.noreply.github.com"
+    }
+  ],
+  "require": {}
+}

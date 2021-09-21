@@ -39,25 +39,38 @@ const ArtistComponent = ({history}) => {
 
     const [error, setError] = React.useState(false);
     const {id} = useParams();
+    // const [id, setId] = React.useState(_id);
     useEffect(() => {
         const LoadArtist = async () => {
             try {
                 // const id = new URLSearchParams(window.location.search).get("id")
                 if (!id) return;
-                const saved = await get(storageIndex.artists.saveObject(id));
-                if (!saved || saved.etag !== state.etag) {
-                    const response = await comLinkWorker.fetch(endPoints.getArtistInfo(id), {
-                        headers: {Authorization: `Bearer ${window.__kn.music.serviceLoginToken}`},
-                    });
-                    if (!Object.entries(response).length) return setError(!error);
-                    setState(response);
-                    setLoaded(response.items.slice(0, loadedLength));
-                    setLoadedLength(loadedLength + 4);
-                } else {
-                    setState(saved);
-                    setLoaded(saved.items.slice(0, loadedLength));
-                    setLoadedLength(loadedLength + 4);
-                }
+                // if (id.length < 24) return history.push(`/artist/${await comLinkWorker.fetchText("https://docs.kabeercloud.tk/yebr/resolve-yt-channel-id.php", {
+                //     method: "POST",
+                //     body: JSON.stringify({u: `https://www.youtube.com/${id}`})
+                // })}`);
+                // const saved = await get(storageIndex.artists.saveObject(id));
+                // if (!saved || saved.etag !== state.etag) {
+                const response = await comLinkWorker.fetch(endPoints.getArtistInfo(id), {
+                    headers: {Authorization: `Bearer ${window.__kn.music.serviceLoginToken}`},
+                });
+                // if (!Object.entries(response).length) {
+                // setId(await get(storageIndex.artists.IdResolver(_id)) || await comLinkWorker.fetchText("https://docs.kabeercloud.tk/yebr/resolve-yt-channel-id.php", {
+                //     method: "POST",
+                //     body: JSON.stringify({u: `https://www.youtube.com/${_id}`})
+                // }));
+                // await set(storageIndex.artists.IdResolver(_id), id);
+                // response = await comLinkWorker.fetch(endPoints.getArtistInfo(id), {headers: {Authorization: `Bearer ${window.__kn.music.serviceLoginToken}`}});
+                // }
+                if (!response || !Object.entries(response).length) return setError(!error);
+                setState(response);
+                setLoaded(response.items.slice(0, loadedLength));
+                setLoadedLength(loadedLength + 4);
+                // } else {
+                //     setState(saved);
+                //     setLoaded(saved.items.slice(0, loadedLength));
+                //     setLoadedLength(loadedLength + 4);
+                // }
             } catch (e) {
                 DebugLog(e);
                 enqueueSnackbar("Failed to Load Artist");
@@ -85,24 +98,29 @@ const ArtistComponent = ({history}) => {
     return <div>
         {state && state.author ? <React.Fragment>
             <Card
-                variant={"outlined"} elevation={0}><CardActionArea>
-                <img src={state.author.bestAvatar.url} style={{
-                    height: "15rem",
-                    // position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    objectFit: "cover",
-                    filter: "blur(2px)",
-                }} alt={state.author.name}/>
-                <div style={{
-                    position: "absolute",
-                    backgroundColor: "#000000",
-                    opacity: "30%",
-                    height: "100%",
-                    width: "100%",
-                    top: 0
-                }}/>
+                variant="elevation" elevation={0}>
+                <CardActionArea>
+                    <img src={state.author.bestAvatar.url} style={{
+                        height: "15rem",
+                        // position: "fixed",
+                        top: 0,
+                        left: 0,
+                        minHeight: "15rem",
+                        width: "100%",
+                        objectFit: "cover",
+                        filter: "blur(2px)",
+                    }} onError={function () {
+                        this.onerror = null;
+                        this.src = "https://docs.google.com/document/d/1fBjVMFDn8Ag-xF3s-BRCqXU5NHG_Hg_E3Nm-f59uRjM/edit?usp=sharing"
+                    }} alt={state.author.name}/>
+                    <div style={{
+                        position: "absolute",
+                        backgroundColor: "#000000",
+                        opacity: "30%",
+                        height: "100%",
+                        width: "100%",
+                        top: 0
+                    }}/>
 
                 <Slide in={trigger} direction={"bottom"}>
                     <AppBar position="fixed" style={{zIndex: "5", paddingLeft: tv ? "4.5rem" : 0}}>
@@ -188,13 +206,15 @@ const ArtistComponent = ({history}) => {
                     endMessage={<></>}>
                     <Container>
                         {
-                            !tv ? <Grid container spacing={2}>
+                            !tv ? <Grid container spacing={1}>
                                 {
-                                    loaded ? loaded.map((video, index) => <Grid key={index} item xs={6}
+                                    loaded ? loaded.map((video, index) => <Grid key={index} item
+                                                                                className={"p-0 m-0 px-1"} xs={6}
                                                                                 sm={2}>
                                         <SongCard2 onPlay={() => PlaySong({
                                             useProxy: true,
                                             song: video,
+                                            play: true,
                                             playList: {
                                                 list: state,
                                                 index: index
@@ -209,6 +229,7 @@ const ArtistComponent = ({history}) => {
                                         <SongCard onClick={() => PlaySong({
                                             useProxy: true,
                                             song: video,
+                                            play: true,
                                             playList: {
                                                 list: state,
                                                 index: index

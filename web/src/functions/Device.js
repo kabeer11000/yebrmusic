@@ -8,6 +8,6 @@ export const Device = {
         return deviceId;
     },
     fp: {
-        client: new window.ClientJS(),
+        client: window.ClientJS ? new window.ClientJS() : null,
     }
 };

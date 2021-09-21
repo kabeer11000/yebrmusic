@@ -45,7 +45,7 @@ abstract class Result
      * @template S
      * @template F
      *
-     * @param callable(T):\GrahamCampbell\ResultType\Result<S,F> $f
+     * @param callable(T):Result $f
      *
      * @return Result
      */

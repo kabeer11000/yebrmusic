@@ -71,9 +71,9 @@ export const ConnectionError = () => (
 				</Grid>
 				<Grid item xl={6}>
 					<Button variant={"outlined"} style={{
-						width: "100%"
-					}} color="inherit"
-							onClick={() => window.location.reload()}>{Strings["Utils:App:Retry.Text"]}</Button>
+                        width: "100%"
+                    }} color="inherit"
+                            onClick={() => window.location.href = "/"}>{Strings["Utils:App:Retry.Text"]}</Button>
 				</Grid>
 			</Grid>
 		</React.Fragment>
@@ -93,9 +93,10 @@ const PageContainer = ({children, code}) => {
 	return <div>
 		<div>{children}</div>
 		<div style={{
-			bottom: 0,
-			position: "fixed"
-		}}>
+            bottom: 0,
+            position: "fixed",
+            width: "100%"
+        }}>
 			<Accordion variant={"outlined"} elevation={0}>
 				<AccordionSummary
 					expandIcon={<ExpandMore/>}
@@ -114,16 +115,20 @@ const PageContainer = ({children, code}) => {
 };
 export const ErrorComponent = () => {
 	const {code} = useParams();
-	switch (code) {
-		case "INVALID_STATE":
-			return <PageContainer code={code}>
-				<InvalidState/>
-			</PageContainer>;
-		case "APP_ERROR":
-			return <PageContainer code={code}>
-				<AppError/>
-			</PageContainer>;
-		default:
-			return "";
-	}
+    switch (code) {
+        case "INVALID_STATE":
+            return <PageContainer code={code}>
+                <InvalidState/>
+            </PageContainer>;
+        case "APP_ERROR":
+            return <PageContainer code={code}>
+                <AppError/>
+            </PageContainer>;
+        // case "CONNECTION_REFUSED":
+        // 	return <PageContainer code={code}>
+        // 		<ConnectionError/>
+        // 	</PageContainer>;
+        default:
+            return "";
+    }
 };

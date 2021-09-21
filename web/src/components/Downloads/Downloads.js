@@ -60,22 +60,22 @@ const Downloads = () => {
 						{
 							songs && songs.items.length ? (
 								<List className={`${classes.root} mt-0 bg-transparent`}>
-									<Grid container spacing={tv ? 2 : 0}>
-										{songs.items.map((song, index) => <Grid className={"w-100"} item md={6} xl={6}>
-											<DownloadListItem
-												onMouseLeave={() => deleteDownload(song)}
-												onClick={async () => PlaySong({
-													useProxy: false,
-													songURI: URL.createObjectURL(song.blobs.audio),
-													song: song,
-													others: {
-														offline: true
-													},
-													playList: {
-														index: index,
-														list: songs // {...songs, items: songs.items.map(a => a.videoElement)}
-													}
-												})} className={"text-truncate"} song={song}/>
+                                    <Grid container spacing={tv ? 0 : 0}>
+                                        {songs.items.map((song, index) => <Grid className={"w-100"} item md={4} xl={4}>
+                                            <DownloadListItem
+                                                onMouseLeave={() => deleteDownload(song)}
+                                                onClick={async () => PlaySong({
+                                                    useProxy: false,
+                                                    songURI: URL.createObjectURL(song.blobs.audio),
+                                                    song: song,
+                                                    others: {
+                                                        offline: true
+                                                    },
+                                                    playList: {
+                                                        index: index,
+                                                        list: songs // {...songs, items: songs.items.map(a => a.videoElement)}
+                                                    }
+                                                })} song={song}/>
 										</Grid>)}
 									</Grid>
 								</List>

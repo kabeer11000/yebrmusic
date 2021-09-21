@@ -12,15 +12,17 @@ import endPoints from "../../api/EndPoints/EndPoints";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
 import SongCard from "../SongCard/SongCard";
 import Avatar from "@material-ui/core/Avatar";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
+import Link from "../Link"
 import {get, set} from "idb-keyval";
 import {storageIndex} from "../../functions/Helper/StorageIndex";
+import {capitalizeName} from "../../functions/Helper/Utils";
 
 
 // Trending PL-DfNcB3lim9L-rrvhrR3AoFB9Sa-KoxW
 const TrendingArtists = () => {
-	const [state, setState] = React.useState(null);
-	const [error, setError] = React.useState(false);
+    const [state, setState] = React.useState(null);
+    const [error, setError] = React.useState(false);
 
 	const {token} = React.useContext(AccountContext);
 	React.useEffect(() => {
@@ -61,11 +63,11 @@ const TrendingArtists = () => {
 				{state && state.artists ? state.artists.map((artist, playListIndex) => <React.Fragment
 					key={playListIndex}>
 					<Grow in={true}>
-						<Typography variant={"h5"} className={"mb-3 mt-2 pl-3 text-left text-truncate"}>
-							{artist.title} {artist.accounts[0] && <IconButton component={Link}
-																			  to={`/artist/${artist.accounts[0].url.split("/").pop()}`}><Avatar
-							src={artist.accounts[0].image}/></IconButton>}
-						</Typography>
+                        <Typography variant={"h5"} className={"mb-3 mt-2 pl-3 text-left text-truncate"}>
+                            {capitalizeName(artist.title)} {artist.accounts[0] && <IconButton component={Link}
+                                                                                              to={`/artist/${artist.accounts[0].url.split("/").pop()}`}><Avatar
+                            src={artist.accounts[0].image}/></IconButton>}
+                        </Typography>
 					</Grow>
 					<Container maxWidth="xl" className={"mb-0 pb-0"}>
 						{isTv ? <Grid container spacing={2}>
@@ -76,14 +78,15 @@ const TrendingArtists = () => {
 										onClick={async () => {
 											const song = artist.items[index];
 											await PlaySong({
-												useProxy: true,
-												songURI: await getSong(song.id),
-												song: song,
-												playList: {
-													list: artist,
-													index: index
-												}
-											});
+                                                useProxy: true,
+                                                songURI: await getSong(song.id),
+                                                song: song,
+                                                play: true,
+                                                playList: {
+                                                    list: artist,
+                                                    index: index
+                                                }
+                                            });
 										}}
 										playlist={true}/>
 								</Grid>
@@ -98,14 +101,15 @@ const TrendingArtists = () => {
 										onPlay={async () => {
 											const song = artist.items[index];
 											await PlaySong({
-												useProxy: true,
-												songURI: await getSong(song.id),
-												song: song,
-												playList: {
-													list: artist,
-													index: index
-												}
-											});
+                                                useProxy: true,
+                                                songURI: await getSong(song.id),
+                                                song: song,
+                                                play: true,
+                                                playList: {
+                                                    list: artist,
+                                                    index: index
+                                                }
+                                            });
 										}}
 										playlist={true}/>
 								</Grid>

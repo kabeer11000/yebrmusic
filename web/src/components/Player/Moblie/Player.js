@@ -2,21 +2,21 @@ import React from "react";
 import "./Player.css";
 import {AppBar, CircularProgress, Drawer, IconButton, Toolbar, Typography} from "@material-ui/core";
 import {
-	AccountCircle,
-	Close,
-	Done,
-	Forward10,
-	GetApp,
-	Loop,
-	Pause,
-	PlayCircleOutline,
-	Repeat,
-	RepeatOne,
-	SkipNext,
-	SkipPrevious,
-	Toc,
-	VolumeDown,
-	VolumeUp,
+    AccountCircle,
+    Close,
+    Done,
+    Forward10,
+    GetApp,
+    Loop, MoreVert,
+    Pause,
+    PlayCircleOutline,
+    Repeat,
+    RepeatOne,
+    SkipNext,
+    SkipPrevious,
+    Toc,
+    VolumeDown,
+    VolumeUp,
 } from "@material-ui/icons";
 import Replay10Icon from "@material-ui/icons/Replay10";
 import {deleteDownloadedSong, DownloadSong, isOfflineAvailable} from "../../../functions/SongsUtility";
@@ -38,16 +38,18 @@ import Strings from "../../../Strings";
 import styled from "@material-ui/core/styles/styled";
 import Box from "@material-ui/core/Box";
 import grey from "@material-ui/core/colors/grey";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const LoopingButton = ({playState, setLooping}) => {
-	const handleOnClick = async () => {
-		playState.audioElement.loop = true;
-		setLooping(<IconButton
-			color={"primary.player.invertButtons.invert"}
-			onClick={() => playState.audioElement.loop = false}
-			style={{backgroundColor: "primary.player.invertButtons.invert"}}><Loop/></IconButton>);
-	};
-	return (
+    const handleOnClick = async () => {
+        playState.audioElement.loop = true;
+        setLooping(<IconButton
+            color={"primary.player.invertButtons.invert"}
+            onClick={() => playState.audioElement.loop = false}
+            style={{backgroundColor: "primary.player.invertButtons.invert"}}><Loop/></IconButton>);
+    };
+    return (
 		<IconButton color={"primary.player.invertButtons.main"}
 					style={{backgroundColor: "primary.player.invertButtons.main"}}
 					onClick={handleOnClick}><Loop/></IconButton>
@@ -137,6 +139,7 @@ const Player = () => {
 			<IconButton onClick={deleteDownload}><Done/></IconButton> :
 			<IconButton onClick={DownloadAudio}><GetApp/></IconButton>));
 	}, [playState.videoElement]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 	return (
 		<div className="Player">
 			<SwipeableDrawer
@@ -147,16 +150,17 @@ const Player = () => {
 					keepMounted: true,
 				}}
 				PaperProps={{
-					style: {
-						// opacity: "0.9",
-						filter: "opacity(0.9)",
-						// backgroundColor: "rgba(52, 52, 52, 0.5)",
-						backdropFilter: "blur(2rem)",
-						// maxHeight: "99vh",
-						borderRadius: "1rem 1rem 0 0"
-					},
-					square: false
-				}}
+                    className: "player-mobile-background",
+                    style: {
+                        // opacity: "0.9",
+                        // filter: "opacity(0.9)",
+                        // backgroundColor: "rgba(52, 52, 52, 0.5)",
+                        // backdropFilter: "blur(2rem)",
+                        // maxHeight: "99vh",
+                        borderRadius: "1rem 1rem 0 0"
+                    },
+                    square: false
+                }}
 				open={playerState.Dialog}
 				onOpen={() => setPlayerState({...playerState, Dialog: true})}>
 				<StyledBox
@@ -255,26 +259,50 @@ const Player = () => {
 							}}><RepeatOne/></IconButton>) : (<IconButton onClick={() => {
 								setLooping(true);
 								playState.audioElement.loop = true;
-							}}><Repeat/></IconButton>)}
-							{downloadButton ? downloadButton : <IconButton><CircularProgress size={25}/></IconButton>}
-							{/*<IconButton onClick={() => {*/}
-							{/*}}><Grade/></IconButton>*/}
-							<IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
-							<IconButton
-								hidden={!Song.channelId}
-								onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
-								<AccountCircle/>
-							</IconButton>
-						</div>
-						<Container maxWidth={"md"}>
-							<Drawer
-								anchor={"bottom"}
-								PaperProps={{
-									style: {
-										maxHeight: "90vh"
-										// maxWidth: "20rem"
-									}
-								}}
+                            }}><Repeat/></IconButton>)}
+                            {downloadButton ? downloadButton : <IconButton><CircularProgress size={25}/></IconButton>}
+                            {/*<IconButton onClick={() => {*/}
+                            {/*}}><Grade/></IconButton>*/}
+                            <IconButton onClick={() => setPlayList(true)}><Toc/></IconButton>
+                            <IconButton
+                                hidden={!Song.channelId}
+                                onClick={() => navigator.onLine ? (history.push(`/artist/${Song.channelId}`), handleClose()) : (enqueueSnackbar("No Connection"))}>
+                                <AccountCircle/>
+                            </IconButton>
+
+                            <IconButton aria-controls="simple-menu" aria-haspopup="true"
+                                        onClick={(e) => setAnchorEl(e.currentTarget)}>
+                                <MoreVert/>
+                            </IconButton>
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={() => setAnchorEl(null)}>
+                                <MenuItem onClick={async () => {
+                                    await navigator.share({
+                                        url: `https://${window.location.host}/?play=${Song.id}&player=dialog&utm_source=kn.music.sources.desktop.WEB_SHARE`,
+                                        title: `Listen to ${Song.snippet.title} on Yebr`,
+                                        text: `Yebr music, podcasts and culture - By Kabeer's Network`
+                                    });
+                                    setAnchorEl(null);
+                                }}>Share</MenuItem>
+                                <MenuItem onClick={async () => {
+                                    await navigator.clipboard.writeText(`https://${window.location.host}/?play=${Song.id}&player=dialog&utm_source=kn.music.sources.desktop.WEB_COPY`);
+                                    setAnchorEl(null);
+                                }}>Copy Link</MenuItem>
+                            </Menu>
+                        </div>
+                        <Container maxWidth={"md"}>
+                            <Drawer
+                                anchor={"bottom"}
+                                PaperProps={{
+                                    style: {
+                                        maxHeight: "90vh"
+                                        // maxWidth: "20rem"
+                                    }
+                                }}
 								open={PlayList}
 								onClose={() => setPlayList(false)}
 								onOpen={() => setPlayList(true)}>

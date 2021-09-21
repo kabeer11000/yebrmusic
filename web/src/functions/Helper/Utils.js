@@ -7,12 +7,21 @@ export function RetryPromise(fn, retriesLeft = 5, interval = 1000) {
 					if (retriesLeft === 1) {
 						// reject('maximum retries exceeded');
 						reject(error);
-						return;
-					}
+                        return;
+                    }
 
-					// Passing on "reject" is the important part
-					RetryPromise(fn, retriesLeft - 1, interval).then(resolve, reject);
-				}, interval);
-			});
-	});
+                    // Passing on "reject" is the important part
+                    RetryPromise(fn, retriesLeft - 1, interval).then(resolve, reject);
+                }, interval);
+            });
+    });
 }
+
+/**
+ *
+ * @param {string} string
+ * @param {boolean} lower
+ * @returns {string}
+ */
+export const capitalizeName = (string, lower) => (lower ? string?.toLowerCase() : string).replace(/(?:^|\s|['`‘’.-])[^\x00-\x60^\x7B-\xDF](?!(\s|$))/g, (a) => a.toUpperCase());
+

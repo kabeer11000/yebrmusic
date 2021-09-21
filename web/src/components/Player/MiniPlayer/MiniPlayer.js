@@ -1,6 +1,7 @@
 import {AppBar, IconButton, Typography} from "@material-ui/core";
 import {Close, OpenInNew, Pause, PlayCircleOutline} from "@material-ui/icons";
 import React from "react";
+import "./MiniPlayer.css";
 import CustomMiniPlayerSlider from "../CustomMiniPlayerSlider";
 import Card from "@material-ui/core/Card";
 import {FocusNode} from "@please/lrud";
@@ -8,7 +9,7 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Link from "@material-ui/core/Link";
-import {isTvContext, PlayContext, PlayerContext} from "../../../Contexts";
+import {BottomNavigationContext, isTvContext, PlayContext, PlayerContext} from "../../../Contexts";
 import Slide from "@material-ui/core/Slide";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
@@ -50,27 +51,28 @@ const MiniPlayer = ({history}) => {
 
 	const pauseAudio = () => {
 		playState.audioElement.pause();
-		setPlaying(true);
-	};
-	const playAudio = () => {
-		playState.audioElement.play();
-		setPlaying(false);
-	};
-	const ReOpenDialog = () => setPlayerState({
-		Dialog: true,
-		MiniPlayer: false
-	});
-	const bottomNav = !["/settings", "/artist"].includes(history.location.pathname);
+        setPlaying(true);
+    };
+    const playAudio = () => {
+        playState.audioElement.play();
+        setPlaying(false);
+    };
+    const ReOpenDialog = () => setPlayerState({
+        Dialog: true,
+        MiniPlayer: false
+    });
+    // const bottomNav = !["/settings", "/artist"].includes(history.location.pathname);
+    const [bottomNav] = React.useContext(BottomNavigationContext);
 
-	return tv ?
-		<Slide in={playerState.MiniPlayer} direction={"top"}>
-			<AppBar
-				color={"slideDown primary.miniPlayer.main"} style={{
-				position: "fixed",
-				top: "auto",
-				bottom: "0",
-				maxWidth: "25rem",
-				maxHeight: "17rem",
+    return tv ?
+        <Slide in={playerState.MiniPlayer} direction={"top"}>
+            <AppBar
+                color={"slideDown primary.miniPlayer.main"} style={{
+                position: "fixed",
+                top: "auto",
+                bottom: "0",
+                maxWidth: "25rem",
+                maxHeight: "17rem",
 			}} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
 				<Card className={"SongCard"} style={{width: "100%", height: "100%", borderRadius: 0}}
 					  variant={"elevation"}

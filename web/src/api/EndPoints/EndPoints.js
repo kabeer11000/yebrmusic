@@ -46,8 +46,8 @@ const endPoints = {
 
     Auth: {
         GetServiceLoginKey: `${hostName}/auth/service-login/browse/key`,
-        GetActiveSessionAccounts: `${window.__kn.music.config.hosts.kauth_server}/auth/user/accounts/active/0`,
-        SignOutDeleteSession: `${window.__kn.music.config.hosts.kauth_server}/auth/user/accounts/remove`,
+        GetActiveSessionAccounts: `https://sessions-kabeeridp-3pa.kabeersnetwork.tk/service/user/sessions`,
+        SignOutDeleteSession: `https://sessions-kabeeridp-3pa.kabeersnetwork.tk/service/user/remove/sessions`,
         getAccounts: `https://accounts.kabeersnetwork.tk/auth/oauth/`,
         refreshToken: ({redirect_uri}) => `${hostName}/auth/store/tokens/refresh?redirect_uri=${redirect_uri}`
     },

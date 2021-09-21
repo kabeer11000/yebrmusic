@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import HomeComponent from "./components/Home/home.lazy";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import CustomBottomNavigation from "./components/CustomBottomNavigation/CustomBottomNavigation.lazy";
 import Downloads from "./components/Downloads/Downloads.lazy";
 import MobilePlayer from "./components/Player/Moblie/Player.lazy";
@@ -13,7 +13,6 @@ import DrawerComponent from "./components/Drawer/Drawer.lazy";
 import SearchResultComponent from "./components/SearchComponent/SearchResultComponent.lazy";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Settings from "./components/Settings/Settings.lazy";
-import Liked from "./components/Liked/Liked.lazy";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {DialogProvider} from "muibox";
 import ArtistComponent from "./components/ArtistComponent/ArtistComponent.lazy";
@@ -26,6 +25,7 @@ import {
     BottomNavigationProvider,
     DrawerProvider,
     isTvContext,
+    LoadingContext,
     LoadingProvider,
     OfflineToken,
     PlayerProvider,
@@ -40,8 +40,7 @@ import TrendingArtists from "./components/TrendingArtists/TrendingArtists.lazy";
 import {ConnectionError, ErrorComponent} from "./InternalViews/ErrorViewer";
 import AccountChooser from "./components/AccountChooser/AccountChooser.lazy";
 import Preloader from "./components/Preloader/Preloader";
-//import HistoryComponent from "./components/History/History";
-// import CastDialog from "./components/CastingDialog/CastingDialog";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const AppRenderer = ({children}) => {
     const {token} = React.useContext(AccountContext);
@@ -53,6 +52,20 @@ const AppRenderer = ({children}) => {
             </app-container>
         );
 };
+const Admin = ({children}) => (
+    <Switch>
+        {children}
+        <Route path={"/admin/create"} component={() => (<div>Feature Not Implemented Yet</div>)}/>
+    </Switch>
+);
+const LoadingIndicator = () => {
+    const [loading] = React.useContext(LoadingContext);
+    return (
+        <div style={{zIndex: "99999"}} hidden={!loading} className={"fixed-top"}>
+            <LinearProgress/>
+        </div>
+    )
+}
 const App = () => {
     const tv = React.useContext(isTvContext);
     return (
@@ -62,39 +75,32 @@ const App = () => {
                     <CssBaseline/>
                     <FocusRoot className="App">
                         <AccountChooserProvider>
-                            {/*<React.Suspense fallback={<div className="spinner"><Preloader/></div>}>*/}
                             <AccountProvider>
+                                <Route path="/admin" component={Admin}/>
                                 <Route exact
-                                       path={["/artist/:id", "/artists", "/", "/trending", "/discover", "/home", "/search", "/downloads", "/history", "/liked", "/charts", "/search/results", "/settings"]}>
+                                       path={["/artist/:id", "/artists", "/", "/trending", "/discover", "/home", "/suggest", "/search", "/downloads", "/history", "/liked", "/charts", "/search/results", "/settings"]}>
                                     <AppRenderer>
-                                        {/*<RatingProvider>*/}
                                         <BottomNavigationProvider>
                                             <DrawerProvider>
                                                 <DrawerComponent>
-                                                    <SnackbarProvider maxSnack={1}>
+                                                    <SnackbarProvider maxSnack={3}>
                                                         <LoadingProvider>
+                                                            <LoadingIndicator/>
                                                             <PlayerProvider>
                                                                 <PlayProvider>
                                                                     <Route exact
-                                                                           path={["/artists", "/", "/trending", "/discover", "/home", "/search", "/downloads", "/history", "/liked", "/charts"]}>
+                                                                           path={["/artists", "/", "/trending", "/discover", "/home", "/downloads", "/history", "/liked", "/charts", tv ? "/search" : "/"]}>
                                                                         <React.Fragment>
                                                                             <CustomAppBar/>
-                                                                            <AccountChooser/>
                                                                             <CustomBottomNavigation/>
-                                                                            {/*<BackDropLoader hidden={backdrop}/>*/}
                                                                         </React.Fragment>
                                                                     </Route>
+                                                                    <AccountChooser/>
                                                                     <RatingProvider>
-                                                                        {/*<CastProvider>*/}
-                                                                        {/*    <CastDialogProvider>*/}
                                                                         <RatingProvider>
-                                                                            {tv ? <DesktopPlayer/> :
-                                                                                <MobilePlayer/>}
+                                                                            {tv ? <DesktopPlayer/> : <MobilePlayer/>}
                                                                             <MiniPlayer/>
-                                                                            {/*<CastDialog/>*/}
                                                                         </RatingProvider>
-                                                                        {/*</CastDialogProvider>*/}
-                                                                        {/*</CastProvider>*/}
                                                                     </RatingProvider>
                                                                     <Route exact path={["/home", "/"]}
                                                                            component={HomeComponent}/>
@@ -110,38 +116,22 @@ const App = () => {
                                                                             ) : (
                                                                                 <React.Fragment>
                                                                                     <Route exact={true}
-                                                                                           path={"/search/results"}
+                                                                                           path={"/search"}
                                                                                            component={SearchResultComponent}/>
-                                                                                    <Route exact path={"/search"}
+                                                                                    <Route exact path={"/suggest"}
                                                                                            component={SearchComponent}/>
                                                                                 </React.Fragment>
                                                                             )
                                                                         }
                                                                     </SearchingProvider>
-                                                                    <Route exact path={"/liked"} component={Liked}/>
                                                                     <Route exact path={"/settings"}
                                                                            component={Settings}/>
                                                                     <Route exact path={"/discover"}
                                                                            component={Discover}/>
-                                                                    {/*<Route exact path={"/history"}*/}
-                                                                    {/*       component={HistoryComponent}/>*/}
-                                                                    {/*<Route exact path={"/charts"} component={PlayLists}/>*/}
                                                                     <Route exact path={"/artist/:id"}
                                                                            component={ArtistComponent}/>
-                                                                    {/*<Route exact path={"/TestArtistComponent"}*/}
-                                                                    {/*       component={TestArtistComponent}/>*/}
-                                                                    {/*Trending*/}
                                                                     <Route exact path={"/artists"}
                                                                            component={TrendingArtists}/>
-                                                                    {
-                                                                        /*
-                                                                    <Route path={"*"} component={<NotFoundComponent/>}/>
-                                                                    <Route path={"*"} component={<NotFoundComponent/>}/>
-
-                                                                    <Route render={()=>errorPage('Route Not Found, 404', ()=>{}, <Button
-                                                                        onClick={()=>{window.location.href = ('/home')}}>Go Home</Button>)}/>
-                                                                         */
-                                                                    }
                                                                 </PlayProvider>
                                                             </PlayerProvider>
                                                         </LoadingProvider>
@@ -152,7 +142,6 @@ const App = () => {
                                     </AppRenderer>
                                 </Route>
                             </AccountProvider>
-                            {/*</React.Suspense>*/}
                         </AccountChooserProvider>
                     </FocusRoot>
                 </DialogProvider>

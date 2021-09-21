@@ -6,63 +6,10 @@
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
     <meta content="#2B2B2B" name="theme-color"/>
     <meta content="Yebr Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network" name="description"/>
+    <meta content="Kabeer's Network LLC" name="author"/>
+    <meta content="http://yebr.tk" name="canonical"/>
     <link href="%PUBLIC_URL%/assets/icons/AppleMusicIcon.png" rel="apple-touch-icon"/>
     <base href="/"/>
-    <style>
-        .text-truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap
-        }
-
-        .container {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto
-        }
-
-        @media (min-width: 576px) {
-            .container {
-                max-width: 540px
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                max-width: 720px
-            }
-        }
-
-        @media (min-width: 992px) {
-            .container {
-                max-width: 960px
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1140px
-            }
-        }
-
-        .PlayerSlider span {
-            background-color: #fff !important
-        }
-
-        .Player .thumbnail {
-            position: relative;
-            width: 5rem;
-            height: 5rem;
-            border-radius: 100%;
-            overflow: hidden
-        }
-
-        .Player .thumbnail .image {
-            max-width: 100%
-        }
-    </style>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -90,7 +37,7 @@
                 super();
             }
         });
-        const production = true;
+        const production = false;
         window.__kn = {
             music: {
                 logger: {
@@ -128,13 +75,14 @@
                 },
                 developers: {
                     available_proxies: `https://proxy-cloudflare-yebrmusic.kabeer11000.workers.dev|https://cors.bridged.cc/|https://ancient-queen-3235.kabeer11000.workers.dev/|https://proxy-yebrmusic.kabeersnetwork.tk/`,
-                    "debugging-enabled": true
+                    "debugging-enabled": !production
                 },
                 config: {
                     other: {
                         recently_added_list_id: "PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL"
                     },
                     hosts: {
+                        kauth_session_server: production ? "https://sessions-kabeeridp-3pa.kabeersnetwork.tk/auth/" : "",
                         api: !production ? "http://localhost:9000" : "https://backend-yebrmusic.kabeersnetwork.tk",
                         "data-collection-server": !production ? `http://localhost:80` : "https://collect-yebrmusic.kabeercloud.tk",
                         "cast-server": !production ? `http://localhost:3240` : "https://cast-yebrmusic.kabeercloud.tk",
@@ -187,7 +135,7 @@
         script.onload = () => console.log("Using `window.scrollIntoView` polyfill")
         document.head.appendChild(script);
     }
-    if (!fetch in window) {
+    if (!"fetch" in window) {
         const script = window.document.createElement("script");
         // Load Polyfill
         script.src = "https://cdn.jsdelivr.net/gh/github/fetch@master/fetch.js";

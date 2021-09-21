@@ -4,7 +4,8 @@ import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-expo
 import endPoints from "../../api/EndPoints/EndPoints";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
+import Link from "../Link"
 import Avatar from "@material-ui/core/Avatar";
 import {Done} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
@@ -19,6 +20,9 @@ import Paper from "@material-ui/core/Paper";
 import {useNetwork} from "../../Hooks";
 import "./home.css";
 import {DebugLog} from "../../functions/Log";
+import List from "@material-ui/core/List";
+import Grid from "@material-ui/core/Grid";
+import SongListItem from "../SongListItem/SongListItem.lazy";
 
 const ArtistsSlider = () => {
     const [state, setState] = React.useState(null);
@@ -54,7 +58,7 @@ const ArtistsSlider = () => {
         </Paper>
     );
 };
-export const FeedSection = ({response, showTitle = true}) => {
+export const FeedSection = ({response, showTitle = true, list}) => {
     const {PlaySong} = React.useContext(PlayContext);
     return (
         <React.Fragment>
@@ -65,21 +69,40 @@ export const FeedSection = ({response, showTitle = true}) => {
                             {response.title}
                         </Typography>
                     </Grow>
-                    <Container maxWidth="xl" className={"px-0 mx-0 mb-0 pb-0"}>
+                    {list ? <>
+                        <br/>
+                        <Grid container spacing={0}>
+                            {response.items.map((audio, index) => (
+                                <Grid className={"w-100"} key={index} item md={4} xl={4}>
+                                    <SongListItem onClick={() => PlaySong({
+                                        useProxy: true,
+                                        song: audio,
+                                        play: true,
+                                        playList: {
+                                            list: response,
+                                            index: index
+                                        }
+                                    })} item={audio}/>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </> : <Container maxWidth="xl" className={"px-0 mx-0 mb-0 pb-0"}>
                         <div className={"cardSlider Slider"}>
-                            {response.items.map((video, index) => <SongCard key={index}
-                                                                            song={video}
-                                                                            onClick={() => PlaySong({
-                                                                                useProxy: true,
-                                                                                song: video,
-                                                                                playList: {
-                                                                                    list: response,
-                                                                                    index: index
-                                                                                }
-                                                                            })}/>
-                            )}
+                            {response.items.map((video, index) => (
+                                <SongCard key={index}
+                                          song={video}
+                                          onClick={() => PlaySong({
+                                              useProxy: true,
+                                              song: video,
+                                              play: true,
+                                              playList: {
+                                                  list: response,
+                                                  index: index
+                                              }
+                                          })}/>
+                            ))}
                         </div>
-                    </Container>
+                    </Container>}
                 </React.Fragment> : null}
         </React.Fragment>
     );
@@ -151,7 +174,7 @@ const HomeComponent = () => {
             </div>
 
             {(state && state.length) ? (
-                state.map((response, index) => <FeedSection key={index} response={response}/>)
+                state.map((response, index) => <FeedSection key={index} list={index === 1 && tv} response={response}/>)
             ) : !error ? <Preloader/> : null}
 
             <div className={"mb-3"}>
@@ -159,11 +182,6 @@ const HomeComponent = () => {
                     <div hidden={!online || error}>
                         <Divider/>
                         <React.Fragment>
-                            <Grow in={true}>
-                                <Typography variant={"h5"} className={"mb-3 mt-2 pl-3 text-left text-truncate"}>
-                                    Explore
-                                </Typography>
-                            </Grow>
                             <Discover embedded={true} items={10}/>
                         </React.Fragment>
                     </div> : null

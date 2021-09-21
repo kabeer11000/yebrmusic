@@ -8,7 +8,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import List from "@material-ui/core/List";
 import Container from "@material-ui/core/Container";
 import {Avatar, Divider} from "@material-ui/core";
-import {Add} from "@material-ui/icons";
+import {Add, Contacts, VerifiedUser} from "@material-ui/icons";
 import {AccountChooserContext, AccountContext} from "../../Contexts";
 import {Cookies} from "../../functions/Cookies";
 import {storageIndex} from "../../functions/Helper/StorageIndex";
@@ -41,19 +41,24 @@ const AccountChooser = () => {
 			ModalProps={{keepMounted: true}}
 			open={open}>
 			<List>
-				<ListItem>
-					<ListItemAvatar>
-						<Avatar src={ImageLinks.KABEERS_NETWORK_LOGO}/>
-					</ListItemAvatar>
-					<ListItemText primary={"Kabeers Network"} secondary={"Switch Account"}/>
-				</ListItem>
-				<Divider/>
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar src={ImageLinks.KABEERS_NETWORK_LOGO}/>
+                    </ListItemAvatar>
+                    <ListItemText primary={"Kabeers Network"} secondary={<>Switch Account <VerifiedUser style={{
+                        marginLeft: "0.5rem",
+                        width: "1rem",
+                        height: "1rem",
+                    }}/></>}/>
+                </ListItem>
+                <Divider/>
 				{
 					accounts.all ? accounts.all.map((a, index) => (
 						<React.Fragment key={index}>
 							<ListItem disabled={!a.signed_in || account?.user_id === a.user_id}
-									  style={{minWidth: "100%"}} button alignItems="flex-start"
-									  onClick={async () => {
+                                      selected={account?.user_id === a.user_id}
+                                      style={{minWidth: "100%"}} button alignItems="flex-start"
+                                      onClick={async () => {
 										  setOpen(!open);
 										  const params = new URLSearchParams(window.location.search);
 										  params.set("u", index);

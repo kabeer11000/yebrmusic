@@ -106,7 +106,7 @@ final class RepositoryBuilder
     /**
      * Return the array of default adapters.
      *
-     * @return Generator<\Dotenv\Repository\Adapter\AdapterInterface>
+     * @return Generator<AdapterInterface>
      */
     private static function defaultAdapters()
     {
@@ -143,7 +143,7 @@ final class RepositoryBuilder
      * @param ReaderInterface|string $reader
      *
      * @return RepositoryBuilder
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      */
     public function addReader($reader)
@@ -176,7 +176,7 @@ final class RepositoryBuilder
      * @param WriterInterface|string $writer
      *
      * @return RepositoryBuilder
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      */
     public function addWriter($writer)
@@ -210,7 +210,7 @@ final class RepositoryBuilder
      * @param WriterInterface|string $adapter
      *
      * @return RepositoryBuilder
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      */
     public function addAdapter($adapter)

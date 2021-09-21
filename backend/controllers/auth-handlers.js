@@ -25,7 +25,7 @@ const GetAPIKeyWithoutAccount = async (req, res) => {
         expiresIn: 2147483647,
     });
 };
-const FU = "bb5dc8842ca31d4603d6aa11448d1654"
+const FU = "23c21d659cbb22ee0fcd7c3c1820dd"
 const GetAPIKey = async (req, res) => {
     return res.status(200).json({
         public_grant: true,

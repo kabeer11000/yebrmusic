@@ -1,6 +1,7 @@
 export const storageIndex = {
     userData: "bGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
     artists: {
+        IdResolver: (u) => `__kn.music.artist.yt.channel.id-${u}`,
         saveObject: (id) => `__kn.music.artists.save.${id}.details`,
     },
     discover: {

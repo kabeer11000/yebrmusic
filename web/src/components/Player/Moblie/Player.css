@@ -52,7 +52,7 @@ div.Slider {
     white-space: nowrap;
 }
 
-div.Slider .ImageSliderIMG {
+div.Slider > .ImageSliderIMG {
     display: inline-block;
 }
 
@@ -64,4 +64,25 @@ div.Slider .ImageSliderIMG {
 /* Optional: show position indicator in red */
 .ComingNext::-webkit-scrollbar-thumb {
     background: #FF0000;
+}
+
+
+.PlayerSlider span {
+    background-color: #fff !important
+}
+
+.Player .thumbnail {
+    position: relative;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 100%;
+    overflow: hidden
+}
+
+.Player .thumbnail .image {
+    max-width: 100%
+}
+
+.player-mobile-background::before {
+    fill-opacity: 0.2%;
 }

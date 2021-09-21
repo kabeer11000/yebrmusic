@@ -20,7 +20,7 @@ use PhpOption\Some;
 /**
  * @template T
  * @template E
- * @extends \GrahamCampbell\ResultType\Result<T,E>
+ * @extends Result
  */
 final class Success extends Result
 {
@@ -85,7 +85,7 @@ final class Success extends Result
      * @template S
      * @template F
      *
-     * @param callable(T):\GrahamCampbell\ResultType\Result<S,F> $f
+     * @param callable(T):Result $f
      *
      * @return Result
      */

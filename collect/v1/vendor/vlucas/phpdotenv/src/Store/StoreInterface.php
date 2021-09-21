@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dotenv\Store;
 
+use Dotenv\Exception\InvalidEncodingException;
 use Dotenv\Exception\InvalidPathException;
 
 interface StoreInterface
@@ -12,7 +13,7 @@ interface StoreInterface
      * Read the content of the environment file(s).
      *
      * @return string
-     * @throws \Dotenv\Exception\InvalidEncodingException|InvalidPathException
+     * @throws InvalidEncodingException|InvalidPathException
      *
      */
     public function read();

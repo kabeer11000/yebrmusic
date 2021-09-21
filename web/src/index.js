@@ -7,6 +7,7 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import {IsTvProvider} from "./Contexts";
 import {storageIndex} from "./functions/Helper/StorageIndex";
+import {RetrievalDeleteLS} from "./functions/Helper/RetrievalDeleteLS";
 // import "https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js";
 
 if (!window.__kn.music.developers["debugging-enabled"]) {
@@ -14,6 +15,17 @@ if (!window.__kn.music.developers["debugging-enabled"]) {
     console.log = () => {
     };
 }
+window.addEventListener("beforeunload", async (e) => {
+    await RetrievalDeleteLS.set(storageIndex.cookies.AuthUser, window.__kn.music.auth.authUser);
+    // e.preventDefault()
+    // const params = new URLSearchParams(window.location.search);
+    // params.set("u", window.__kn.music.auth.authUser);
+    // const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + params.toString();
+    // window.history.replaceState({ path: newurl }, "", newurl);
+    // window.location.href = "https://google.com"
+    // alert(params.toString())
+    // window.location.search = params.toString()
+});
 /*
 const consolere = {
     channel: 'yebrmusic',

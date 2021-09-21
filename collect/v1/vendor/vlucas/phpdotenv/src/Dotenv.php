@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dotenv;
 
+use Dotenv\Exception\InvalidEncodingException;
 use Dotenv\Exception\InvalidFileException;
 use Dotenv\Exception\InvalidPathException;
 use Dotenv\Loader\Loader;
@@ -59,9 +60,9 @@ class Dotenv
      * @return void
      */
     public function __construct(
-        StoreInterface $store,
-        ParserInterface $parser,
-        LoaderInterface $loader,
+        StoreInterface      $store,
+        ParserInterface     $parser,
+        LoaderInterface     $loader,
         RepositoryInterface $repository
     ) {
         $this->store = $store;
@@ -215,7 +216,7 @@ class Dotenv
      * Read and load environment file(s).
      *
      * @return array<string,string|null>
-     * @throws \Dotenv\Exception\InvalidPathException|\Dotenv\Exception\InvalidEncodingException|InvalidFileException
+     * @throws InvalidPathException|InvalidEncodingException|InvalidFileException
      *
      */
     public function load()
@@ -229,7 +230,7 @@ class Dotenv
      * Read and load environment file(s), silently failing if no files can be read.
      *
      * @return array<string,string|null>
-     * @throws \Dotenv\Exception\InvalidEncodingException|InvalidFileException
+     * @throws InvalidEncodingException|InvalidFileException
      *
      */
     public function safeLoad()

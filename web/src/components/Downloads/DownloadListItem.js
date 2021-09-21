@@ -20,21 +20,20 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
 	const classes = useStyles();
 	return (
 		<React.Fragment>
-			<ListItem button alignItems="flex-start" className={"mx-0 px-0"}>
-				<React.Fragment>
-					<ListItemAvatar onClick={onClick}>
-						<Avatar variant="rounded" alt={song.videoElement.snippet.title}
-								src={song.videoElement.snippet.thumbnails.high.url}/>
-					</ListItemAvatar>
-					<ListItemText
-						primary={<div className={"text-truncate"}>{song.videoElement.snippet.title}</div>}
-						onClick={onClick}
-						secondary={
-							<React.Fragment>
-								<div
-									className={"text-truncate"}>
-									{song.videoElement.snippet.channelTitle}
-								</div>
+			<ListItem button alignItems="flex-start" className={"mx-0 px-2 rounded"}>
+                <React.Fragment>
+                    <ListItemAvatar onClick={onClick}>
+                        <Avatar variant="rounded" alt={song.videoElement.snippet.title}
+                                src={song.videoElement.snippet.thumbnails.high.url}/>
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={<div>{song.videoElement.snippet.title}</div>}
+                        onClick={onClick}
+                        secondary={
+                            <React.Fragment>
+                                <div>
+                                    {song.videoElement.snippet.channelTitle}
+                                </div>
 								{
 									song.tags && song.tags.length ? <div className={"cardSlider Slider"}>
 										{song.tags.map((v, i) => <Chip className={"mx-1"} key={i}
@@ -49,7 +48,7 @@ const DownloadListItem = ({song, onClick, onMouseLeave}) => {
 					<Delete/>
 				</IconButton>
 			</ListItem>
-			<Divider variant="inset" component="li"/>
+            {/*<Divider variant="inset" component="li"/>*/}
 		</React.Fragment>
 	);
 };

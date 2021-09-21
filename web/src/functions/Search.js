@@ -4,6 +4,7 @@ import {comLinkWorker} from "./Worker/worker-export";
 
 export const SuggestSearch = async (q, ...args) => {
     const response = await comLinkWorker.fetchText(endPoints.getSuggestionFake(q)); //.then(r => r.text());
+    if (!response) return [];
     const xmlDoc = await xml2json(new DOMParser().parseFromString(response.toString(), "text/xml"));
     return xmlDoc.toplevel ? (xmlDoc.toplevel).CompleteSuggestion : [];
 };

@@ -1,0 +1,54 @@
+{
+  "fingerprint": {
+    "blob": "BLOB"
+  },
+  "id": "YEBR_MUSIC_ID",
+  "streaming": {
+    "streams": 523132,
+    "overall": "Adding Streams Across All Sources"
+  },
+  "meta": {
+    "tags": [],
+    "classifications": ""
+  },
+  "lyrics": {
+    "text": ""
+  },
+  "sources": [
+    {
+      "source": "__kn.music.sources.youtube",
+      "artist": "kn.music.artist.id",
+      "publishing": {
+        "publishedAt": "new Date()"
+      },
+      "posters": [
+        {
+          "url": "https://i.ytimg.com/vi/OGMm7g0tdRA/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        {
+          "url": "https://i.ytimg.com/vi/OGMm7g0tdRA/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        {
+          "url": "https://i.ytimg.com/vi/OGMm7g0tdRA/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      ],
+      "meta": {
+        "title": "",
+        "description": "",
+        "duration": {
+          "ms": 48700
+        },
+        "streams": 16820720
+      },
+      "featuring": [
+        "kn.music.artist:ARTIST_ID"
+      ]
+    }
+  ]
+}

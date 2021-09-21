@@ -13,7 +13,8 @@ import {get, set} from "idb-keyval";
 import {storageIndex} from "../../functions/Helper/StorageIndex";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
+import Link from "../Link"
 import {OpenInNew} from "@material-ui/icons";
 import SessionRecommendation from "../../functions/SessionRecommendation";
 import {useNetwork} from "../../Hooks";
@@ -21,6 +22,7 @@ import {FeedSection} from "../Home/home";
 import {comLinkWorker as comlinkWorker} from "../../functions/Worker/worker-export";
 import endPoints from "../../api/EndPoints/EndPoints";
 import Typography from "@material-ui/core/Typography";
+import Grow from "@material-ui/core/Grow";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -101,6 +103,11 @@ const Discover = (props) => {
                 }
             </div>
             <Divider hidden={props.embedded}/>
+            {props.embedded && <Grow hidden={error} in={true}>
+                <Typography variant={"h5"} className={"mb-3 mt-2 pl-3 text-left text-truncate"}>
+                    Explore
+                </Typography>
+            </Grow>}
             <Container className={"mt-2"}>
                 {
                     props.embedded ? null : <div hidden={error}>
@@ -113,10 +120,12 @@ const Discover = (props) => {
                     {
                         !tv ? <Grid container spacing={2}>
                             {
-                                state ? state.items.map((video, i) => <Grid key={i} item xs={6} sm={2}>
+                                state ? state.items.map((video, i) => <Grid key={i} item xs={6}
+                                                                            className={"p-0 m-0 px-1"} sm={2}>
                                     <SongCard2 onPlay={() => PlaySong({
                                         useProxy: true,
                                         song: video,
+                                        play: true,
                                         playList: {
                                             list: state,
                                             index: i
@@ -130,6 +139,7 @@ const Discover = (props) => {
                                     onClick={() => PlaySong({
                                         useProxy: true,
                                         song: video,
+                                        play: true,
                                         playList: {
                                             list: state,
                                             index: i
@@ -140,14 +150,16 @@ const Discover = (props) => {
                     }
                 </div>
                 {
-                    props.embedded ? <List hidden={error}>
-                        <ListItem selected={true} button component={Link} to={"/discover"}>
-                            <ListItemText primary="Explore More" secondary={"Find More Recommendations"}/>
-                            <ListItemSecondaryAction>
-                                <IconButton><OpenInNew/></IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    </List> : null
+                    props.embedded ? <React.Fragment>
+                        <List hidden={error}>
+                            <ListItem selected={true} button component={Link} to={"/discover"}>
+                                <ListItemText primary="Explore More" secondary={"Find More Recommendations"}/>
+                                <ListItemSecondaryAction>
+                                    <IconButton><OpenInNew/></IconButton>
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        </List>
+                    </React.Fragment> : null
                 }
                 {error ? <div hidden>
                     <Typography variant={"button"}>Failed to Load</Typography>

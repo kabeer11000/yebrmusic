@@ -11,7 +11,7 @@ interface AdapterInterface extends ReaderInterface, WriterInterface
     /**
      * Create a new instance of the adapter, if it is available.
      *
-     * @return Option<\Dotenv\Repository\Adapter\AdapterInterface>
+     * @return Option<AdapterInterface>
      */
     public static function create();
 }

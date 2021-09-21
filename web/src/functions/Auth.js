@@ -3,29 +3,39 @@ import {storageIndex} from "./Helper/StorageIndex";
 import {get, set} from "idb-keyval";
 import Log from "./Log";
 import {Cookies} from "./Cookies";
+import {comLinkWorker} from "./Worker/worker-export";
 
+
+export const _GetActiveAccounts = async () => {
+    const accounts = await fetch("https://cdn.jsdelivr.net/gh/kabeer11000/docs-hosted@yebrmusic-assets/accounts.json" || "http://localhost:8084/service/user/sessions" || endPoints.Auth.GetActiveSessionAccounts, {
+        // method: "post",
+        // credentials: "include"
+    }).then(a => a.status === 200 ? a.json() : []).catch(() => []);
+    return {active: accounts.filter(account => account.signed_in), all: accounts};
+};
 
 export const GetActiveAccounts = async () => {
-	const accounts = await fetch(endPoints.Auth.getAccounts, {
-		credentials: "include"
-	}).then(a => a.status === 200 ? a.json() : []).catch();
-	return {active: accounts.filter(account => account.signed_in), all: accounts};
+    const accounts = await fetch("http://localhost:8084/service/user/sessions" || endPoints.Auth.GetActiveSessionAccounts, {
+        method: "post",
+        credentials: "include"
+    }).then(a => a.status === 200 ? a.json() : []).catch(() => []);
+    return {active: accounts.filter(account => account.signed_in), all: accounts};
 };
-export const ServiceLoginRequest = (u) => fetch(endPoints.Auth.GetServiceLoginKey, {
-	credentials: "include",
-	method: "post",
-	headers: {authuser: u}
-}).then(response => response.status === 200 ? response.json() : null).catch(() => ({}));
+export const ServiceLoginRequest = (u) => comLinkWorker.fetch(endPoints.Auth.GetServiceLoginKey, {
+    credentials: "include",
+    method: "post",
+    headers: {authuser: u}
+})//.then(response => response.status === 200 ? response.json() : null).catch(() => ({}));
 
 export const AuthOnLoad = async () => {
-	if (navigator.onLine) {
-		await GetActiveAccounts(); // Try Catch
-		const user = parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam));
-		if (!window.__kn.music.accounts.active.length) {
-			window.__kn.music.internals.auth_redirecting = true;
-			window.location.href = endPoints.authRedirect;
-			return;
-		}
+    if (navigator.onLine) {
+        await GetActiveAccounts(); // Try Catch
+        const user = parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam));
+        if (!window.__kn.music.accounts.active.length) {
+            window.__kn.music.internals.auth_redirecting = true;
+            window.location.href = endPoints.authRedirect;
+            return;
+        }
 		window.__kn.music.user = window.__kn.music.accounts.active[user || 0];
 		await set(storageIndex.cookies.UserData, window.__kn.music.user);
 		if (!Cookies.getCookie(storageIndex.cookies.ServiceLoginToken)) await ServiceLoginRequest();

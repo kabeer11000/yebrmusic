@@ -5,7 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import {ArrowBack, Menu, Search} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
-import {Link, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import HideOnScroll from "../HideOnScroll/HideOnScroll";
 import Avatar from "@material-ui/core/Avatar";
@@ -15,7 +15,7 @@ import {AccountChooserContext, AccountContext, DrawerContext, isTvContext, Loadi
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import {Divider} from "@material-ui/core";
-
+import Link from "../Link";
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		width: "calc(100% - 4.5rem)",
@@ -43,7 +43,6 @@ const CustomAppBar = () => {
 	const [drawer, setDrawer] = React.useContext(DrawerContext);
 	const tv = React.useContext(isTvContext);
 	const classes = useStyles();
-	const [loading] = React.useContext(LoadingContext);
 	const history = useHistory();
 	const {account: userInfo} = React.useContext(AccountContext);
 	const [open, setOpen] = React.useContext(AccountChooserContext).dialog;
@@ -51,9 +50,6 @@ const CustomAppBar = () => {
 	return tv ?
 		(
 			<React.Fragment>
-				<div style={{zIndex: "99999"}} hidden={!loading} className={"fixed-top"}>
-					<LinearProgress/>
-				</div>
 				<AppBar position="sticky" className={"bg-transparent position-relative"} elevation={0}>
 					<Toolbar style={{width: "100%", display: "inline-flex", justifyContent: "space-between"}}>
 						<div className={"d-inline-flex"}>
@@ -70,9 +66,9 @@ const CustomAppBar = () => {
 							<Button component={Link} to={"/artists"}>ARTISTS</Button>
 						</div>
 						<div className={"d-flex"}>
-							<IconButton component={Link} to={"/search"}>
-								<Search/>
-							</IconButton>
+                            <IconButton component={Link} to={"/search?r=1"}>
+                                <Search/>
+                            </IconButton>
 							{/*<Divider orientation={"vertical"}/>*/}
 							{/*<IconButton>*/}
 							{/*	<Avatar src={userInfo ? userInfo.account_image : ""}/>*/}
@@ -89,12 +85,12 @@ const CustomAppBar = () => {
 							{drawer ? <ArrowBack/> : <Menu/>}
 						</IconButton>
 						<InputBase
-							readOnly
-							onClick={() => history.push("/search")}
+                            readOnly
+                            onClick={() => history.push("/suggest?r=1")}
 							// component={Link} to={"/search"}
-							className={`text-truncate ${classes.input}`}
-							placeholder="Search Yebr"
-							inputProps={{"aria-label": "search yebr music"}}
+                            className={`text-truncate ${classes.input}`}
+                            placeholder="Search Yebr"
+                            inputProps={{"aria-label": "search yebr music"}}
 						/>
 						<IconButton className={classes.iconButton} aria-label="search"
 									onClick={() => history.push("/search")}>

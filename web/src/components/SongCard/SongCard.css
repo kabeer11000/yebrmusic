@@ -18,6 +18,6 @@ div.Slider {
     white-space: nowrap;
 }
 
-div.Slider .SongCard {
+div.Slider > .SongCard {
     display: inline-block;
 }

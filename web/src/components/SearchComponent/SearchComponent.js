@@ -1,6 +1,5 @@
 import React from "react";
 import "./SearchComponent.css";
-import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -11,122 +10,121 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {Link, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
+import Link from "../Link"
 import {SuggestOfflineSongs} from "../../functions/SongsUtility";
-import Preloader from "../Preloader/Preloader";
 import {Slide} from "@material-ui/core";
-import {SearchContext} from "../../Contexts";
-import {useNetwork} from "../../Hooks";
+import {useNetwork, useQuery} from "../../Hooks";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="left" ref={ref} {...props} />;
+    return <Slide direction="left" ref={ref} {...props} />;
 });
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: "1rem",
-		padding: "2px 4px",
-		display: "flex",
-		alignItems: "center",
-		width: "100%",
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
-	divider: {
-		height: 28,
-		margin: 4,
-	},
+    root: {
+        marginTop: "1rem",
+        padding: "2px 4px",
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    divider: {
+        height: 28,
+        margin: 4,
+    },
 }));
+const TransitionComponent = ({children, slide}) => {
+    return slide ? <Slide direction="left" in={true}>
+        <div>{children}</div>
+    </Slide> : <React.Fragment>{children}</React.Fragment>
+}
 
-const SearchComponent = (props) => {
-	let history = useHistory();
-	const [open, setOpen] = React.useState(true);
-	const [queryArray, setQueryArray] = React.useState([]);
-	const abortController = new AbortController();
-	const online = useNetwork();
-	const [listItems, setListItems] = React.useState(
-		<div className={"errorPage text-center w-100"}
-			 style={{
-				 position: "absolute",
-				 top: "50%",
-				 left: "50%",
-				 transform: "translate(-50%, -50%)"
-			 }}>
-			<img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}
-				 alt={"Kabeers Music Logo"}/>
-			<br/>
-			<ListItemText primary={online ? "Searching Kabeer's Music" : "Searching In Downloads"}
-						  secondary={"Results will appear as you type"}/>
-		</div>
-	);
-	const classes = useStyles();
-	// const {token} = React.useContext(AccountContext);
-	const [query, setQuery] = React.useContext(SearchContext);
-	const ListItems = () => {
-		if (!queryArray) return;
-		setListItems(() => queryArray.map((value, index) => {
-			if (!value) return;
-			return (
-				<ListItem button key={index} onClick={() => {
-					setQuery(value.suggestion.attributes.data);
-				}} component={Link} to={"/search/results"}>
-					<ListItemIcon>
-						<SearchOutlined/>
-					</ListItemIcon>
-					<ListItemText primary={`${value.suggestion.attributes.data}`}/>
-				</ListItem>
-			);
-		}));
-	};
 
-	const Search = async (e) => {
-		if (e.key === "Enter") return query ? history.push("/search/results") : null;
-		if (online) await SuggestSearch(e.target.value, abortController).then(v => v && v.length ? setQueryArray(v) : setQueryArray([])).catch(() => []);
-		else await SuggestOfflineSongs(e.target.value).then(t => setQueryArray(t.map(t => ({suggestion: {attributes: {data: t.item.videoElement.snippet.title}}}))));
-		ListItems();
-		props.history.push({
-			pathname: "search",
-			search: "?" + new URLSearchParams({q: e.target.value}).toString()
-		});
-		setQuery(e.target.value);
-	};
+const SearchComponent = () => {
+    let history = useHistory();
+    const [queryArray, setQueryArray] = React.useState([]);
+    const online = useNetwork();
+    const classes = useStyles();
+    const queryParam = useQuery();
+    const [query, setQuery] = React.useState(queryParam.get("q"));
 
-	React.useEffect(() => () => abortController.abort(), []);
-	return (
-		<div className="SearchComponent">
-			<Dialog fullScreen open={open} TransitionComponent={Transition}>
-				<AppBar className={"fixed-top"}>
-					<Toolbar>
-						{window.history ? <IconButton onClick={() => {
-							setOpen(false);
-						}} component={Link} to={"/home"} color="primary.light" visibility={false}>
-							<ArrowBack style={{color: "#FFF"}}/>
-						</IconButton> : null}
-						<InputBase
-							// autoCapitalize={true}
-							// autoComplete={true}
-							autoFocus={true}
-							onKeyUp={Search}
-							className={`${classes.input} text-light`}
-							placeholder="Search Yebr"
-							inputProps={{"aria-label": "Search Yebr"}}
-						/>
-					</Toolbar>
-				</AppBar>
-				<div className="container px-3" style={{marginTop: "4rem"}}>
-					<div className="row">
-						{listItems}
-						{listItems ? null : <Preloader/>}
-					</div>
-				</div>
-			</Dialog>
-		</div>
-	);
+    React.useEffect(() => {
+        if (queryParam.get("q")) Search({target: {value: queryParam.get("q")}})
+    }, []);
+    const Search = async (e) => {
+        setQuery(e.target.value);
+        if (e.code === "Enter" && e.target.value) return history.push(`/search?q=${e.target.value}`);
+        const suggestions = online ? await SuggestSearch(e.target.value) : await SuggestOfflineSongs(e.target.value).then(t => t.map(t => ({suggestion: {attributes: {data: t.item.videoElement.snippet.title}}})));
+        setQueryArray(suggestions);
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + "q=" + e.target.value;
+        window.history.replaceState({path: newurl}, "", newurl);
+        // Log(e)
+    };
+    const [focus, setFocus] = React.useState(true);
+    return (
+        <TransitionComponent slide={queryParam.get("r")}>
+            <div className="SearchComponent">
+                <AppBar color={"inherit"} className={"fixed-top"}>
+                    <Toolbar>
+                        {window.history ?
+                            <IconButton component={Link} to={"/home"} color="primary.light" visibility={false}>
+                                <ArrowBack style={{color: "#FFF"}}/>
+                            </IconButton> : null}
+                        <InputBase
+                            autoFocus={true}
+                            value={query}
+                            onFocus={() => setFocus(true)}
+                            onBlur={() => setFocus(false)}
+                            onKeyUp={Search}
+                            autoComplete={false}
+                            spellCheck={true} autoCapitalize={true}
+                            className={`${classes.input} text-light`}
+                            placeholder="Search Yebr"
+                            inputProps={{"aria-label": "Search Yebr"}}
+                        />
+                        {focus ? null : <SearchOutlined style={{color: "#FFF"}}/>}
+                    </Toolbar>
+                </AppBar>
+                <div className="container px-3" style={{marginTop: "4rem"}}>
+                    <div className="row">
+                        {(!query || !queryArray?.length) && (
+                            <div className={"errorPage text-center w-100"}
+                                 style={{
+                                     position: "absolute",
+                                     top: "50%",
+                                     left: "50%",
+                                     transform: "translate(-50%, -50%)"
+                                 }}>
+                                <img src={"./assets/icons/darkmode_nothingfound.svg"}
+                                     style={{width: "8rem", height: "auto"}}
+                                     alt={"Yebr Logo"}/>
+                                <br/>
+                                <ListItemText primary={online ? "Searching Yebr" : "Searching In Downloads"}
+                                              secondary={"Suggestions will appear as you type"}/>
+                            </div>
+                        )}
+                        {queryArray && query && queryArray.map((value, index) => (
+                            <ListItem button key={index} component={Link}
+                                      to={`/search?q=${value.suggestion.attributes.data}`}>
+                                <ListItemIcon>
+                                    <SearchOutlined/>
+                                </ListItemIcon>
+                                <ListItemText primary={`${value.suggestion.attributes.data}`}/>
+                            </ListItem>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </TransitionComponent>
+    );
 };
 SearchComponent.propTypes = {};
 SearchComponent.defaultProps = {};

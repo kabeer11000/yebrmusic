@@ -20,24 +20,18 @@ const NextListItem = (props) => {
 				  selected={props.currentIndex === props.keyIndex} className={"p-0 px-1"}
 				  onClick={props.onClick}>
 			<ListItemAvatar>
-				<Avatar alt={props.title} src={props.image}/>
-			</ListItemAvatar>
-			<ListItemText
-				className={"text-truncate"}
-				primary={props.title}
-				secondary={
-					<React.Fragment>
-						<Typography
-							component="span"
-							variant="body2"
-							className={`${classes.inline} text-truncate`}
-							color="textPrimary"
-						>
-							<div className={"text-truncate"}>{props.channelTitle}</div>
-						</Typography>
-					</React.Fragment>
-				}
-			/>
+                <Avatar imgProps={{
+                    loading: "lazy"
+                }} variant="rounded" alt={props.title} src={props.image}/>
+            </ListItemAvatar>
+            <ListItemText
+                primary={<div className={"text-truncate"}>{props.title}</div>}
+                secondary={<div
+                    // component="span"
+                    // variant="body2"
+                    className={`${classes.inline} text-truncate`}
+                    color="textPrimary">{props.channelTitle}</div>}
+            />
 		</ListItem>);
 };
 

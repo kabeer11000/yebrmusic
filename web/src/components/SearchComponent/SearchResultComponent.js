@@ -11,7 +11,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {Link, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
+import Link from "../Link"
 import Avatar from "@material-ui/core/Avatar";
 import {getSong, SuggestOfflineSongs} from "../../functions/SongsUtility";
 import {Slide} from "@material-ui/core";
@@ -19,7 +20,7 @@ import SkeletonList from "../SkeletonList/SkeletonList";
 import Divider from "@material-ui/core/Divider";
 import {PlayContext, SearchContext} from "../../Contexts";
 import SessionRecommendation from "../../functions/SessionRecommendation";
-import {useNetwork} from "../../Hooks";
+import {useNetwork, useQuery} from "../../Hooks";
 import Log from "../../functions/Log";
 
 
@@ -50,13 +51,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const SearchResultComponent = () => {
 	const history = useHistory();
 	const classes = useStyles();
-
-	const [open, setOpen] = React.useState(true);
 	const [listItems, setListItems] = React.useState(null);
-	const {PlaySong} = React.useContext(PlayContext);
+    const {PlaySong} = React.useContext(PlayContext);
+    const query = useQuery();
 
 	const abortController = new AbortController();
-	const [query] = React.useContext(SearchContext);
+    // const [query] = React.useContext(SearchContext);
 
 	// const errorPage = (message = "No Internet Connection", button = <Button component={Link}
 	//                                                                         to={"/search"}>Retry</Button>) => (
@@ -72,39 +72,39 @@ const SearchResultComponent = () => {
 
 	const online = useNetwork();
 	React.useEffect(() => {
-		if (!query) return history.push("/search");
-		SessionRecommendation.addSearch(query);
-		if (navigator.onLine) SearchYoutube(query, abortController).then(setListItems);
-		else SuggestOfflineSongs(query).then(a => {
-			setListItems({
-				accounts: [],
-				etag: "b78bc54f-dd76-4ed9-ae0e-fab7e11a5336",
-				items: a,
-				kind: "KabeersMusic#searchListResponse",
-				pageInfo: {totalResults: a.length},
-				regionCode: "PK",
-				title: query,
-			});
-			Log(a);
+        if (!query.get("q")) return history.push("/suggest");
+        SessionRecommendation.addSearch(query.get("q"));
+        if (online) SearchYoutube(query).then(setListItems);
+        else SuggestOfflineSongs(query).then(results => {
+            setListItems({
+                accounts: [],
+                etag: "b78bc54f-dd76-4ed9-ae0e-fab7e11a5336",
+                items: results,
+                kind: "KabeersMusic#searchListResponse",
+                pageInfo: {totalResults: results.length},
+                regionCode: "PK",
+                title: query,
+            });
+            // Log("Searched");
 		});
 		return () => abortController.abort();
 	}, [online]);
 	return (
-		<div className="SearchResultComponent">
-			<Dialog fullScreen open={open}>
-				<AppBar className={"fixed-top"}>
-					<Toolbar component={Link} to={`/search?q=${query}`} style={{textDecoration: "none"}}>
-						{window.history ?
-							<IconButton onClick={() => setOpen(false)} component={Link} style={{textDecoration: "none"}}
-										to={"/home"} color="primary.light"
-										visibility={false}>
-								<ArrowBack/>
-							</IconButton> : null}
-						<InputBase
-							autoCapitalize={true}
-							autoComplete={true}
-							value={query}
-							className={`${classes.input} text-light`}
+        <div className="SearchResultComponent">
+            {/*<Dialog fullScreen open={open}>*/}
+            <AppBar color={"inherit"} className={"fixed-top"}>
+                <Toolbar component={Link} to={`/suggest?q=${query.get("q")}&r=0`} style={{textDecoration: "none"}}>
+                    {window.history ?
+                        <IconButton component={Link} style={{textDecoration: "none"}}
+                                    to={"/home"} color="primary.light"
+                                    visibility={false}>
+                            <ArrowBack/>
+                        </IconButton> : null}
+                    <InputBase
+                        autoCapitalize={true}
+                        autoComplete={true}
+                        value={query.get("q")}
+                        className={`${classes.input} text-light`}
 							placeholder="Search Yebr"
 							inputProps={{"aria-label": "Search Yebr"}}
 						/>
@@ -112,84 +112,69 @@ const SearchResultComponent = () => {
 				</AppBar>
 				<div className={"container px-3"} style={{marginTop: "4rem"}}>
 					<div className={"row"}>
-						{listItems && listItems.items ? (
-							<React.Fragment>
-								{listItems.accounts.length ? (
-									<React.Fragment>
-										{listItems.accounts.map((value, index) => (
-											<ListItem component={Link} button key={index}
-													  to={`/artist/${value.url.split("/").slice(-1)[0]}`}>
-												<ListItemIcon>
-													<Avatar alt={value.title} src={value.image}/>
-												</ListItemIcon>
-												<ListItemText primary={`${value.title}`}
-															  secondary={value.subCountLabel ? `${value.subCountLabel} Listeners` : ""}/>
-											</ListItem>
-										))}
-										<Divider/>
-									</React.Fragment>
-								) : null}
-								{listItems.items.length ? (
-									<React.Fragment>
-										{listItems.items.map((song, index) => (
-											<ListItem button key={index} onClick={async () => {
-												console.log(listItems.items.map(result => result.item));
-												if (!online) {
-													// song.item.videoElement.snippet.thumbnails.high.url = URL.createObjectURL(song.item.blobs.thumbnail)
-													return PlaySong({
-														useProxy: false,
-														songURI: URL.createObjectURL(song.item.blobs.audio),
-														song: song.item,
-														others: {
-															offline: true
-														},
-														playList: {
-															index: index,
-															list: ({
-																...listItems,
-																items: listItems.items.map(result => result.item),
-															})
-														}
-													});
-												}
-												return PlaySong({
-													useProxy: true,
-													songURI: await getSong(song.id),
-													song: song,
-													playList: {
-														list: listItems,
-														index: index
-													}
-												});
-											}
-												// a({
-												// 	useProxy: false,
-												// 	songURI: URL.createObjectURL(data.blobs.audio),
-												// 	song: data.videoElement,
-												// 	playList: {
-												// 		...playState.playList,
-												// 		index: index
-												// 	}
-												// })
-												// await PlaySong(value, {
-												// 	list: listItems, index: index
-												// })
-											}>
-												{!online ? <React.Fragment>
-													<ListItemIcon>
-														<Avatar alt={song.item.videoElement.snippet.title}
-																src={song.item.videoElement.snippet.thumbnails.high.url}/>
-													</ListItemIcon>
-													<ListItemText primary={`${song.item.videoElement.snippet.title}`}
-																  secondary={`${song.item.videoElement.snippet.channelTitle}`}/>
-												</React.Fragment> : <React.Fragment>
-													<ListItemIcon>
-														<Avatar alt={song.snippet.title}
-																src={song.snippet.thumbnails.high.url}/>
-													</ListItemIcon>
-													<ListItemText primary={`${song.snippet.title}`}
-																  secondary={`${song.snippet.channelTitle}`}/>
-												</React.Fragment>}
+                        {listItems?.items ? (
+                            <React.Fragment>
+                                {listItems.accounts.length ? (
+                                    <React.Fragment>
+                                        {listItems.accounts.map((value, index) => (
+                                            <ListItem component={Link} button key={index}
+                                                      to={`/artist/${value.url.split("/").slice(-1)[0]}`}>
+                                                <ListItemIcon>
+                                                    <Avatar alt={value.title} src={value.image}/>
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={<div className={"-text-truncate"}>{value.title}</div>}
+                                                    secondary={<div
+                                                        className={"text-truncate"}>{value.subCountLabel ? `${value.subCountLabel} Listeners` : ""}</div>}/>
+                                            </ListItem>
+                                        ))}
+                                        <Divider/>
+                                    </React.Fragment>
+                                ) : null}
+                                {listItems?.items?.length ? (
+                                    <React.Fragment>
+                                        {listItems.items.map((song, index) => (
+                                            <ListItem button key={index} onClick={async () => online ? PlaySong({
+                                                useProxy: true,
+                                                song: song,
+                                                play: true,
+                                                playList: {
+                                                    list: listItems,
+                                                    index: index
+                                                }
+                                            }) : PlaySong({
+                                                useProxy: false,
+                                                songURI: URL.createObjectURL(song.item.blobs.audio),
+                                                song: song.item,
+                                                play: true,
+                                                others: {
+                                                    offline: true
+                                                },
+                                                playList: {
+                                                    index: index,
+                                                    list: ({
+                                                        ...listItems,
+                                                        items: listItems.items.map(result => result.item),
+                                                    })
+                                                }
+                                            })}>
+                                                {!online ? <React.Fragment>
+                                                    <ListItemIcon>
+                                                        <Avatar alt={song.item.videoElement.snippet.title}
+                                                                variant="rounded"
+                                                                src={song.item.videoElement.snippet.thumbnails.high.url}/>
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={song.item.videoElement.snippet.title}
+                                                                  secondary={song.item.videoElement.snippet.channelTitle}/>
+                                                </React.Fragment> : <React.Fragment>
+                                                    <ListItemIcon>
+                                                        <Avatar alt={song.snippet.title}
+                                                                variant="rounded"
+                                                                src={song.snippet.thumbnails.high.url}/>
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={song.snippet.title}
+                                                                  secondary={song.snippet.channelTitle}/>
+                                                </React.Fragment>}
 											</ListItem>
 										))}
 									</React.Fragment>
@@ -198,7 +183,7 @@ const SearchResultComponent = () => {
 						) : <SkeletonList length={10}/>}
 					</div>
 				</div>
-			</Dialog>
+            {/*</Dialog>*/}
 		</div>
 	);
 };

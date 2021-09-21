@@ -7,17 +7,18 @@ import {getHistory} from "../../functions/SongsUtility";
 import DownloadListItem from "../DownloadListItem/DownloadListItem";
 import Container from "@material-ui/core/Container";
 import {Button} from "@material-ui/core";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
+import Link from "../Link"
 import {isTvContext, LoadingContext, PlayContext} from "../../Contexts";
 import {comLinkWorker} from "../../functions/Worker/worker-export";
 import endPoints from "../../api/EndPoints/EndPoints";
 
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-		maxWidth: "100%",
-		backgroundColor: theme.palette.background.paper,
+    root: {
+        width: "100%",
+        maxWidth: "100%",
+        backgroundColor: theme.palette.background.paper,
 	},
 	inline: {
 		display: "inline",

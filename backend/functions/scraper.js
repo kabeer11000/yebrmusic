@@ -1,6 +1,7 @@
 const ytSearch = require("yt-search");
 const uuid = require("uuid");
 const ytPlaylist = require("ytpl");
+const axios = require("axios");
 /**
  * GetSong Details By Id
  * @param id
@@ -203,6 +204,7 @@ const getPlayList = async (id) => ytPlaylist(id).then(list => ({
         }
     }))
 }));
+const IDResolver = `https://docs.kabeercloud.tk/yebr/resolve-yt-channel-id.php`;
 /**
  * Get Artist
  * @param id
@@ -210,7 +212,16 @@ const getPlayList = async (id) => ytPlaylist(id).then(list => ({
  */
 const getArtist = async (id) => {
     try {
-        const channel = await ytPlaylist(`https://www.youtube.com/channel/${id}`);
+        // console.log(await axios({
+        //     method: "POST",
+        //     url: IDResolver,
+        //     data: JSON.stringify({u: `https://www.youtube.com/${id}`})}).then(res => res.data))
+        // if (id.length < 24) id = await axios({method: "POST",url: "https://docs.kabeercloud.tk/yebr/resolve-yt-channel-id.php",data: JSON.stringify({u: `https://www.youtube.com/${id}`})})
+        const channel = await ytPlaylist(`https://www.youtube.com/channel/${await id.length !== 24 ? await axios({
+            method: "POST",
+            url: IDResolver,
+            data: JSON.stringify({u: `https://www.youtube.com/${id}`})
+        }).then(res => res.data) : id}`);
         return ({
             ...channel,
             author: {

@@ -5,17 +5,18 @@ import {Explore, GetApp, Home, Subscriptions} from "@material-ui/icons";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import AppBar from "@material-ui/core/AppBar";
-import {Link} from "react-router-dom";
+import Link from "../Link"
+// import {Link} from "react-router-dom";
 import Slide from "@material-ui/core/Slide";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import * as PropTypes from "prop-types";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import {isTvContext, LoadingContext} from "../../Contexts";
+import {BottomNavigationContext, isTvContext, LoadingContext} from "../../Contexts";
 
 const useStyles = makeStyles({
-	root: {
-		width: "100%",
-	},
+    root: {
+        width: "100%",
+    },
 });
 const HideOnScroll = (props) => {
 	const {children, window} = props;
@@ -35,11 +36,16 @@ const CustomBottomNavigation = () => {
 	// const {location} = useHistory();
 	const [value, setValue] = React.useState("/home");
 	const tv = React.useContext(isTvContext);
-	const [loading] = React.useContext(LoadingContext);
+    const [loading] = React.useContext(LoadingContext);
+    const [, setBottomNav] = React.useContext(BottomNavigationContext)
 
 	React.useEffect(() => {
-		setValue(window.location.pathname === "/" ? "/home" : window.location.pathname);
-	}, []);
+        setValue(window.location.pathname === "/" ? "/home" : window.location.pathname);
+        setBottomNav(true);
+        return () => {
+            setBottomNav(false);
+        }
+    }, []);
 	return tv ? null : (
 		<AppBar color="primary" style={{
 			position: "fixed",

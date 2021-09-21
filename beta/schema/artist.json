@@ -1,0 +1,10 @@
+{
+  "id": "YEBR_ARTIST_ID",
+  "linked": [
+    {
+      "source": "__kn.music.sources.youtube",
+      "id": "YOUTUBE_CHANNEL_ID",
+      "name": "Travis Scott"
+    }
+  ]
+}

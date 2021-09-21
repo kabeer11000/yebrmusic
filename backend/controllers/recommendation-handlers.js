@@ -1,14 +1,9 @@
 const endpoints = require("../api/endpoints");
 const keys = require("../keys");
-const MongoClient = require("mongodb").connect(keys.db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(db => db.db("music"));
+const MongoClient = require("../MongoClient");
 const axios = require("axios").default;
-const jwt = require("jsonwebtoken");
 const history = require("../functions/history");
 const scraper = require("../functions/scraper");
-const {ValidParams} = require("../functions/misc");
 const {getMaximum} = require("../functions/misc");
 const nodeIPLocate = require("node-iplocate");
 /**
@@ -53,12 +48,12 @@ const KnnRankedCandidates = async (req, res) => {
             "etag": Math.random(),
             "regionCode": "PK",
             "pageInfo": {
-                "totalResults": recommendations.length
+                "totalResults": recommendations?.length
             },
             "items": recommendations
         });
     } catch (e) {
-        (e.name !== "JsonWebTokenError") && console.log(e);
+        (e.name !== "JsonWebTokenError") && console.log(e.name);
         res.status(400).end();
     }
 }
@@ -142,7 +137,7 @@ const BasedOnLastSearches = async (req, res) => {
             kind: "KabeersMusic#searchListResponse",
             etag: Math.random(),
             regionCode: "PK",
-            title: history.length ? `Based on Your Last Searches` : `Music You might like`,
+            title: history?.length ? `Based on Your Last Searches` : `Music You might like`,
             pageInfo: {
                 totalResults: r.size,
             },
@@ -163,12 +158,17 @@ const BasedOnLastSearches = async (req, res) => {
  */
 const BecauseYouListenedTo = async (req, res) => {
     try {
-        const watches = (req.__kn.session.user) ? {
+        let watches = (req.__kn.session.user) ? {
             u_history: true, watches: (await history.getWatchHistory({
                 user_id: req.__kn.session.user.user_id,
                 limit: 5
             }))
         } : {u_history: false, watches: (await history.getWatchHistory({})).slice(-5)};
+        if (!watches.watches.length) watches = {
+            u_history: false,
+            watches: (await history.getWatchHistory({})).slice(-5)
+        };
+        console.log(watches);
         const artist = getMaximum(watches.watches.map(v => v.song.snippet.channelTitle));
         const response = await scraper.searchYoutube(`${artist.name} official music`);
         response.title = watches.u_history ? `Because You Listened to ${artist.name}` : `Top Artist Right Now`;

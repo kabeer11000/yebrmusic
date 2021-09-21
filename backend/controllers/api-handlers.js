@@ -143,6 +143,47 @@ const topArtistsRanked = async (req, res) => {
         // });
         // const db = await MongoClient;
         // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
+        // const watches = await history.getWatchHistory({
+        //     user_id: req.__kn.session.user.user_id,
+        // });
+        // const watches = await db.collection("history").find({
+        //     user_id: "SD6YoQaxbvSMrXkHuXWQM9kjgcJuYN4aCQNbc8jA" || decoded.sub,
+        //     type: "listeningHistory",
+        // }).limit(5).toArray();
+
+        // const artists = new Set(watches.map(v => v.song.snippet.channelTitle));
+        // const response = [];
+        res.write(`{"kind": "KabeersMusic#cumilativeArtistsList", "etag": "${uuid.v4()}", "regionCode": "PK", "artists": [`);
+        const artists = ["travis scott", "justin bieber"];
+        for (const [index, artist] of artists.entries()) res.write(`${JSON.stringify({
+            ...await scraper.searchYoutube(`${artist} official music`),
+            title: artist
+        })} ${index === artists.length - 1 ? "" : ","}`);
+        res.write(`], "pageInfo": {"totalResults": ${artists.length}}}`);
+        res.end();
+        // return res.json({
+        //     kind: "KabeersMusic#cumilativeArtistsList",
+        //     etag: uuid.v4(),
+        //     regionCode: "PK",
+        //     pageInfo: {
+        //         totalResults: response.length,
+        //     },
+        //     artists: response
+        // });
+    } catch (e) {
+        console.log(e);
+        return res.status(400).end();
+    }
+};
+
+const _topArtistsRanked = async (req, res) => {
+    // if (!req.headers.authorization) return res.status(400).json("Bad Request");
+    try {
+        // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
+        //     algorithms: "RS256"
+        // });
+        // const db = await MongoClient;
+        // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:feed"], "grant_types")) return res.status(400).end();
         const watches = await history.getWatchHistory({
             user_id: req.__kn.session.user.user_id,
         });

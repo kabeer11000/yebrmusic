@@ -1,4 +1,9 @@
-importScripts("./worker-scripts/comlink.min.js", "./worker-scripts/fuse.js", "./worker-scripts/dexie.min.js", "https://naturalintelligence.github.io/fast-xml-parser/lib/parser.js");
+importScripts(
+    "./worker-scripts/comlink.min.js",
+    "./worker-scripts/fuse.js",
+    "./worker-scripts/dexie.min.js",
+    // "https://naturalintelligence.github.io/fast-xml-parser/lib/parser.js"
+);
 
 const fusePrivates = {
     corpus: null,

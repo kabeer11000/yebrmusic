@@ -43,10 +43,9 @@ const Settings = () => {
 				<div style={{display: "inline-flex", justifyContent: "center"}} className={"w-100 mt-5"}>
 					<IconButton>
 						{userInfo ? <Avatar style={{
-							width: "4rem",
-							height: "4rem"
-						}} alt={userInfo.username}
-											src={userInfo.picture}/> : null}
+                            width: "4rem",
+                            height: "4rem"
+                        }} alt={userInfo.username} src={userInfo.account_image}/> : null}
 					</IconButton>
 				</div>
 				{/*<CustomAppBar title={"Settings"}/>*/}

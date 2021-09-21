@@ -1,7 +1,7 @@
 /**
  * Changes XML to JSON
  * Modified version from here: http://davidwalsh.name/convert-xml-json
- * @param {string} xml XML DOM tree
+ * @param {Document} xml XML DOM tree
  */
 // export default async function xml2json(xml) {
 //     return await comLinkWorker.utils.XML2JSON(comlink.proxy(xml));
