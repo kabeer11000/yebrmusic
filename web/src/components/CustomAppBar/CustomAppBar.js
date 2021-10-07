@@ -10,12 +10,12 @@ import {makeStyles} from "@material-ui/core/styles";
 import HideOnScroll from "../HideOnScroll/HideOnScroll";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import {AccountChooserContext, AccountContext, DrawerContext, isTvContext, LoadingContext} from "../../Contexts";
+import {AccountChooserContext, AccountContext, DrawerContext, isTvContext} from "../../Contexts";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import {Divider} from "@material-ui/core";
 import Link from "../Link";
+
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		width: "calc(100% - 4.5rem)",
@@ -101,7 +101,8 @@ const CustomAppBar = () => {
 							<Avatar src={userInfo ? userInfo.account_image : ""}
 									style={{width: "1.7rem", height: "1.7rem"}}/>
 						</IconButton>) : (<Button onClick={() => window.location.href = "LOGIN" + "?prompt=password"}>Sign
-							In</Button>)}
+							In</Button>)
+						}
 						{/*<Divider className={classes.divider} orientation="vertical" />*/}
 						{/*<IconButton component={Link} to={"/settings"} color="primary" className={classes.iconButton} aria-label="directions">*/}
 						{/*	<Mic />*/}

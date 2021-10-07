@@ -11,13 +11,13 @@ import {RetrievalDeleteLS} from "./functions/Helper/RetrievalDeleteLS";
 // import "https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js";
 
 if (!window.__kn.music.developers["debugging-enabled"]) {
-    if (localStorage.getItem(storageIndex.litemode)) localStorage.setItem(storageIndex.litemode, JSON.stringify(true));
+    if (localStorage.getItem(storageIndex.litemode)) localStorage.setItem(storageIndex.litemode, "true");
     console.log = () => {
     };
 }
 window.addEventListener("beforeunload", async (e) => {
+    e.preventDefault();
     await RetrievalDeleteLS.set(storageIndex.cookies.AuthUser, window.__kn.music.auth.authUser);
-    // e.preventDefault()
     // const params = new URLSearchParams(window.location.search);
     // params.set("u", window.__kn.music.auth.authUser);
     // const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + params.toString();

@@ -141,11 +141,11 @@ const Player = () => {
                                     flexDirection: "column",
                                     justifyContent: "space-around",
                                 }}>
-                                    <IconButton onClick={() => audioElement.volume = 1}>
+                                    <IconButton onClick={() => playState.audioElement.volume = 1}>
                                         <VolumeUp/>
                                     </IconButton>
                                     <CustomVolumeSlider style={{height: "25vh"}} orientation={"vertical"}/>
-                                    <IconButton onClick={() => audioElement.volume = 0}>
+                                    <IconButton onClick={() => playState.audioElement.volume = 0}>
                                         <VolumeDown/>
                                     </IconButton>
                                 </div>
@@ -158,8 +158,8 @@ const Player = () => {
                                 </Container>
                             </Grid>
                             <Grid item className={"w-100"} lg={12} md={12} xl={12}>
-                                <Container maxWidth={"md"} className={"justify-content-center w-100"}>
-                                    <div className={"mb-0 d-flex justify-content-center -smallOnDesktop"} style={{
+                                <Container maxWidth={"md"} className={"d-flex justify-content-center w-100"}>
+                                    <div className={"mb-0 smallOnDesktop"} style={{
                                         width: "100%",
                                         alignItems: "center",
                                         display: "inline-flex",
@@ -252,7 +252,7 @@ const Player = () => {
                         <Drawer
                             anchor={"right"}
                             PaperProps={{
-                                style: {maxHeight: "100%"}
+                                style: {maxHeight: "100%", maxWidth: "40vw"}
                             }}
                             open={nextDrawer}
                             onClose={() => setNextDrawer(!nextDrawer)}

@@ -3,7 +3,6 @@ import "./ComingNext.css";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import NextListItem from "./NextListItem";
 import List from "@material-ui/core/List";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import {PlayContext} from "../../../Contexts";
 import PropTypes from "prop-types";
 
@@ -11,13 +10,7 @@ const ComingNext = (props) => {
 	const {playState} = React.useContext(PlayContext);
 	return (
 		<AccordionDetails className={"ComingNext"} style={{/*maxHeight: "90vh", overflowY: "hidden"*/}}>
-			<List className={"text-truncate"} style={{/*maxHeight: "85vh",*/ overflowY: "hidden"}}
-				  subheader={
-					  <ListSubheader component="div" style={{backgroundColor: "primary.main"}} className={"mx-0 px-0"}
-									 id="nested-list-subheader">
-						  Coming Up Next
-					  </ListSubheader>
-				  }>
+			<List style={{/*maxHeight: "85vh",*/ overflowY: "hidden"}}>
 				{
 					playState.playList ? playState.playList.list.items.map((value, index) => <NextListItem
 							onClick={() => props.PlaySong(value, index)} currentIndex={index}

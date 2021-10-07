@@ -27,17 +27,17 @@ const GetAPIKeyWithoutAccount = async (req, res) => {
 };
 const FU = "23c21d659cbb22ee0fcd7c3c1820dd"
 const GetAPIKey = async (req, res) => {
-    return res.status(200).json({
-        public_grant: true,
-        response_type: "KN.MUSIC.PUBLIC.ACCESS",
-        serviceLoginToken: null,
-        ["serviceLoginToken.context"]: {
-            secure: true,
-            key: storageIndex.cookies.APIToken,
-        }
-    })
-    // const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
-    // if (!deviceId) return res.status(400).end();
+    // return res.status(200).json({
+    //     public_grant: true,
+    //     response_type: "KN.MUSIC.PUBLIC.ACCESS",
+    //     serviceLoginToken: null,
+    //     ["serviceLoginToken.context"]: {
+    //         secure: true,
+    //         key: storageIndex.cookies.APIToken,
+    //     }
+    // })
+    const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
+    if (!deviceId) return res.status(400).end();
     return res.cookie(storageIndex.cookies.APIToken, FU, {
         secure: true,
         // sameSite: "none",

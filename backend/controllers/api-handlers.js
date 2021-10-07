@@ -21,17 +21,18 @@ const ValidParams = {
  * @param res
  * @returns {Promise<*>}
  */
-const getSong = async (req, res) => {
+const resolveAudioURI = async (req, res) => {
     // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
         // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
         //     algorithms: "RS256"
         // });
         // if (!ValidParams.token_scope(decoded, ["s564d68a34dCn9OuUNTZRfuaCnwc6:getSong", "s564d68a34dCn9OuUNTZRfuaCnwc6:history.readwrite"], "grant_types")) return res.status(400).end();
-        const song = await ytdl.getInfo(req.query.id).then(info => ytdl.filterFormats(info.formats, "audioonly"));
+        const audio = await ytdl.getInfo(req.params.id).then(info => ytdl.filterFormats(info.formats, "audioonly"));
         res.set("Cache-Control", "public, max-age=20000"); //6hrs approx
-        res.json(song[1].url);
-        await IndexSongOnRequest(req.query.id);
+        console.log(audio)
+        res.json(audio[1].url);
+        await IndexSongOnRequest(req.params.id);
         // console.log(await scraper.getSong(req.query.id))
         // if (req.__kn.session.user) await history.listeningHistory(decoded, req.query.id);
     } catch (e) {
@@ -45,7 +46,7 @@ const getSong = async (req, res) => {
  * @param res
  * @returns {Promise<*>}
  */
-const getSongDetail = async (req, res) => {
+const getAudioMetaData = async (req, res) => {
     // if (!req.headers.authorization) return res.status(402).json("Bad Request");
     try {
         // const decoded = await jwt.verify(req.headers.authorization.split(" ")[1], keys.KabeerAuthPlatform_Public_RSA_Key, {
@@ -237,11 +238,11 @@ const Discover = async (req, res) => {
     }
 }
 module.exports = {
-    getSong,
+    resolveAudioURI,
     searchSong,
     AllArtistsChips,
     topArtistsRanked,
-    getSongDetail,
+    getAudioMetaData,
     Discover,
     GetRecentlyAdded,
     GetHistory

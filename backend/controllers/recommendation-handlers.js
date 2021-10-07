@@ -21,9 +21,9 @@ const KnnRankedCandidates = async (req, res) => {
         //     algorithms: "RS256"
         // });
         const db = await MongoClient;
-        const candidates = req.__kn.session.user ? (await db.collection("watch-candidates").findOne({
+        const candidates = req.__kn.session.user && (await db.collection("watch-candidates").findOne({
             user_id: req.__kn.session.user.user_id
-        }))?.['candidates'] : (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
+        }))?.['candidates'] || (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;
         //return res.status(400).json("Cannot Find Candidates");
         // if (!candidates) {
         //     candidates = (await scraper.getPlayList("PLkqz3S84Tw-TGS_ltn3Yu_4JQAulJqXrL")).items;

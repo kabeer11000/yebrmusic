@@ -3,7 +3,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {pure} from "recompose";
 
@@ -25,12 +24,11 @@ const NextListItem = (props) => {
                 }} variant="rounded" alt={props.title} src={props.image}/>
             </ListItemAvatar>
             <ListItemText
-                primary={<div className={"text-truncate"}>{props.title}</div>}
-                secondary={<div
-                    // component="span"
-                    // variant="body2"
-                    className={`${classes.inline} text-truncate`}
-                    color="textPrimary">{props.channelTitle}</div>}
+				primary={<div>{props.title}</div>}
+				secondary={<div
+					// component="span"
+					// variant="body2"
+					color="textPrimary">{props.channelTitle}</div>}
             />
 		</ListItem>);
 };

@@ -13,9 +13,9 @@ const endPoints = {
     mostPopularFake: key => `${hostName}/files/yt-fake/sample-response-master/yt-api/yt.json`,
     //getVideo: (key, id) => `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${key}`,
     //getVideoFake: (key, id) => `https://cdn.jsdelivr.net/gh/kabeer11000/sample-response@master/yt-api/video-.json`,
-    getProxyfiedURI: (id) => `${hostName}/api/song?id=${id}`,
+    getProxyfiedURI: (id) => `${hostName}/api/resolve/${id}`,
     getSuggestion: (q) => "https://suggestqueries.google.com/complete/search?",
-    getSuggestionFake: (q) => `${proxy}http://clients1.google.com/complete/search?hl=en&output=toolbar&q=${q}`,
+    getSuggestionFake: (q) => `${proxy}https://clients1.google.com/complete/search?hl=en&output=toolbar&q=${q}`,
     searchYoutube: (q) => `${hostName}/api/search?q=${q}`,
     searchYoutubeFake: (key, q) => `${hostName}/files/yt-fake/sample-response-master/yt-api/search-result.json`,
     proxyURI: (url) => `${proxy}${url}`,
@@ -41,7 +41,7 @@ const endPoints = {
     sendCastPause: `${hostName}/cast/user/devices/pause`,
     castPingTest: `${hostName}/cast/user/devices/ping`,
     clientComSocket: `${hostName}/socket/com`,
-    getSongDetail: (id) => `${hostName}/api/song/details/${id}`,
+    getSongDetail: (id) => `${hostName}/api/audio/details/${id}`,
     getTrendingArtistsRanked: `${hostName}/api/feed/trending/artists`,
 
     Auth: {

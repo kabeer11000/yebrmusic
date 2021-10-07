@@ -35,6 +35,9 @@ export const storageIndex = {
     castPreventRepeat: "castPreventFakeId",
     onScreenKeyboard: "onScreenKeyboard",
     castAcceptedDevices: "castAcceptedDevices",
+    util: {
+        onboarded: "__kn.music.user.onboarded"
+    },
     cookies: {
         deviceID: "__kn.auth.user.device-id",
         UserData: "__kn.music.auth.k-auth:userdata",

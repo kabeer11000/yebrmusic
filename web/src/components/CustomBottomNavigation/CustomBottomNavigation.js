@@ -52,6 +52,7 @@ const CustomBottomNavigation = () => {
 			top: "auto",
 			bottom: 0,
 			width: "100%",
+			// zIndex: 900,
 			marginLeft: tv ? "4.5rem" : ""
 		}} component={"div"}>
 			<div style={{zIndex: "99999"}} hidden={!loading} className={"fixed-top"}>

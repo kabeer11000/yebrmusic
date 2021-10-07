@@ -2,8 +2,8 @@ const router = require("express").Router();
 const handler = require("../controllers/api-handlers");
 const {RequestParser} = require("../functions/header-parser");
 
-router.get("/song", RequestParser.Optional, handler.getSong);
-router.get("/song/details/:id", RequestParser.Optional, handler.getSongDetail);
+router.get("/resolve/:id", RequestParser.Optional, handler.resolveAudioURI);
+router.get("/audio/details/:id", RequestParser.Optional, handler.getAudioMetaData);
 router.get("/search", RequestParser.Optional, handler.searchSong);
 router.get("/feed/artists/all", RequestParser.Optional, handler.AllArtistsChips);
 router.get("/feed/trending/artists", RequestParser.Optional, handler.topArtistsRanked);

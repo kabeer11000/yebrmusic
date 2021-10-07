@@ -39,18 +39,26 @@ import {SnackbarProvider} from "notistack";
 import TrendingArtists from "./components/TrendingArtists/TrendingArtists.lazy";
 import {ConnectionError, ErrorComponent} from "./InternalViews/ErrorViewer";
 import AccountChooser from "./components/AccountChooser/AccountChooser.lazy";
-import Preloader from "./components/Preloader/Preloader";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import {CircularProgress} from "@material-ui/core";
 
 const AppRenderer = ({children}) => {
     const {token} = React.useContext(AccountContext);
-    return token && !(token instanceof Error) ? (
-        <app-container>{children}</app-container>) : !token && !(token instanceof Error) ?
-        (token instanceof OfflineToken) ? <app-container>{children}</app-container> : <Preloader/> : (
-            <app-container>
-                <ConnectionError/>
-            </app-container>
-        );
+    return <React.Fragment>
+        {token && !(token instanceof Error) ? (
+            <app-container>{children}</app-container>) : !token && !(token instanceof Error) ?
+            (token instanceof OfflineToken) ? <app-container>{children}</app-container> : <div style={{
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+            }}><CircularProgress/></div> : (
+                <app-container>
+                    <ConnectionError/>
+                </app-container>
+            )}
+        <AccountChooser/>
+    </React.Fragment>;
 };
 const Admin = ({children}) => (
     <Switch>

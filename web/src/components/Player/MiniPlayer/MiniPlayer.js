@@ -15,7 +15,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import List from "@material-ui/core/List";
-import {withRouter} from "react-router-dom";
 
 const styles = {
 	TVPlayButton: {
@@ -25,7 +24,7 @@ const styles = {
 		transform: "translate(-50%, -50%)"
 	}
 };
-const MiniPlayer = ({history}) => {
+const MiniPlayer = () => {
 	const {playState, setPlayState} = React.useContext(PlayContext);
 	const [playerState, setPlayerState] = React.useContext(PlayerContext);
 	if (!playerState.MiniPlayer) return null;
@@ -43,7 +42,7 @@ const MiniPlayer = ({history}) => {
 			playList: null,
 			videoElement: null,
 		});
-		document.title = "Yebr Music";
+		document.title = "Yebr Music - Free Music, Podcasts and Culture";
 		// if (localStorage.getItem(storageIndex.currentlyCasting)) await sendPauseCast(localStorage.getItem(storageIndex.castingTo));
 	};
 	const Song = playState.others.offline ? playState.videoElement.videoElement : playState.videoElement;
@@ -65,14 +64,14 @@ const MiniPlayer = ({history}) => {
     const [bottomNav] = React.useContext(BottomNavigationContext);
 
     return tv ?
-        <Slide in={playerState.MiniPlayer} direction={"top"}>
-            <AppBar
-                color={"slideDown primary.miniPlayer.main"} style={{
-                position: "fixed",
-                top: "auto",
-                bottom: "0",
-                maxWidth: "25rem",
-                maxHeight: "17rem",
+		<Slide in={playerState.MiniPlayer} direction={"up"}>
+			<AppBar
+				color={"slideDown primary.miniPlayer.main"} style={{
+				position: "fixed",
+				top: "auto",
+				bottom: "0",
+				maxWidth: "25rem",
+				maxHeight: "17rem",
 			}} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
 				<Card className={"SongCard"} style={{width: "100%", height: "100%", borderRadius: 0}}
 					  variant={"elevation"}
@@ -139,11 +138,12 @@ const MiniPlayer = ({history}) => {
 			</AppBar>
 		</Slide>
 		:
-		<Slide in={playerState.MiniPlayer} direction={"bottom"}>
+		<Slide in={playerState.MiniPlayer} direction="up">
 			<AppBar
 				color={"slideDown primary.miniPlayer.main"} style={{
 				position: "fixed",
 				top: "auto",
+				transition: "bottom 1s",
 				bottom: bottomNav ? "3.5rem" : 0,
 				width: "100%",
 			}} component={"div"} elevation={1} className={"d-inline-flex KabeersMiniPlayerContainer"}>
@@ -182,4 +182,4 @@ const MiniPlayer = ({history}) => {
 		</Slide>;
 };
 
-export default React.memo(withRouter(MiniPlayer));
+export default React.memo(MiniPlayer);

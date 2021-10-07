@@ -16,7 +16,6 @@ import {
 import {AccountCircle, ArrowDropDown, Explore, GetApp, Home, Search, Settings, Subscriptions} from "@material-ui/icons";
 // import {Link} from "react-router-dom";
 import Link from "../Link"
-import {FocusNode} from "@please/lrud";
 import {AccountChooserContext, AccountContext, DrawerContext, isTvContext} from "../../Contexts";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Strings from "../../Strings";
@@ -209,13 +208,13 @@ const DrawerComponent = ({children}) => {
                             <ListItemIcon><Settings/></ListItemIcon>
                             <ListItemText primary={"Settings"}/>
                         </ListItem>
-                        <ListItem button hidden={!!window.__kn.music.auth.user} component={MuiLink}
+                        <ListItem button hidden={!!!account} component={MuiLink}
                                   href={account ? `https://accounts.kabeersnetwork.tk/?u=${window.__kn.music.auth.authUser}` : endPoints.authRedirect}>
                             <ListItemIcon><AccountCircle/></ListItemIcon>
                             <ListItemText primary={"Account"}/>
                         </ListItem>
                     </List>
-                    <List className={tv ? "d-none" : ""}>
+                    <List>
                         <Divider/>
                         <ListItem button>
                             <Typography muted small>

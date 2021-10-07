@@ -37,7 +37,7 @@
                 super();
             }
         });
-        const production = false;
+        const production = true;
         window.__kn = {
             music: {
                 logger: {
@@ -52,7 +52,7 @@
                                 s.src = _this.api;
                                 s.id = 'consolerescript';
                                 s.onload = async () => {
-                                    console.re.log("Init@", __kn.music.version, {
+                                    console["re"].log("Init@", __kn.music.version, {
                                         debugger_version: __kn.music.debugger_version,
                                         debugging_enabled: __kn.music.developers["debugging-enabled"]
                                     });
@@ -93,7 +93,7 @@
                         last_session_carry_recom_length: 6
                     }
                 },
-                version: "beta-3.4.6",
+                version: "beta-4.4.6",
                 debugger_version: "alpha-0.0.1",
                 audio: new Audio("#"),
                 "data-collection": {},
@@ -103,7 +103,7 @@
                 }
             }
         };
-        document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"]));
+        // document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"]));
         console.error = () => void null;
     </script>
 </head>
@@ -142,8 +142,8 @@
         script.onload = () => console.log("Using `window.fetch` polyfill")
         document.head.appendChild(script);
     }
-</script>
-<script async>
+    /** Polyfill loader JS **/
+
     window.dataLayer = window.dataLayer || [];
 
     function gtag() {

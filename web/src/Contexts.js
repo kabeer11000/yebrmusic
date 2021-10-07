@@ -5,7 +5,7 @@ import {AddMediaSession} from "./functions/Helper/MediaSession";
 // import {Cast, Events} from "./functions/Cast/Cast";
 import endPoints from "./api/EndPoints/EndPoints";
 import {useSnackbar} from "notistack";
-import {get, set} from "idb-keyval";
+import {del, get, set} from "idb-keyval";
 import {storageIndex} from "./functions/Helper/StorageIndex";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 import {comLinkWorker} from "./functions/Worker/worker-export";
@@ -13,7 +13,15 @@ import Log, {DebugLog} from "./functions/Log";
 import SessionRecommendation from "./functions/SessionRecommendation";
 import {GetActiveAccounts, ServiceLoginRequest} from "./functions/Auth";
 import {useNetwork} from "./Hooks";
-import {RetrievalDeleteLS} from "./functions/Helper/RetrievalDeleteLS";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import {Avatar, Button} from "@material-ui/core";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import Drawer from "@material-ui/core/Drawer";
+import Divider from "@material-ui/core/Divider";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
 
 export const CastDialogContext = React.createContext(false);
 export const CastDialogProvider = ({children}) => {
@@ -38,7 +46,7 @@ export class OfflineToken {
 export const AccountContext = React.createContext(null);
 export const AccountProvider = React.memo(({children}) => {
     const [account, setAccount] = React.useState(null);
-    const {sessions} = React.useContext(AccountChooserContext);
+    const {sessions, dialog} = React.useContext(AccountChooserContext);
     const [token, setToken] = React.useState(null);
     const online = useNetwork();
     // const history = useHistory();
@@ -48,34 +56,40 @@ export const AccountProvider = React.memo(({children}) => {
         window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
         window.__kn.music["data-collection"].token = dataServerToken;
     }), [online])*/
-
+    const onlineLogin = async (accounts, account, u) => {
+        if (account) {
+            const {
+                public_grant,
+                serviceLoginToken: token,
+                dataServerToken
+            } = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)));
+            setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
+            window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
+            window.__kn.music.auth.authUser = u;
+            window.__kn.music.auth.user = account;
+            window.__kn.music["data-collection"].token = dataServerToken;
+            await set(storageIndex.cookies.UserData, account)
+        } else {
+            const {public_grant, serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
+            setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
+            window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
+            window.__kn.music["data-collection"].token = dataServerToken;
+            await del(storageIndex.cookies.AuthUser);
+            await del(storageIndex.cookies.UserData);
+        }
+    }
     React.useEffect(() => void new Promise(async () => {
         if (online) {
             const accounts = await GetActiveAccounts();
             sessions[1](accounts);
-            const authuserParam = parseInt(new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam));
-            const u = (authuserParam > accounts.active.length ? 0 : authuserParam) || await RetrievalDeleteLS.get(storageIndex.cookies.AuthUser) || 0;
+            const authuserParam = parseInt((new URLSearchParams(window.location.search).get(storageIndex.AuthUserParam)) || 0);
+            const u = (authuserParam > accounts.active.length ? 0 : authuserParam) || 0;
             const account = accounts.active[u];
-            if (account) {
-                setAccount(account);
-                await set(storageIndex.cookies.UserData, account);
-                await set(storageIndex.cookies.AuthUser, u);
-                const {
-                    public_grant,
-                    serviceLoginToken: token,
-                    dataServerToken
-                } = (await ServiceLoginRequest(accounts.all.findIndex(a => a.user_id === account.user_id)));
-                setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
-                window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
-                window.__kn.music.auth.authUser = u;
-                window.__kn.music.auth.user = account;
-                window.__kn.music["data-collection"].token = dataServerToken;
-            } else {
-                const {public_grant, serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
-                setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
-                window.__kn.music.serviceLoginToken = token || new Error("An Error Occurred, Failed to get Service Login Key");
-                window.__kn.music["data-collection"].token = dataServerToken;
-            }
+            // console.log(u, account, accounts)
+            if (account) setAccount(account);
+            await set(storageIndex.cookies.AuthUser, u);
+            if (!(await get(storageIndex.util.onboarded))) return setOnboardingOpen(true);
+            await onlineLogin(accounts, account, u)
             // history.push(`/u/${u}${window.location.pathname}`)
         } else {
             const account = await get(storageIndex.cookies.UserData);
@@ -96,8 +110,85 @@ export const AccountProvider = React.memo(({children}) => {
             }
         }
     }), [online]);
+    const [onboardingOpen, setOnboardingOpen] = React.useState(false);
 
-    return <AccountContext.Provider value={{account, setAccount, token, setToken}}>{children}</AccountContext.Provider>;
+    return <div>
+        <Drawer
+            // onClose={() => setOnboardingOpen(false)}
+            ModalProps={{keepMounted: false}}
+            PaperProps={{
+                component: Container,
+                maxWidth: "sm",
+                className: "px-0",
+                square: false,
+                style: {
+                    // backgroundImage: "https://cdn.dribbble.com/users/2099490/screenshots/12281820/media/8d021830bc8bb6bdce729d952c042132.png?compress=1&resize=400x300",
+                    minHeight: "60vh",
+                    maxHeight: "70vh",
+                    backgroundSize: "500% 500%",
+                    // background: "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
+                    // animation: "gradient 15s ease infinite",
+                    borderRadius: "0.4rem 0.4rem 0 0",
+                    backdropFilter: "brightness(50%)"
+                }
+            }}
+            anchor={"bottom"} open={onboardingOpen}>
+            {/*<img*/}
+            {/*    style={{*/}
+            {/*        filter: "brightness(40%)",*/}
+            {/*        minHeight: "100%",*/}
+            {/*        minWidth: "auto",*/}
+            {/*        zIndex: "-5",*/}
+            {/*        maxWidth: "120%",*/}
+            {/*        width: "auto",*/}
+            {/*        height: "100%",*/}
+            {/*        position:"fixed",*/}
+            {/*    }}*/}
+            {/*    src={"https://cdn.dribbble.com/users/2099490/screenshots/12281820/media/8d021830bc8bb6bdce729d952c042132.png?compress=1&resize=400x300"}*/}
+            {/*/>*/}
+            <Container className={"py-2 h-100 my-4"}>
+                <Typography variant="h5">Welcome to Yebr!</Typography>
+                <ListItemText secondary={<div>
+                    Stream free music podcasts and more. even when offline.
+                    Choose an account or continue signed out to get started.</div>}/>
+                {/*<Divider variant="inset"/>*/}
+                <List style={{
+                    marginTop: "5rem",
+                    top: "auto",
+                    bottom: 0
+                }}>
+                    {account ? <ListItem button className={"px-0"}>
+                        <ListItemAvatar>
+                            <Avatar alt={account.username} src={account.account_image}/>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={<div className={"text-truncate"}>{account.username}</div>}
+                            secondary={<div className={"text-truncate"}>{account.email}</div>}
+                        />
+                        {/*<ListItemSecondaryAction style={{*/}
+                        {/*    paddingBottom: "1.2rem"*/}
+                        {/*}}>*/}
+                        {/*<IconButton onClick={() => dialog[1](true)}>*/}
+                        {/*    <MoreVert/>*/}
+                        {/*</IconButton>*/}
+                        {/*{!account.signed_in && <ListItemText secondary={"Signed Out"}/>}*/}
+                        {/*</ListItemSecondaryAction>*/}
+                    </ListItem> : null}
+                </List>
+                <Divider variant="inset" style={{
+                    border: "none"
+                }}/>
+                <Button className="mb-4 w-100" variant="contained" onClick={async () => {
+                    setOnboardingOpen(false);
+                    await onlineLogin(sessions[0], account, await get(storageIndex.cookies.AuthUser));
+                    await set(storageIndex.util.onboarded, true);
+                }}>
+                    {account ? `Continue as ${account.username}` : `Continue signed out`}
+                </Button>
+            </Container>
+        </Drawer>
+        <AccountContext.Provider value={{account, setAccount, token, setToken}}>{children}</AccountContext.Provider>
+    </div>;
 });
 export const AccountChooserContext = React.createContext(false);
 export const AccountChooserProvider = React.memo(({children}) => {
