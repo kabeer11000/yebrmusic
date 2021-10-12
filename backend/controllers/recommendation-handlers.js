@@ -1,5 +1,4 @@
 const endpoints = require("../api/endpoints");
-const keys = require("../keys");
 const MongoClient = require("../MongoClient");
 const axios = require("axios").default;
 const history = require("../functions/history");
@@ -168,7 +167,6 @@ const BecauseYouListenedTo = async (req, res) => {
             u_history: false,
             watches: (await history.getWatchHistory({})).slice(-5)
         };
-        console.log(watches);
         const artist = getMaximum(watches.watches.map(v => v.song.snippet.channelTitle));
         const response = await scraper.searchYoutube(`${artist.name} official music`);
         response.title = watches.u_history ? `Because You Listened to ${artist.name}` : `Top Artist Right Now`;
