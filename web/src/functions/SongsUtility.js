@@ -21,6 +21,7 @@ export const getSong = async (id) => {
 	if (!token) return new Error("No Token");
 	if (!navigator.onLine) return new Error("No Connection");
 	return await WebWorker.fetch(endPoints.getProxyfiedURI(id), {
+		// method: "POST",
 		headers: {
 			"Authorization": `Bearer ${token}`
 		}
@@ -31,6 +32,7 @@ export const getSongDetails = async (id) => {
 	if (!token) return new Error("No Token");
 	if (!navigator.onLine) return new Error("No Connection");
 	return await WebWorker.fetch(endPoints.getSongDetail(id), {
+		// method: "POST",
 		headers: {
 			"Authorization": `Bearer ${token}`
 		}

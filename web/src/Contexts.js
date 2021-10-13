@@ -46,7 +46,7 @@ export class OfflineToken {
 export const AccountContext = React.createContext(null);
 export const AccountProvider = React.memo(({children}) => {
     const [account, setAccount] = React.useState(null);
-    const {sessions, dialog} = React.useContext(AccountChooserContext);
+    const {sessions} = React.useContext(AccountChooserContext);
     const [token, setToken] = React.useState(null);
     const online = useNetwork();
     // const history = useHistory();
@@ -68,7 +68,7 @@ export const AccountProvider = React.memo(({children}) => {
             window.__kn.music.auth.authUser = u;
             window.__kn.music.auth.user = account;
             window.__kn.music["data-collection"].token = dataServerToken;
-            await set(storageIndex.cookies.UserData, account)
+            await set(storageIndex.cookies.UserData, account);
         } else {
             const {public_grant, serviceLoginToken: token, dataServerToken} = (await ServiceLoginRequest(null));
             setToken(public_grant ? new OfflineToken() : (token || new Error("An Error Occurred, Failed to get Service Login Key")));
@@ -89,7 +89,7 @@ export const AccountProvider = React.memo(({children}) => {
             if (account) setAccount(account);
             await set(storageIndex.cookies.AuthUser, u);
             if (!(await get(storageIndex.util.onboarded))) return setOnboardingOpen(true);
-            await onlineLogin(accounts, account, u)
+            await onlineLogin(accounts, account, u);
             // history.push(`/u/${u}${window.location.pathname}`)
         } else {
             const account = await get(storageIndex.cookies.UserData);

@@ -15,7 +15,7 @@ export const _GetActiveAccounts = async () => {
 };
 
 export const GetActiveAccounts = async () => {
-    const accounts = await fetch("http://localhost:8084/service/user/sessions" || endPoints.Auth.GetActiveSessionAccounts, {
+    const accounts = await fetch(endPoints.Auth.GetActiveSessionAccounts /* "http://localhost:8084/service/user/sessions" */, {
         method: "post",
         credentials: "include"
     }).then(a => a.status === 200 ? a.json() : []).catch(() => []);
