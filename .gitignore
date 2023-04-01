@@ -16,5 +16,5 @@ recommendation-api/model-snapshots/recommendation-model_tf/assets/
 recommendation-api/models/__pycache__/
 recommendation-api/models/knn_classifier/__pycache__/
 recommendation-api/models/next_song_prediction/__pycache__/
-
+**/.DS_Store
 backend/dev.env
