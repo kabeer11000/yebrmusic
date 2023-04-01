@@ -7,7 +7,7 @@ import endPoints from "./api/EndPoints/EndPoints";
 import {useSnackbar} from "notistack";
 import {del, get, set} from "idb-keyval";
 import {storageIndex} from "./functions/Helper/StorageIndex";
-import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
+import {createTheme as createMuiTheme, ThemeProvider as MuiThemeProvider} from "@mui/material/styles";
 import {comLinkWorker} from "./functions/Worker/worker-export";
 import Log, {DebugLog} from "./functions/Log";
 import SessionRecommendation from "./functions/SessionRecommendation";

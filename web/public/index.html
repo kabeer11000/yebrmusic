@@ -37,7 +37,7 @@
                 super();
             }
         });
-        const production = true;
+        const production = false;
         window.__kn = {
             music: {
                 logger: {
@@ -103,7 +103,7 @@
                 }
             }
         };
-        // document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"]));
+        document.addEventListener("load", () => window.__kn.music.logger["console.re"].ready.call(window.__kn.music.logger["console.re"]));
         console.error = () => void null;
     </script>
 </head>

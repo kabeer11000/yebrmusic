@@ -1,0 +1,25 @@
+{
+  "short_name": "Yebr",
+  "name": "Yebr - Songs, Podcasts and Culture",
+  "icons": [
+    {
+      "src": "assets/icons/smallTvIcon.svg",
+      "sizes": "64x64 32x32 24x24 16x16 109x111",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "assets/icons/smallTvIcon.svg",
+      "type": "image/svg+xml",
+      "sizes": "109x111"
+    },
+    {
+      "src": "assets/icons/smallTvIcon.svg",
+      "type": "image/svg+xml",
+      "sizes": "218x221"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#E14A58",
+  "background_color": "#303030"
+}

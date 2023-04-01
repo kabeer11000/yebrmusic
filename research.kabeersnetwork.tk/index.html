@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="ie=edge" http-equiv="X-UA-Compatible">
+        <title>Kabeer's Network Research</title>
+        <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+              integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" rel="stylesheet">
+    </head>
+    <body>
+        <div>
+            <h1>Kabeer's Network Research</h1>
+            <div class="_container"></div>
+        </div>
+        <script async src="https://cdn.jsdelivr.net/gh/tsayen/dom-to-image/dist/dom-to-image.min.js"></script>
+        <script async src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script type="module">
+            // import showdown from "https://cdn.jsdelivr.net/npm/showdown@2.0.3/dist/showdown.min.js/+esm";
+            import {get, set} from 'https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm';
+            // import domToImage from "https://cdn.jsdelivr.net/gh/1904labs/dom-to-image-more@2.9.5/src/dom-to-image-more.js";
+            import {renderContent} from "./scripts/renderContent.js";
+            import {getArticle} from "./scripts/parseContent.js";
+
+            /**
+             * Check if d2 is greater than d1
+             * @param {String|Object} d1 Datestring or Date object
+             * @param {String|Object} d2 Datestring or Date object
+             * @param {Number} days Optional number of days to add to d1
+             */
+            function isDateGreater(d1, d2, days) {
+                d1 = new Date(d1);
+                return +new Date(d2) > d1.setDate(d1.getDate() + (days || 0))
+            }
+
+            const StorageIndex = {
+                parsedArticles: "_kn.static.research.landingpage.blogs.cache.articles",
+                files: "_kn.static.research.landingpage.blogs.cache.files",
+                parsedArticlesDate: "_kn.static.research.landingpage.blogs.cache.articles.date"
+            }
+            if (await get(StorageIndex.parsedArticlesDate) && isDateGreater(new Date().toDateString(), await get(StorageIndex.parsedArticlesDate).toString(), 3)) {
+                const articles = await get(StorageIndex.parsedArticles);
+                await renderContent({
+                    articles: articles,
+                    container: document.querySelector("._container")
+                });
+            } else {
+                const domParser = new DOMParser();
+                marked.makeHtml = marked.parse;
+                // const showdownParser = new showdown.Converter();
+
+                const files = await get(StorageIndex.files)//await getFilesFromDirectory();
+                await set(StorageIndex.files, files);
+                const Articles = [];
+                for (const file of files) Articles.push(await getArticle(domParser, marked, window.domtoimage, file));
+                await set(StorageIndex.parsedArticles, Articles);
+                await set(StorageIndex.parsedArticlesDate, new Date());
+                await renderContent({
+                    articles: Articles,
+                    container: document.querySelector("._container")
+                });
+            }
+        </script>
+    </body>
+</html>

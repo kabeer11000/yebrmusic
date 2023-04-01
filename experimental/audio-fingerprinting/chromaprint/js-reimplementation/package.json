@@ -1,0 +1,44 @@
+{
+  "name": "chromaprint",
+  "version": "0.0.0",
+  "description": "A JavaScript implementation of AcoustID Chromaprint",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "../../../indexing-service/chromaprint/node_modules/.bin/cake test"
+  },
+  "bin": {
+    "fpcalc": "bin/fpcalc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/bjjb/chromaprint.js.git"
+  },
+  "keywords": [
+    "audio",
+    "fingerprint",
+    "acoustid",
+    "musicbrainz"
+  ],
+  "author": "bjjb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bjjb/chromaprint.js/issues"
+  },
+  "homepage": "https://github.com/bjjb/chromaprint.js",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "docco": "^0.6.3",
+    "http-server": "^0.7.3",
+    "mocha": "^1.21.4",
+    "mocha-phantomjs": "^3.5.1",
+    "phantomjs": "^1.9.12"
+  },
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "commander": "^2.5.0",
+    "q": "^1.1.2"
+  }
+}

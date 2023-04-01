@@ -4,21 +4,28 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/core": "^5.0.0-alpha.54",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.124",
+    "@mui/material": "^5.11.15",
+    "@mui/styles": "^5.11.13",
     "@please/lrud": "0.0.11",
     "bootstrap": "^5.0.0-alpha1",
     "comlink": "^4.3.0",
     "idb-keyval": "^4.0.1",
     "jsonp": "^0.2.1",
-    "mui-feedback-dialog": "^2.2.1",
+    "mui-feedback-dialog": "^3.0.0",
     "muibox": "^1.4.1",
-    "notistack": "^1.0.0",
+    "notistack": "^3.0.1",
     "preact": "^10.5.14",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-infinite-scroll-component": "^5.1.0",
     "react-router-dom": "^5.2.0",
-    "react-simple-keyboard": "^2.4.38"
+    "react-simple-keyboard": "^2.4.38",
+    "recompose": "^0.30.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -58,7 +65,7 @@
     "prop-types": "^15.7.2",
     "react-app-rewired": "^2.1.8",
     "react-hot-loader": "^4.13.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.1",
     "react-snap": "^1.23.0"
   }
 }

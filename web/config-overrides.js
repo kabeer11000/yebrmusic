@@ -3,8 +3,10 @@ const {useBabelRc, override, addWebpackAlias} = require("customize-cra");
 // const {RetryChunkLoadPlugin} = require("webpack-retry-chunk-load-plugin");
 
 module.exports = override(addWebpackAlias({
-	"react": "preact/compat",
-	"react-dom": "preact/compat"
+	"@material-ui/core": "@mui/material",
+	"@material-ui/icons": "@mui/icons-material",
+    "@material-ui/lab": "@mui/lab",
+	"@material-ui/styles": "@mui/styles"
 }), useBabelRc());
 /*
 , new RetryChunkLoadPlugin({

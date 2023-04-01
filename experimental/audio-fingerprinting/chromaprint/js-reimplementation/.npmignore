@@ -1,0 +1,4 @@
+Cakefile
+lib/*.[lit]coffee
+test/
+doc/

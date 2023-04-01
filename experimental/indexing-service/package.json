@@ -1,0 +1,22 @@
+{
+  "name": "indexing-service",
+  "version": "1.0.0",
+  "description": "Indexing Service for Yebr Music",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/kabeer11000/yebrmusic"
+  },
+  "author": "Kabeer's Network Authors",
+  "license": "MIT",
+  "dependencies": {
+    "chromaprint": "^0.1.0",
+    "chromaprint.js": "^0.1.0"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.7.0"
+  }
+}

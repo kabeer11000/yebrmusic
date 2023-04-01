@@ -9,7 +9,7 @@ Dejavu can memorize audio by listening to it once and fingerprinting it. Then by
 Note: for voice recognition, *Dejavu is not the right tool!* Dejavu excels at recognition of exact signals with reasonable amounts of noise.
 
 ## Quickstart with Docker
-
+ 
 First, install [Docker](https://docs.docker.com/get-docker/).
 
 ```shell
@@ -282,14 +282,14 @@ Here are the results for different values of listening time (`n`):
 
 This is pretty rad. For the percentages:
 
-Number of Seconds | Number Correct | Percentage Accuracy
-----|----|----
-1 | 27 / 45 | 60.0%
-2 | 43 / 45 | 95.6%
-3 | 44 / 45 | 97.8%
-4 | 44 / 45 | 97.8%
-5 | 45 / 45 | 100.0%
-6 | 45 / 45 | 100.0%
+| Number of Seconds | Number Correct | Percentage Accuracy |
+|-------------------|----------------|---------------------|
+| 1                 | 27 / 45        | 60.0%               |
+| 2                 | 43 / 45        | 95.6%               |
+| 3                 | 44 / 45        | 97.8%               |
+| 4                 | 44 / 45        | 97.8%               |
+| 5                 | 45 / 45        | 100.0%              |
+| 6                 | 45 / 45        | 100.0%              |
 
 Even with only a single second, randomly chosen from anywhere in the song, Dejavu is getting 60%! One extra second to 2 seconds get us to around 96%, while getting perfect only took 5 seconds or more. Honestly when I was testing this myself, I found Dejavu beat me - listening to only 1-2 seconds of a song out of context to identify is pretty hard. I had even been listening to these same songs for two days straight while debugging...
 
