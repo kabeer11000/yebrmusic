@@ -1,7 +1,0 @@
-{
-  "name": "Yebr Music",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react"
-}

@@ -9,13 +9,20 @@ const authRouter = require("./routes/auth-routes");
 const apiRouter = require("./routes/api-routes");
 const recommendationRouter = require("./routes/recommendation-routes");
 
-const ddos = new DDOS({burst: 10, limit: 20, onDenial: async () => console.log("DOS Denied")})
+// const ddos = new DDOS({burst: 10, limit: 20, onDenial: async () => console.log("DOS Denied")})
 const app = express();
-app.use(ddos.express);
-app.use(cors({
-    credentials: true, optionsSuccessStatus: 200,
-    origin: (origin, callback) => (origin === config.FRONTEND_URL || !origin) ? callback(null, true) : callback(new Error("Cors error occurred"))
-}));
+// app.use(ddos.express);
+app.use((request, response, next) => {
+    console.log('[Yebr]: request intercepted: ' + request.path);
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    next()
+})
+// app.use(cors({
+//     credentials: true, optionsSuccessStatus: 200,
+//     origin: "*",
+//     // @0x, testing and debugging origin 
+//     // origin: (origin, callback) => (origin === config.FRONTEND_URL || !origin) ? callback(null, true) : callback(new Error("Cors error occurred"))
+// }));
 app.use(cookieParser());
 app.use(express.json({}));
 app.use(express.urlencoded({extended: true}));

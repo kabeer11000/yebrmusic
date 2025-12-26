@@ -1,8 +1,0 @@
-{
-  "appId": "com.kabeers.yebr.music",
-  "appName": "Yebr Music",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "build",
-  "cordova": {}
-}
