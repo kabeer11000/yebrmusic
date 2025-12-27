@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {ArrowBack, Menu, Search} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import {useHistory} from "react-router-dom";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@mui/styles";
 import HideOnScroll from "../HideOnScroll/HideOnScroll";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";

@@ -1,13 +1,14 @@
 /* eslint-disable */
 import "preact/debug";
 import React from "react";
-import {hydrate, render} from "react-dom";
+import { hydrate, render } from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import {IsTvProvider} from "./Contexts";
-import {storageIndex} from "./functions/Helper/StorageIndex";
-import {RetrievalDeleteLS} from "./functions/Helper/RetrievalDeleteLS";
+import { IsTvProvider } from "./Contexts";
+import { storageIndex } from "./functions/Helper/StorageIndex";
+import { RetrievalDeleteLS } from "./functions/Helper/RetrievalDeleteLS";
+import { Cookies } from "./functions/Cookies";
 // import "https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js";
 
 if (!window.__kn.music.developers["debugging-enabled"]) {
@@ -16,8 +17,10 @@ if (!window.__kn.music.developers["debugging-enabled"]) {
     };
 }
 window.addEventListener("beforeunload", async (e) => {
-    e.preventDefault();
-    await RetrievalDeleteLS.set(storageIndex.cookies.AuthUser, window.__kn.music.auth.authUser);
+    // TODO Temporarily diabled beforeunloads
+    // e.preventDefault();
+    // await RetrievalDeleteLS.set(storageIndex.cookies.AuthUser, window.__kn.music.auth.authUser);
+
     // const params = new URLSearchParams(window.location.search);
     // params.set("u", window.__kn.music.auth.authUser);
     // const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + params.toString();
@@ -87,8 +90,32 @@ if (localStorage.getItem("3d-sound") !== null) {
 }
 
 const rootElement = document.querySelector("app-renderer");
-if (rootElement.hasChildNodes()) hydrate(<IsTvProvider><App/></IsTvProvider>, rootElement);
-else render(<IsTvProvider><App/></IsTvProvider>, rootElement);
+if (rootElement.hasChildNodes()) hydrate(<IsTvProvider><App /></IsTvProvider>, rootElement);
+else render(<IsTvProvider><App /></IsTvProvider>, rootElement);
+
+// This function is called from index.html, ClientJS library's onLoad method
+// Set's users deviceId, do not remove
+
+// Serialized functionset for ClientJS, 
+// this is not initialized anywhere except in feedback dialog.
+
+// This code is responible for populating the device ID / fingerprint variable
+// While the function is used here, it is defined in index.js file to use the module bundler
+// for StorageIndex structs
+
+(function () {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js";
+    s.onload = () => {
+        if (Cookies.getCookie(storageIndex.cookies.deviceID)) return;
+        const fp = new window.ClientJS().getFingerprint();
+        console.log('index.js: [$__kn_yebr_fpload] saved fingerprint: ' + fp);
+        Cookies.setCookie(storageIndex.cookies.deviceID, fp, 400);
+        s.remove();
+        return;
+    }
+    document.head.append(s);
+}());
 
 // render(<IsTvProvider><App/></IsTvProvider>, document.querySelector("app-renderer"));
 // If you want your app to work offline and load faster, you can change

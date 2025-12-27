@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import "./Discover.css";
 import SongCard2 from "../SongCard2/SongCard2.lazy";
 import {Container, Divider, IconButton, ListItemSecondaryAction} from "@material-ui/core";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import Grid from "@material-ui/core/Grid";
 import ListItemText from "@material-ui/core/ListItemText";
 import {AccountContext, isTvContext, PlayContext} from "../../Contexts";

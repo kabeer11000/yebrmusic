@@ -1,13 +1,13 @@
 import React from "react";
 import "./SearchComponentTV.css";
-import {SearchYoutube, SuggestSearch} from "../../functions/Search";
-import {downloadsToPlaylist, SuggestOfflineSongs} from "../../functions/SongsUtility";
-import {useHistory} from "react-router-dom";
+import { SearchYoutube, SuggestSearch } from "../../functions/Search";
+import { downloadsToPlaylist, SuggestOfflineSongs } from "../../functions/SongsUtility";
+import { useHistory } from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import {SearchOutlined} from "@material-ui/icons";
+import { SearchOutlined } from "@material-ui/icons";
 import ListItemText from "@material-ui/core/ListItemText";
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import Paper from "@material-ui/core/Paper";
@@ -17,15 +17,15 @@ import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import Container from "@material-ui/core/Container";
 import SongCard from "../SongCard/SongCard.lazy";
-import {FocusNode} from "@please/lrud";
-import {storageIndex} from "../../functions/Helper/StorageIndex";
+import { FocusNode } from "@please/lrud";
+import { storageIndex } from "../../functions/Helper/StorageIndex";
 import Slide from "@material-ui/core/Slide";
 import Grow from "@material-ui/core/Grow";
 import Log from "../../functions/Log";
-import {PlayContext} from "../../Contexts";
+import { PlayContext } from "../../Contexts";
 import SessionRecommendation from "../../functions/SessionRecommendation";
-import {Typography} from "@material-ui/core";
-import {useQuery} from "../../Hooks";
+import { Typography } from "@material-ui/core";
+import { useQuery } from "../../Hooks";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -65,12 +65,12 @@ function getParameterByName(name, url) {
 const EmptyState = () => (
     <Grow in={true}>
         <div className={"errorPage text-center"}
-             style={{
-                 position: "absolute",
-                 top: "50%",
-                 left: "22.5%",
-                 transform: "translate(-50%, -50%)"
-             }}>
+            style={{
+                position: "absolute",
+                top: "50%",
+                left: "22.5%",
+                transform: "translate(-50%, -50%)"
+            }}>
             {/*<img src={"./assets/icons/darkmode_nothingfound.svg"} style={{width: "8rem", height: "auto"}}*/}
             {/*     alt={"Yebr Music Logo"}/>*/}
             {/*<br/>*/}
@@ -87,7 +87,7 @@ const SearchComponentTV = () => {
     const online = false // useNetwork();
     const [query, setQuery] = React.useState(params.get("q"));
     const [open, setOpen] = React.useState(false);
-    const {PlaySong} = React.useContext(PlayContext);
+    const { PlaySong } = React.useContext(PlayContext);
     const [state, setState] = React.useState(undefined);
     const [predictions, setPredictions] = React.useState(undefined);
 
@@ -100,7 +100,7 @@ const SearchComponentTV = () => {
                     SearchYoutube(query).then(setState);
                     history.push({
                         pathname: "search",
-                        search: "?" + new URLSearchParams({q: query}).toString()
+                        search: "?" + new URLSearchParams({ q: query }).toString()
                     });
                     await SessionRecommendation.addSearch(query);
                 }
@@ -118,52 +118,52 @@ const SearchComponentTV = () => {
     }, [online]);
     return (
         <Slide in={true} direction={"left"}>
-            <div style={{height: "100%"}}>
-                <div style={{width: "100%", display: "inline-flex", height: "49vh", justifyContent: "space-between"}}>
+            <div style={{ height: "100%" }}>
+                <div style={{ width: "100%", display: "inline-flex", height: "49vh", justifyContent: "space-between" }}>
                     <FocusNode
                         onFocused={() => setOpen(!open)}
                         onBlurred={() => setOpen(!open)}>
                         <Paper component="form" className={`ml-5 mt-5 ${classes.root}`}>
                             <IconButton>
-                                <SearchIcon/>
+                                <SearchIcon />
                             </IconButton>
-                            <Divider className={classes.divider} orientation="vertical"/>
+                            <Divider className={classes.divider} orientation="vertical" />
                             <InputBase
                                 autoFocus
                                 className={classes.input}
                                 value={query}
                                 placeholder="Search Yebr"
-                                inputProps={{"aria-label": "search yebr music"}}
+                                inputProps={{ "aria-label": "search yebr music" }}
                                 onKeyUpCapture={(e) => Search(e.target.value, e.key === "Enter")}
                             />
                         </Paper>
-                        <br/>
+                        <br />
                         <Paper className={"ml-5"}
-                               style={{
-                                   maxWidth: 400,
-                                   maxHeight: "30vh",
-                                   overflow: "hidden"
-                               }} hidden={!open}>
+                            style={{
+                                maxWidth: 400,
+                                maxHeight: "30vh",
+                                overflow: "hidden"
+                            }} hidden={!open}>
                             {
                                 predictions?.length ? predictions.map((value, index) => (
-                                        <ListItem button key={index}
-                                                  onClick={() => Search(!online ? value.item.videoElement.snippet.title : value.suggestion.attributes.data, true)}>
-                                            <ListItemIcon>
-                                                <SearchOutlined/>
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`${!online ? value.item.videoElement.snippet.title : value.suggestion.attributes.data}`}/>
-                                        </ListItem>
-                                    )
-                                ) : <EmptyState/>
+                                    <ListItem button key={index}
+                                        onClick={() => Search(!online ? value.item.videoElement.snippet.title : value.suggestion.attributes.data, true)}>
+                                        <ListItemIcon>
+                                            <SearchOutlined />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={`${!online ? value.item.videoElement.snippet.title : value.suggestion.attributes.data}`} />
+                                    </ListItem>
+                                )
+                                ) : <EmptyState />
                             }
                         </Paper>
                     </FocusNode>
                     <div>
                         {
                             localStorage.getItem(storageIndex.onScreenKeyboard) && JSON.parse(localStorage.getItem(storageIndex.onScreenKeyboard)) ? (
-                                <div style={{width: "50vw", color: "black", height: "100%"}}
-                                     className={"bg-transparent mr-5 mt-5"}>
+                                <div style={{ width: "50vw", color: "black", height: "100%" }}
+                                    className={"bg-transparent mr-5 mt-5"}>
                                     <Keyboard
                                         className={"bg-transparent h-100 w-100"}
                                         onChange={Search}
@@ -205,39 +205,39 @@ const SearchComponentTV = () => {
                 </div>
                 <div className={"mt-0"}>
                     {state && (online ? state.items : true) ? (
-                        <Container maxWidth="xl" className={"px-0 mx-0"} style={{maxWidth: "100vw"}}>
+                        <Container maxWidth="xl" className={"px-0 mx-0"} style={{ maxWidth: "100vw" }}>
                             <Grow in={!!query}>
                                 <div className={"cardSlider Slider"}>
                                     {
                                         online ?
                                             state.items.map((song, index) => (
                                                 <SongCard key={index}
-                                                          song={song}
-                                                          onClick={async () => PlaySong({
-                                                              useProxy: true,
-                                                              song: song,
-                                                              play: true,
-                                                              playList: {
-                                                                  index: index,
-                                                                  list: state
-                                                              }
-                                                          })}/>
+                                                    song={song}
+                                                    onClick={async () => PlaySong({
+                                                        useProxy: true,
+                                                        song: song,
+                                                        play: true,
+                                                        playList: {
+                                                            index: index,
+                                                            list: state
+                                                        }
+                                                    })} />
                                             )) : state.map((song, index) => (
                                                 <SongCard key={index}
-                                                          song={song.item.videoElement}
-                                                          onClick={async () => PlaySong({
-                                                              useProxy: false,
-                                                              songURI: URL.createObjectURL(song.item.blobs.audio),
-                                                              song: song.item,
-                                                              play: true,
-                                                              others: {
-                                                                  offline: true
-                                                              },
-                                                              playList: {
-                                                                  index: index,
-                                                                  list: await downloadsToPlaylist()
-                                                              }
-                                                          })}/>
+                                                    song={song.item.videoElement}
+                                                    onClick={async () => PlaySong({
+                                                        useProxy: false,
+                                                        songURI: URL.createObjectURL(song.item.blobs.audio),
+                                                        song: song.item,
+                                                        play: true,
+                                                        others: {
+                                                            offline: true
+                                                        },
+                                                        playList: {
+                                                            index: index,
+                                                            list: await downloadsToPlaylist()
+                                                        }
+                                                    })} />
                                             ))
                                     }
                                 </div>

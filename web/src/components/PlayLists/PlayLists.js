@@ -3,7 +3,7 @@ import "./PlayLists.css";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import Typography from "@material-ui/core/Typography";
 import endPoints from "../../api/EndPoints/EndPoints";
 import {Button} from "@material-ui/core";

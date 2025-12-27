@@ -9,14 +9,14 @@ import {
     ListItemAvatar,
     ListItemIcon,
     ListItemText,
-    makeStyles,
     SwipeableDrawer,
     Typography
 } from "@material-ui/core";
-import {AccountCircle, ArrowDropDown, Explore, GetApp, Home, Search, Settings, Subscriptions} from "@material-ui/icons";
+import { makeStyles } from "@mui/styles";
+import { AccountCircle, ArrowDropDown, Explore, GetApp, Home, Search, Settings, Subscriptions } from "@material-ui/icons";
 // import {Link} from "react-router-dom";
 import Link from "../Link"
-import {AccountChooserContext, AccountContext, DrawerContext, isTvContext} from "../../Contexts";
+import { AccountChooserContext, AccountContext, DrawerContext, isTvContext } from "../../Contexts";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Strings from "../../Strings";
 import Button from "@material-ui/core/Button";
@@ -99,20 +99,20 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 const routes = [
-    {name: "Home", path: "/home", icon: <Home/>},
-    {name: "Explore", path: "/discover", icon: <Explore/>},
-    {name: "Downloads", path: "/downloads", icon: <GetApp/>},
-    {name: "Artists", path: "/artists", icon: <Subscriptions/>},
-    {name: "Search", path: "/search", icon: <Search/>},
+    { name: "Home", path: "/home", icon: <Home /> },
+    { name: "Explore", path: "/discover", icon: <Explore /> },
+    { name: "Downloads", path: "/downloads", icon: <GetApp /> },
+    { name: "Artists", path: "/artists", icon: <Subscriptions /> },
+    { name: "Search", path: "/search", icon: <Search /> },
 ];
 
-const DrawerComponent = ({children}) => {
+const DrawerComponent = ({ children }) => {
 
     const classes = useStyles();
     const [open, setOpen] = React.useContext(DrawerContext);
     const tv = React.useContext(isTvContext);
     const handleDrawerToggle = (a) => setOpen(a !== undefined ? a : !open);
-    const {account} = React.useContext(AccountContext);
+    const { account } = React.useContext(AccountContext);
     const [, setAccountChooser] = React.useContext(AccountChooserContext).dialog;
     return (
         <React.Fragment>
@@ -120,42 +120,42 @@ const DrawerComponent = ({children}) => {
                 <Drawer
                     variant="permanent"
                     elevation={1}
-                    ModalProps={{keepMounted: true}}
+                    ModalProps={{ keepMounted: true }}
                     onMouseOver={() => setOpen(!open)}
-                    classes={{paper: classes.drawerClose}}>
+                    classes={{ paper: classes.drawerClose }}>
                     <React.Fragment>
                         <List className={`_text-truncate ${classes.root}`}>
                             {account ? <ListItem button onClick={() => setAccountChooser(true)}>
-                                    <ListItemAvatar>
-                                        <Avatar src={account.account_image || ""}
-                                                alt={account.username || ""}/>
-                                    </ListItemAvatar>
-                                    <ListItemText className={"text-truncate"} primary={account.username || ""}
-                                                  secondary={account.email || ""}/>
-                                </ListItem>
+                                <ListItemAvatar>
+                                    <Avatar src={account.account_image || ""}
+                                        alt={account.username || ""} />
+                                </ListItemAvatar>
+                                <ListItemText className={"text-truncate"} primary={account.username || ""}
+                                    secondary={account.email || ""} />
+                            </ListItem>
                                 : null}
                         </List>
-                        <div hidden={!account} className={"classes.toolbar"}/>
-                        <Divider hidden={!account}/>
+                        <div hidden={!account} className={"classes.toolbar"} />
+                        <Divider hidden={!account} />
                         <List onClick={handleDrawerToggle}>
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><Home/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><Home /></ListItemIcon>
                             </ListItem>
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><Explore/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><Explore /></ListItemIcon>
                             </ListItem>
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><GetApp/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><GetApp /></ListItemIcon>
                             </ListItem>
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><Subscriptions/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><Subscriptions /></ListItemIcon>
                             </ListItem>
-                            <Divider/>
+                            <Divider />
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><Settings/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><Settings /></ListItemIcon>
                             </ListItem>
                             <ListItem>
-                                <ListItemIcon className={"my-2 ml-2"}><AccountCircle/></ListItemIcon>
+                                <ListItemIcon className={"my-2 ml-2"}><AccountCircle /></ListItemIcon>
                             </ListItem>
                         </List>
                     </React.Fragment>
@@ -174,48 +174,48 @@ const DrawerComponent = ({children}) => {
                         width: "auto"
                     }
                 }}
-                ModalProps={{keepMounted: true}}>
+                ModalProps={{ keepMounted: true }}>
                 <React.Fragment>
                     <List className={`_text-truncate ${classes.root}`}>
                         {account ? <ListItem button onClick={() => setAccountChooser(true) && handleDrawerToggle()}>
                             <ListItemAvatar>
                                 <Avatar src={account.account_image}
-                                        alt={account.username || ""}/>
+                                    alt={account.username || ""} />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={<div className={"text-truncate"}>{account.username || ""}</div>}
-                                secondary={<div className={"text-truncate"}>{account.email || ""}</div>}/>
+                                secondary={<div className={"text-truncate"}>{account.email || ""}</div>} />
                             {tv && <ListItemSecondaryAction>
-                                <ArrowDropDown/>
+                                <ArrowDropDown />
                             </ListItemSecondaryAction>}
                         </ListItem> : <ListItem>
                             <ListItemText className={"w-100"} primary="Sign In"
-                                          secondary="Get personalized songs. playlists and more"/>
+                                secondary="Get personalized songs. playlists and more" />
                             <ListItemSecondaryAction>
                                 <Button>Sign In</Button>
                             </ListItemSecondaryAction></ListItem>}
                     </List>
-                    <div className={"classes.toolbar"}/>
-                    <Divider/>
+                    <div className={"classes.toolbar"} />
+                    <Divider />
                     <List onClick={() => setOpen(false)}>
                         {routes.map(route => <ListItem button component={Link} to={route.path}>
                             <ListItemIcon>{route.icon}</ListItemIcon>
-                            <ListItemText primary={route.name}/>
+                            <ListItemText primary={route.name} />
                         </ListItem>)}
-                        <Divider/>
+                        <Divider />
 
                         <ListItem button component={Link} to={"/settings"}>
-                            <ListItemIcon><Settings/></ListItemIcon>
-                            <ListItemText primary={"Settings"}/>
+                            <ListItemIcon><Settings /></ListItemIcon>
+                            <ListItemText primary={"Settings"} />
                         </ListItem>
                         <ListItem button hidden={!!!account} component={MuiLink}
-                                  href={account ? `https://accounts.kabeersnetwork.tk/?u=${window.__kn.music.auth.authUser}` : endPoints.authRedirect}>
-                            <ListItemIcon><AccountCircle/></ListItemIcon>
-                            <ListItemText primary={"Account"}/>
+                            href={account ? `https://accounts.kabeersnetwork.tk/?u=${window.__kn.music.auth.authUser}` : endPoints.authRedirect}>
+                            <ListItemIcon><AccountCircle /></ListItemIcon>
+                            <ListItemText primary={"Account"} />
                         </ListItem>
                     </List>
                     <List>
-                        <Divider/>
+                        <Divider />
                         <ListItem button>
                             <Typography muted small>
                                 <div
@@ -227,7 +227,7 @@ const DrawerComponent = ({children}) => {
                 </React.Fragment>
             </SwipeableDrawer>
             <main className={`MainDrawerContainer ${classes.content}`}
-                  style={{marginLeft: tv ? "4.5rem" : ""}}>
+                style={{ marginLeft: tv ? "4.5rem" : "" }}>
                 <React.Fragment>
                     {children}
                 </React.Fragment>

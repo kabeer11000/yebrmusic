@@ -12,20 +12,28 @@ const recommendationRouter = require("./routes/recommendation-routes");
 // const ddos = new DDOS({burst: 10, limit: 20, onDenial: async () => console.log("DOS Denied")})
 const app = express();
 // app.use(ddos.express);
-app.use((request, response, next) => {
-    console.log('[Yebr]: request intercepted: ' + request.path);
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    next()
-})
-// app.use(cors({
-//     credentials: true, optionsSuccessStatus: 200,
-//     origin: "*",
-//     // @0x, testing and debugging origin 
-//     // origin: (origin, callback) => (origin === config.FRONTEND_URL || !origin) ? callback(null, true) : callback(new Error("Cors error occurred"))
-// }));
+// app.use((req, res, next) => {
+//     console.log('[Yebr]: request intercepted: ' + req.path);
+//     res.setHeader("Access-Control-Allow-Origin", "*");
+//     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+//     // If it's a preflight check, reply immediately and STOP.
+//     if (req.method === "OPTIONS") {
+//         return res.sendStatus(200);
+//     }
+
+//     next();
+// });
+app.use(cors({
+    credentials: true, optionsSuccessStatus: 200,
+    origin: (origin, callback) => callback(null, origin),
+    // @0x, testing and debugging origin 
+    // origin: (origin, callback) => (origin === config.FRONTEND_URL || !origin) ? callback(null, true) : callback(new Error("Cors error occurred"))
+}));
 app.use(cookieParser());
 app.use(express.json({}));
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.set("json spaces", process.env.NODE_ENV === "production" ? 0 : 2);
 app.use("/api", apiRouter);
 app.use("/auth", authRouter);

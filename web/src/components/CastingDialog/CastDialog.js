@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@mui/styles";
 import Avatar from "@material-ui/core/Avatar";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -10,7 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
-import {blue} from "@material-ui/core/colors";
+import { blue } from "@material-ui/core/colors";
 
 const useStyles = makeStyles({
 	avatar: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 
 export default function CastDialog(props) {
 	const classes = useStyles();
-	const {onClose, selectedValue, open, emails} = props;
+	const { onClose, selectedValue, open, emails } = props;
 
 	const handleClose = () => {
 		onClose(selectedValue);
@@ -39,20 +39,20 @@ export default function CastDialog(props) {
 					<ListItem button onClick={() => handleListItemClick(email)} key={email}>
 						<ListItemAvatar>
 							<Avatar className={classes.avatar}>
-								<PersonIcon/>
+								<PersonIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary={email}/>
+						<ListItemText primary={email} />
 					</ListItem>
 				))}
 
 				<ListItem autoFocus button onClick={() => handleListItemClick("addAccount")}>
 					<ListItemAvatar>
 						<Avatar>
-							<AddIcon/>
+							<AddIcon />
 						</Avatar>
 					</ListItemAvatar>
-					<ListItemText primary="Add account"/>
+					<ListItemText primary="Add account" />
 				</ListItem>
 			</List>
 		</Dialog>

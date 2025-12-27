@@ -1,16 +1,34 @@
 export const Cookies = {
-    getCookie(e) {
-        for (let t = e + "=", o = decodeURIComponent(document.cookie).split(";"), n = 0; n < o.length; n++) {
+    /**
+     * Get a cookie by key / name, returns empty string when cookie does not exist.
+     *
+     * @param {string} key - Cookie Key.
+     * @returns {string} - Cookie Value
+     */
+    getCookie(key) {
+        for (let t = key + "=", o = decodeURIComponent(document.cookie).split(";"), n = 0; n < o.length; n++) {
             for (var r = o[n]; " " === r.charAt(0);) r = r.substring(1);
             if (0 === r.indexOf(t)) return r.substring(t.length, r.length);
         }
         return "";
     },
-    setCookie(e, t, o) {
+    /**
+     * Sets a cookie, client side, useful when setting preferences and deviceId's
+     *
+     * @param {string} key - Cookie Key.
+     * @param {string} value - Cookie Value.
+     * @param {number} expiry - Cookie Expiry in days.
+     */
+    setCookie(key, value, expiry) {
         const n = new Date();
-        n.setTime(n.getTime() + 24 * o * 60 * 60 * 1e3);
-        const r = "expires=" + n.toUTCString();
-        document.cookie = e + "=" + t + ";" + r + ";path=/";
+        n.setTime(n.getTime() + 24 * expiry * 60 * 60 * 1e3);
+        document.cookie = key + "=" + value + ";" + "expires=" + n.toUTCString() + ";path=/";
     },
-    deleteCookie: (name) => document.cookie = name + "=; Max-Age=-99999999;"
+    /**
+     * Deletes a cookie by key / name
+     *
+     * @param {string} key - Cookie Key.
+     * @returns {string} - document.cookie complete, after deletion
+     */
+    deleteCookie: (key) => document.cookie = key + "=; Max-Age=-99999999;"
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import HomeComponent from "./components/Home/home.lazy";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import CustomBottomNavigation from "./components/CustomBottomNavigation/CustomBottomNavigation.lazy";
 import Downloads from "./components/Downloads/Downloads.lazy";
 import MobilePlayer from "./components/Player/Moblie/Player.lazy";
@@ -14,9 +14,9 @@ import SearchResultComponent from "./components/SearchComponent/SearchResultComp
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Settings from "./components/Settings/Settings.lazy";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {DialogProvider} from "muibox";
+import { DialogProvider } from "muibox";
 import ArtistComponent from "./components/ArtistComponent/ArtistComponent.lazy";
-import {FocusRoot} from "@please/lrud";
+import { FocusRoot } from "@please/lrud";
 import SearchComponentTV from "./components/SearchComponentTV/SearchComponentTV.lazy";
 import {
     AccountChooserProvider,
@@ -35,15 +35,15 @@ import {
     ThemeProvider
 } from "./Contexts";
 import Discover from "./components/Discover/Discover.lazy";
-import {SnackbarProvider} from "notistack";
+import { SnackbarProvider } from "notistack";
 import TrendingArtists from "./components/TrendingArtists/TrendingArtists.lazy";
-import {ConnectionError, ErrorComponent} from "./InternalViews/ErrorViewer";
+import { ConnectionError, ErrorComponent } from "./InternalViews/ErrorViewer";
 import AccountChooser from "./components/AccountChooser/AccountChooser.lazy";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import {CircularProgress} from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 
-const AppRenderer = ({children}) => {
-    const {token} = React.useContext(AccountContext);
+const AppRenderer = ({ children }) => {
+    const { token } = React.useContext(AccountContext);
     return <React.Fragment>
         {token && !(token instanceof Error) ? (
             <app-container>{children}</app-container>) : !token && !(token instanceof Error) ?
@@ -52,25 +52,25 @@ const AppRenderer = ({children}) => {
                 left: "50%",
                 top: "50%",
                 transform: "translate(-50%,-50%)",
-            }}><CircularProgress/></div> : (
+            }}><CircularProgress /></div> : (
                 <app-container>
-                    <ConnectionError/>
+                    <ConnectionError />
                 </app-container>
             )}
-        <AccountChooser/>
+        <AccountChooser />
     </React.Fragment>;
 };
-const Admin = ({children}) => (
+const Admin = ({ children }) => (
     <Switch>
         {children}
-        <Route path={"/admin/create"} component={() => (<div>Feature Not Implemented Yet</div>)}/>
+        <Route path={"/admin/create"} component={() => (<div>Feature Not Implemented Yet</div>)} />
     </Switch>
 );
 const LoadingIndicator = () => {
     const [loading] = React.useContext(LoadingContext);
     return (
-        <div style={{zIndex: "99999"}} hidden={!loading} className={"fixed-top"}>
-            <LinearProgress/>
+        <div style={{ zIndex: "99999" }} hidden={!loading} className={"fixed-top"}>
+            <LinearProgress />
         </div>
     )
 }
@@ -80,66 +80,66 @@ const App = () => {
         <ThemeProvider>
             <Router>
                 <DialogProvider>
-                    <CssBaseline/>
+                    <CssBaseline />
                     <FocusRoot className="App">
                         <AccountChooserProvider>
                             <AccountProvider>
-                                <Route path="/admin" component={Admin}/>
+                                <Route path="/admin" component={Admin} />
                                 <Route exact
-                                       path={["/artist/:id", "/artists", "/", "/trending", "/discover", "/home", "/suggest", "/search", "/downloads", "/history", "/liked", "/charts", "/search/results", "/settings"]}>
+                                    path={["/artist/:id", "/artists", "/", "/trending", "/discover", "/home", "/suggest", "/search", "/downloads", "/history", "/liked", "/charts", "/search/results", "/settings"]}>
                                     <AppRenderer>
                                         <BottomNavigationProvider>
                                             <DrawerProvider>
                                                 <DrawerComponent>
                                                     <SnackbarProvider maxSnack={3}>
                                                         <LoadingProvider>
-                                                            <LoadingIndicator/>
+                                                            <LoadingIndicator />
                                                             <PlayerProvider>
                                                                 <PlayProvider>
                                                                     <Route exact
-                                                                           path={["/artists", "/", "/trending", "/discover", "/home", "/downloads", "/history", "/liked", "/charts", tv ? "/search" : "/"]}>
+                                                                        path={["/artists", "/", "/trending", "/discover", "/home", "/downloads", "/history", "/liked", "/charts", tv ? "/search" : "/"]}>
                                                                         <React.Fragment>
-                                                                            <CustomAppBar/>
-                                                                            <CustomBottomNavigation/>
+                                                                            <CustomAppBar />
+                                                                            <CustomBottomNavigation />
                                                                         </React.Fragment>
                                                                     </Route>
-                                                                    <AccountChooser/>
+                                                                    <AccountChooser />
                                                                     <RatingProvider>
                                                                         <RatingProvider>
-                                                                            {tv ? <DesktopPlayer/> : <MobilePlayer/>}
-                                                                            <MiniPlayer/>
+                                                                            {tv ? <DesktopPlayer /> : <MobilePlayer />}
+                                                                            <MiniPlayer />
                                                                         </RatingProvider>
                                                                     </RatingProvider>
                                                                     <Route exact path={["/home", "/"]}
-                                                                           component={HomeComponent}/>
+                                                                        component={HomeComponent} />
                                                                     <Route exact path={"/downloads"}
-                                                                           component={Downloads}/>
+                                                                        component={Downloads} />
                                                                     <SearchingProvider>
                                                                         {
                                                                             tv ? (
                                                                                 <React.Fragment>
                                                                                     <Route exact path={"/search"}
-                                                                                           component={SearchComponentTV}/>
+                                                                                        component={SearchComponentTV} />
                                                                                 </React.Fragment>
                                                                             ) : (
                                                                                 <React.Fragment>
                                                                                     <Route exact={true}
-                                                                                           path={"/search"}
-                                                                                           component={SearchResultComponent}/>
+                                                                                        path={"/search"}
+                                                                                        component={SearchResultComponent} />
                                                                                     <Route exact path={"/suggest"}
-                                                                                           component={SearchComponent}/>
+                                                                                        component={SearchComponent} />
                                                                                 </React.Fragment>
                                                                             )
                                                                         }
                                                                     </SearchingProvider>
                                                                     <Route exact path={"/settings"}
-                                                                           component={Settings}/>
+                                                                        component={Settings} />
                                                                     <Route exact path={"/discover"}
-                                                                           component={Discover}/>
+                                                                        component={Discover} />
                                                                     <Route exact path={"/artist/:id"}
-                                                                           component={ArtistComponent}/>
+                                                                        component={ArtistComponent} />
                                                                     <Route exact path={"/artists"}
-                                                                           component={TrendingArtists}/>
+                                                                        component={TrendingArtists} />
                                                                 </PlayProvider>
                                                             </PlayerProvider>
                                                         </LoadingProvider>
@@ -153,7 +153,7 @@ const App = () => {
                         </AccountChooserProvider>
                     </FocusRoot>
                 </DialogProvider>
-                <Route path={"/internal/error/:code/view"} component={ErrorComponent}/>
+                <Route path={"/internal/error/:code/view"} component={ErrorComponent} />
             </Router>
         </ThemeProvider>
     );

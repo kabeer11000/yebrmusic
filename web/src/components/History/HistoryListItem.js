@@ -5,7 +5,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import Chip from "@material-ui/core/Chip";
 
 const useStyles = makeStyles((theme) => ({

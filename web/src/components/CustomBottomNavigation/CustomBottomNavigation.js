@@ -2,7 +2,7 @@ import React from "react";
 import "./CustomBottomNavigation.css";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import {Explore, GetApp, Home, Subscriptions} from "@material-ui/icons";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import {makeStyles} from "@mui/styles";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import AppBar from "@material-ui/core/AppBar";
 import Link from "../Link"

@@ -3,7 +3,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import Chip from "@material-ui/core/Chip";
 import IconButton from "@material-ui/core/IconButton";
 import {Delete} from "@material-ui/icons";

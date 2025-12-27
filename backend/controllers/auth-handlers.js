@@ -4,7 +4,7 @@ const axios = require("axios");
 const uuid = require("uuid");
 const keys = require("../keys");
 const config = require("../config");
-const {serialize} = require("../functions/misc");
+const { serialize } = require("../functions/misc");
 const MongoClient = require("../MongoClient");
 
 const getSavedAccounts = async (req) => {
@@ -25,23 +25,27 @@ const GetAPIKeyWithoutAccount = async (req, res) => {
         expiresIn: 2147483647,
     });
 };
-const FU = "23c21d659cbb22ee0fcd7c3c1820dd"
+// Yebr's public serviceLoginToken, for when users are not logged in to any account
+// Similar to YouTube's mechanism
+const YEBR_PUBLIC_API_KEY = "23c21d659cbb22ee0fcd7c3c1820dd"
+
+/**
+ * Sets a cookie API Token on users browser, Used by signed out users 
+ * Responsible for handling /.../browse/key route. Populates user's browser with public API Access token
+ *
+ * @param {import("express").Request}  req 
+ * @param {import("express").Response} res 
+ */
 const GetAPIKey = async (req, res) => {
-    // return res.status(200).json({
-    //     public_grant: true,
-    //     response_type: "KN.MUSIC.PUBLIC.ACCESS",
-    //     serviceLoginToken: null,
-    //     ["serviceLoginToken.context"]: {
-    //         secure: true,
-    //         key: storageIndex.cookies.APIToken,
-    //     }
-    // })
     const deviceId = req.cookies[storageIndex.cookies.KabeersAuthDeviceId];
     if (!deviceId) return res.status(400).end();
+    console.log('Auth GetAPI Key: did not end request: ' + deviceId)
     return res.cookie(storageIndex.cookies.APIToken, FU, {
         secure: true,
         // sameSite: "none",
     }) && res.status(200).json({
+        public_grant: true,
+        response_type: "KN.MUSIC.PUBLIC.ACCESS",
         serviceLoginToken: FU,
         ["serviceLoginToken.context"]: {
             secure: true,
@@ -206,7 +210,7 @@ const OAuthCallbackHandler = async (req, res) => {
             })
         }).then(r => r.data);
         res.clearCookie(storageIndex.cookies.OAuthState);
-        const {id_token, refresh_token} = response;
+        const { id_token, refresh_token } = response;
         const userinfo = await jwt.verify(id_token, keys.KabeerAuthPlatform_Public_RSA_Key);
         const tokenPayload = await jwt.verify(refresh_token, keys.KabeerAuthPlatform_Public_RSA_Key);
 
@@ -261,7 +265,7 @@ const RefreshToken = async (req, res) => {
         res.cookie(storageIndex.cookies.UserData, JSON.stringify(userinfo), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
         });
-        res.cookie(storageIndex.cookies.Tokens, JSON.stringify({...response.data, refresh_token: refreshToken}), {
+        res.cookie(storageIndex.cookies.Tokens, JSON.stringify({ ...response.data, refresh_token: refreshToken }), {
             domain: config.FRONTEND_COOKIE_DOMAIN,
             maxAge: 7.2e+6
         });

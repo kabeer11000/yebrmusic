@@ -9,7 +9,7 @@ import {SuggestSearch} from "../../functions/Search";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import { makeStyles } from "@mui/styles";
 import {useHistory} from "react-router-dom";
 import Link from "../Link"
 import {SuggestOfflineSongs} from "../../functions/SongsUtility";

@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <link href="%PUBLIC_URL%/favicon.ico" rel="icon"/>
-    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
-    <meta content="#2B2B2B" name="theme-color"/>
-    <meta content="Yebr Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network" name="description"/>
-    <meta content="Kabeer's Network LLC" name="author"/>
-    <meta content="http://yebr.tk" name="canonical"/>
-    <link href="%PUBLIC_URL%/assets/icons/AppleMusicIcon.png" rel="apple-touch-icon"/>
-    <base href="/"/>
+    <meta charset="utf-8" />
+    <link href="%PUBLIC_URL%/favicon.ico" rel="icon" />
+    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="#2B2B2B" name="theme-color" />
+    <meta content="Yebr Music Free Unlimited Songs, Podcasts and Culture by Kabeer's Network" name="description" />
+    <meta content="Kabeer's Network LLC" name="author" />
+    <meta content="http://yebr.tk" name="canonical" />
+    <link href="%PUBLIC_URL%/assets/icons/AppleMusicIcon.png" rel="apple-touch-icon" />
+    <base href="/" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link href="%PUBLIC_URL%/manifest.json" rel="manifest"/>
+    <link href="%PUBLIC_URL%/manifest.json" rel="manifest" />
     <meta content="58f835af9b4fe231d145c9dfa0e3e443" name="propeller">
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -107,11 +108,12 @@
         console.error = () => void null;
     </script>
 </head>
+
 <body>
-<noscript>You need to enable JavaScript to run this app.</noscript>
-<app-renderer></app-renderer>
-<!--<div id="root"></div>-->
-<!--
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <app-renderer></app-renderer>
+    <!--<div id="root"></div>-->
+    <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.
 
@@ -121,79 +123,80 @@
   To begin the development, run `npm start` or `yarn start`.
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
-<!--<audio hidden id="MainAudio-KabeersMusic" src="#" style="display: none!important;"></audio>-->
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>
-<script src="https://cdn.jsdelivr.net/npm/clientjs/dist/client.min.js"></script>
-<script async src="https://unpkg.com/web-vitals/dist/polyfill.js"></script>
-<script async>
-    /** Polyfill loader JS **/
-    if (!document.createElement("div").scrollIntoView) {
-        const script = window.document.createElement("script");
-        // Load Polyfill
-        script.src = "https://cdn.jsdelivr.net/gh/kabeer11000/smoothscroll/src/smoothscroll.min.js";
-        script.onload = () => console.log("Using `window.scrollIntoView` polyfill")
-        document.head.appendChild(script);
-    }
-    if (!"fetch" in window) {
-        const script = window.document.createElement("script");
-        // Load Polyfill
-        script.src = "https://cdn.jsdelivr.net/gh/github/fetch@master/fetch.js";
-        script.onload = () => console.log("Using `window.fetch` polyfill")
-        document.head.appendChild(script);
-    }
-    /** Polyfill loader JS **/
+    <!--<audio hidden id="MainAudio-KabeersMusic" src="#" style="display: none!important;"></audio>-->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MHLTWXY386"></script>
+    <script async src="https://unpkg.com/web-vitals/dist/polyfill.js"></script>
 
-    window.dataLayer = window.dataLayer || [];
+    <script async>
+        /** Polyfill loader JS **/
+        if (!document.createElement("div").scrollIntoView) {
+            const script = window.document.createElement("script");
+            // Load Polyfill
+            script.src = "https://cdn.jsdelivr.net/gh/kabeer11000/smoothscroll/src/smoothscroll.min.js";
+            script.onload = () => console.log("Using `window.scrollIntoView` polyfill")
+            document.head.appendChild(script);
+        }
+        if (!"fetch" in window) {
+            const script = window.document.createElement("script");
+            // Load Polyfill
+            script.src = "https://cdn.jsdelivr.net/gh/github/fetch@master/fetch.js";
+            script.onload = () => console.log("Using `window.fetch` polyfill")
+            document.head.appendChild(script);
+        }
+        /** Polyfill loader JS **/
 
-    function gtag() {
-        dataLayer.push(arguments)
-    }
+        window.dataLayer = window.dataLayer || [];
 
-    gtag('js', new Date());
-    gtag('config', 'G-MHLTWXY386', {});
-
-    (async function () {
-        const report_web_vitals = async ({name, delta, id}) => {
-            // Assumes the global `gtag()` function exists, see:
-            // https://developers.google.com/analytics/devguides/collection/gtagjs
-            gtag('event', name, {
-                event_category: 'Web Vitals',
-                // The `id` value will be unique to the current page load. When sending
-                // multiple values from the same page (e.g. for CLS), Google Analytics can
-                // compute a total by grouping on this ID (note: requires `eventLabel` to
-                // be a dimension in your report).
-                event_label: id,
-                // Google Analytics metrics must be integers, so the value is rounded.
-                // For CLS the value is first multiplied by 1000 for greater precision
-                // (note: increase the multiplier for greater precision if needed).
-                value: Math.round(name === 'CLS' ? delta * 1000 : delta),
-                // Use a non-interaction event to avoid affecting bounce rate.
-                non_interaction: true,
-
-                // OPTIONAL: any additional params or debug info here.
-                // See: https://web.dev/debug-web-vitals-in-the-field/
-                // metric_rating: 'good' | 'ni' | 'poor',
-                // debug_info: '...',
-                // ...
-            });
+        function gtag() {
+            dataLayer.push(arguments)
         }
 
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/web-vitals/dist/web-vitals.iife.js';
-        script.onload = async () => {
-            // const getCLS = () => new Promise((resolve) => window.webVitals.getCLS(resolve));
-            // const getLCP = () => new Promise((resolve) => window.webVitals.getLCP(resolve));
-            // const getFID = () => new Promise((resolve) => window.webVitals.getFID(resolve));
-            // When loading `web-vitals` using a classic script, all the public
-            // methods can be found on the `webVitals` global namespace.
-            window["webVitals"]["getFID"](report_web_vitals)
-            window["webVitals"]["getLCP"](report_web_vitals)
-            window["webVitals"]["getCLS"](report_web_vitals)
-            // console.log(await Promise.all([getCLS(), getFID(), getLCP()]))//await getLCP(), await getCLS(), await getFID());
-        }
-        document.head.appendChild(script);
-    }());
-</script>
+        gtag('js', new Date());
+        gtag('config', 'G-MHLTWXY386', {});
+
+        (async function () {
+            const report_web_vitals = async ({ name, delta, id }) => {
+                // Assumes the global `gtag()` function exists, see:
+                // https://developers.google.com/analytics/devguides/collection/gtagjs
+                gtag('event', name, {
+                    event_category: 'Web Vitals',
+                    // The `id` value will be unique to the current page load. When sending
+                    // multiple values from the same page (e.g. for CLS), Google Analytics can
+                    // compute a total by grouping on this ID (note: requires `eventLabel` to
+                    // be a dimension in your report).
+                    event_label: id,
+                    // Google Analytics metrics must be integers, so the value is rounded.
+                    // For CLS the value is first multiplied by 1000 for greater precision
+                    // (note: increase the multiplier for greater precision if needed).
+                    value: Math.round(name === 'CLS' ? delta * 1000 : delta),
+                    // Use a non-interaction event to avoid affecting bounce rate.
+                    non_interaction: true,
+
+                    // OPTIONAL: any additional params or debug info here.
+                    // See: https://web.dev/debug-web-vitals-in-the-field/
+                    // metric_rating: 'good' | 'ni' | 'poor',
+                    // debug_info: '...',
+                    // ...
+                });
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/web-vitals/dist/web-vitals.iife.js';
+            script.onload = async () => {
+                // const getCLS = () => new Promise((resolve) => window.webVitals.getCLS(resolve));
+                // const getLCP = () => new Promise((resolve) => window.webVitals.getLCP(resolve));
+                // const getFID = () => new Promise((resolve) => window.webVitals.getFID(resolve));
+                // When loading `web-vitals` using a classic script, all the public
+                // methods can be found on the `webVitals` global namespace.
+                window["webVitals"]["getFID"](report_web_vitals)
+                window["webVitals"]["getLCP"](report_web_vitals)
+                window["webVitals"]["getCLS"](report_web_vitals)
+                // console.log(await Promise.all([getCLS(), getFID(), getLCP()]))//await getLCP(), await getCLS(), await getFID());
+            }
+            document.head.appendChild(script);
+        }());
+    </script>
 </body>
+
 </html>

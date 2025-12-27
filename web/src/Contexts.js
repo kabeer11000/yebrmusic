@@ -22,6 +22,8 @@ import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
+import ThemeLight from "./styles/ThemeLight.json";
+import ThemeDark from "./styles/ThemeLight.json";
 
 export const CastDialogContext = React.createContext(false);
 export const CastDialogProvider = ({children}) => {
@@ -631,14 +633,14 @@ export const ThemeProvider = React.memo(({children}) => {
             color: "#000",
         }
     };
-    const darkTheme = createMuiTheme({
-        palette: {
-            type: palletType,
-            ...colors,
-            Slider: slider
-        }
-    });
-
+    const darkTheme = createMuiTheme(palletType === "dark" ? ThemeDark : ThemeLight);
+// {
+//     palette: {
+//         type: palletType,
+//         ...colors,
+//         Slider: slider
+//     }
+// }
     React.useEffect(() => {
         localStorage.setItem(storageIndex.darkMode, darkMode);
     }, [darkMode]);
@@ -650,3 +652,4 @@ export const ThemeProvider = React.memo(({children}) => {
         </ThemeContext.Provider>
     );
 });
+
